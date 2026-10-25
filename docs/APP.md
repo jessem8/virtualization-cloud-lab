@@ -1,54 +1,43 @@
-# Application du laboratoire : Homebox
+# Application du laboratoire : Vikunja
 
-Choix du 25 octobre 2026 après la préférence utilisateur pour un mélange léger d'inventaire et de documents. Le tutoriel et Gitea ne sont pas les applications finales.
+Le professeur laisse le choix de l'application libre. Vikunja 2.7.1 remplace Homebox pour une démonstration cohérente des VLAN, du VPN, des permissions, de Docker, des sauvegardes et de la supervision. Aucun changement de VM, réseau ou allocation mémoire.
 
-## Usage
+## Scénario de démonstration
 
-Un registre privé des équipements du laboratoire : les deux PC, leurs VM, emplacements, champs utiles, photos, guides joints et suivi de maintenance. Utiliser des données de démonstration. Homebox fournit inventaire et pièces jointes ; ce n'est ni un helpdesk complet ni une plateforme de synchronisation de fichiers.
+Vikunja est un gestionnaire collaboratif de projets/tâches (vue Kanban, pièces jointes). Le partage d'un projet propose trois niveaux : **Read**, **Read & Write**, **Admin**. Il n'est pas présenté comme un inventaire de matériel.
 
-La démonstration relie directement les besoins : créer une fiche équipement, joindre un guide/image, retrouver la fiche, vérifier l'accès authentifié, sauvegarder les données vers TrueNAS et restaurer une copie. GitHub reste la coordination des Codex.
+Créer un projet fictif « Lab virtualisation » avec des tâches OPNsense, VLAN, VPN et NAS. Démontrer qu'un éditeur ajoute/modifie une tâche avec une petite pièce jointe, qu'un lecteur consulte sans pouvoir modifier et qu'un visiteur non connecté n'accède pas au projet privé. Démontrer ensuite la persistance, une restauration sur TrueNAS et l'observation d'une panne/reprise via Grafana. GitHub reste le canal de coordination de l'équipe.
 
-## Composants limités
+## Déploiement prévu sur Ubuntu B, après accord
 
-- Homebox, image maintenue sysadminsmedia, variante rootless, SQLite et interface incluses.
-- Un petit proxy Nginx pour HTTPS8443. Homebox7745 reste uniquement sur le réseau Docker interne.
-- Aucun serveur de base séparé, Redis, worker, runner ou nouvelle VM. Grafana reste sur3001 et Prometheus sur127.0.0.1:9090.
+- **Application** : image officielle `vikunja/vikunja:2.7.1` (version fixe), API et interface dans un seul conteneur avec SQLite intégrée, sans base ni worker supplémentaires. Version/image répertoriées dans les sources officielles ; pas encore téléchargées/exécutées sur le laboratoire.
+- **Accès** : conserver le petit Nginx HTTPS existant, publié seulement sur `10.77.20.10:8443` et relayé vers `http://vikunja:3456` sur le Docker bridge interne. Ne pas publier 3456 sur l'hôte ni le WAN ; vérifier les règles INPUT et DOCKER-USER/FORWARD.
+- **Persistance** : nouveaux dossiers locaux `/srv/lab/vikunja/db` monté sur `/db` (fichier `/db/vikunja.db`) et `/srv/lab/vikunja/files` monté sur `/app/vikunja/files`. L'image officielle utilise UID1000 ; autoriser l'écriture uniquement sur ces nouveaux dossiers. Pas de base SQLite active sur SMB.
+- **Configuration** : `VIKUNJA_SERVICE_PUBLICURL=https://10.77.20.10:8443/` (barre finale), `VIKUNJA_DATABASE_TYPE=sqlite`, et `VIKUNJA_SERVICE_SECRET` aléatoire, stable et stocké dans une configuration privée hors Git. Conserver le secret lors d'une restauration.
+- **Nginx/TLS** : certificat avec SAN IP 10.77.20.10, validé depuis Windows et le VPN ; passer Host, X-Forwarded-For et X-Forwarded-Proto. Pour l'IP réelle du client, `VIKUNJA_SERVICE_IPEXTRACTIONMETHOD=xff` exige `VIKUNJA_SERVICE_TRUSTEDPROXIES` limité à l'adresse effective du proxy, à mesurer au déploiement.
+- **Comptes** : n'autoriser au départ que MGMT, créer les comptes de test, puis désactiver les inscriptions via `VIKUNJA_SERVICE_ENABLEREGISTRATION=false` et le partage par lien via `VIKUNJA_SERVICE_ENABLELINKSHARING=false`, avant d'ouvrir Windows et VPN. Vérifier les effets réels de ces réglages.
+- **Permissions** : partager uniquement le projet de test en Read avec le lecteur, Read & Write avec l'éditeur. Vérifier d'autres partages/héritages éventuels pour que le test de refus soit probant. Aucune permission de gestion globale n'est nécessaire au lecteur.
+- **Charge** : Ubuntu conserve 2,5 Gio pour application, sécurité, logs et supervision. Mesurer la consommation simultanée avec Prometheus/Grafana au lieu de supposer la fluidité.
 
-Le tag stable 0.27.1-rootless a répondu200 au registre officiel pendant cette préparation. Son index de manifeste est sha256:6bb4472e91d3084d292ce654772e26df765d01aa0d38aa7077a7bb07b7d44ac7. La release v0.27.1 est publiée sans indicateur prerelease. Cela prouve la présence de l'image, pas son fonctionnement ici.
+## Persistance, sauvegarde et test de panne
 
-## Préparation sur Ubuntu du PC B, après accord
+Recréer le conteneur sans supprimer les deux montages : comptes, projets, tâches et pièces jointes doivent rester. Le VPN ne donne accès qu'au HTTPS8443, pas à SSH, SMB ou Grafana.
 
-1. Utiliser Docker bridge, INPUT et DOCKER-USER/FORWARD cohérents avec LIAISON.md. Seul Nginx publie 10.77.20.10:8443 vers443 dans son conteneur ; ne pas publier7745.
-2. Épingler l'image ghcr.io/sysadminsmedia/homebox:0.27.1-rootless avec le digest vérifié. Épingler aussi le proxy maintenu retenu. Pas de nightly ou latest flottant.
-3. Monter un stockage persistant local /srv/lab/homebox/data vers /data. La documentation rootless indique UID/GID65532 ; donner les droits au nouveau dossier dédié seulement, sans modifier un ancien répertoire.
-4. Générer un pepper aléatoire fort dans un fichier privé, l'injecter localement comme HBOX_AUTH_API_KEY_PEPPER sans l'afficher ni le publier. Sauvegarder ce secret avec la configuration privée. Ne pas recopier le faux secret de l'exemple officiel.
-5. Définir HBOX_OPTIONS_ALLOW_ANALYTICS=false, HBOX_WEB_MAX_UPLOAD_SIZE=10 et TZ=Africa/Tunis. Désactiver les fonctionnalités/intégrations inutiles.
-6. Configurer Nginx selon le guide officiel de proxy : certificat SAN10.77.20.10 vérifié côté client, proxy vers homebox:7745, en-têtes Host/X-Real-IP/X-Forwarded-For/X-Forwarded-Proto et WebSocket. Régler HBOX_OPTIONS_TRUST_PROXY=true uniquement parce que le backend est isolé derrière ce proxy ; ne pas accepter un accès direct non filtré.
-7. Pendant le premier démarrage, n'autoriser que MGMT. Créer les comptes/groupes de démonstration, puis fixer HBOX_OPTIONS_ALLOW_REGISTRATION=false et vérifier que l'inscription libre est fermée avant d'autoriser Windows/VPN.
-8. Tester les droits réellement disponibles. Ne pas inventer un rôle lecture seule ou une portée API limitée : les API keys Homebox n'ont pas de portée fine dans le code consulté. Aucun token API n'est requis pour la démonstration.
+Pour une copie cohérente, **arrêter proprement Vikunja**, archiver ensemble les dossiers `db` et `files` avec sa configuration et le secret privés, puis copier l'archive vers `tank/app-backups` via le compte NAS dédié `app-backup`. Garder les identifiants du NAS dans un fichier root privé sur Ubuntu, hors conteneur et hors Git. Ne jamais copier une base SQLite active vers un partage SMB.
 
-Le budget Ubuntu reste2,5Gio avec monitoring/journaux et doit être mesuré avec les autres invités. Les chiffres mémoire annoncés par le projet ne constituent pas une mesure de notre lab. Ne pas ajouter des composants pour transformer Homebox en suite métier.
+Restaurer une copie dans un dossier distinct sans écraser le service actif ; vérifier une tâche et le hash de sa pièce jointe. Contrôler la disponibilité HTTPS avec validation du certificat, arrêter volontairement l'application, vérifier l'alerte/indisponibilité et le retour sain dans Grafana. Ces tests restent **non exécutés** tant qu'ils ne sont pas autorisés et observés.
 
-## Démonstration et récupération
+## Atelier Docker du cours
 
-Créer des fiches PC-A, PC-B et NAS-LAB avec un emplacement, un état et une note de maintenance. Ajouter un petit guide texte et une image synthétique. Prouver : utilisateur autorisé capable de retrouver/modifier la fiche ; visiteur non connecté incapable de lire le contenu privé ; éventuel compte d'un autre groupe refusé après vérification réelle de ce modèle d'accès.
+Construire et inspecter le tutoriel `getting-started`, conserver les preuves d'image/historique des couches, puis arrêter l'exemple. Vikunja demeure la seule application permanente. Inspecter l'image Vikunja et exécuter Docker Bench uniquement après revue du script ; ne pas compiler Vikunja depuis les sources.
 
-Recréer le conteneur sans supprimer /data et vérifier fiches, comptes et pièces jointes. Le VPN donne accès à HTTPS8443 seulement, pas à SSH Ubuntu, Grafana ou SMB.
+## Documentation officielle
 
-Pour une sauvegarde cohérente, arrêter Homebox proprement et archiver /data avec la configuration et les secrets privés nécessaires. Les fichiers SQLite, son WAL éventuel et les pièces jointes sont sauvegardés ensemble ; ne pas copier une base active au hasard. Copier l'archive vers tank/app-backups avec le compte NAS app-backup, limité à ce dataset. Les identifiants SMB restent dans un fichier root privé mode600 hors des conteneurs et de Git. Les données actives restent locales à Ubuntu, pas sur SMB.
+- [Installation Docker et SQLite](https://vikunja.io/docs/installing/)
+- [Exemple Docker avec SQLite](https://vikunja.io/docs/full-docker-example/)
+- [Configuration et variables](https://vikunja.io/docs/config-options/)
+- [Proxy Nginx](https://vikunja.io/docs/reverse-proxy/)
+- [Droits Read / Read & Write / Admin](https://vikunja.io/help/permissions/)
+- [Release v2.7.1](https://github.com/go-vikunja/vikunja/releases/tag/v2.7.1)
 
-Restaurer dans une copie isolée, vérifier une fiche et le hash d'une pièce jointe sans écraser l'instance active. Surveiller la disponibilité HTTPS avec le certificat vérifié, puis démontrer panne et reprise. L'archive contient des données/secrets et reste privée.
-
-## Atelier du cours
-
-Réaliser le tutoriel getting-started comme exercice court, garder construction/historique/captures puis arrêter le conteneur. Homebox est la seule application persistante. Inspecter aussi les couches de l'image Homebox et exécuter Docker Bench après revue dans Ubuntu, avec constats et corrections. Pas de compilation de Homebox depuis ses sources pendant la séance.
-
-## Sources et limites
-
-- [Projet maintenu et fonctionnalités](https://github.com/sysadminsmedia/homebox)
-- [Installation officielle rootless](https://github.com/sysadminsmedia/homebox/blob/main/docs/src/content/docs/en/quick-start/install.mdx)
-- [Configuration](https://github.com/sysadminsmedia/homebox/blob/main/docs/src/content/docs/en/quick-start/configure/index.mdx)
-- [Proxy HTTPS officiel](https://github.com/sysadminsmedia/homebox/blob/main/docs/src/content/docs/en/quick-start/configure/proxy.mdx)
-- [Release v0.27.1](https://github.com/sysadminsmedia/homebox/releases/tag/v0.27.1)
-
-Docs officielles et métadonnées de release/registre consultées le25octobre2026. Aucun conteneur, compte, certificat, sauvegarde ou test de performance n'a été exécuté pendant cette mise à jour documentaire.
+Sources consultées le 25 octobre 2026. Aucun invité, réseau, service, conteneur, compte, certificat, test ou sauvegarde n'a été exécuté pendant cette modification documentaire.

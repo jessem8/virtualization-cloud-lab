@@ -12,7 +12,7 @@ Latest requirements: replace the tutorial app with a useful open-source service,
 
 - A7/B11GiB: move Ubuntu, application, monitoring and switching to B; keep OPNsense/Windows/VPN on A. Same five guests and18GiB total.
 - Physical trunk20/30 replaces the private trunk/storage-only cable. Check it in the first20-30minutes of approved network work. B hardware/headroom remain unverified.
-- Gitea was rejected before publication. The user chose a lightweight inventory/documents mix: Homebox rootless/SQLite with a small HTTPS proxy, no externalDB/worker/newVM. Official docs, non-prerelease release and exact rootless image tag/digest were retrieved read-only.
+- Historical choice (now superseded): Gitea was rejected; Homebox rootless/SQLite was selected for inventory/documents. Its official docs and image metadata were reviewed read-only. On 2026-10-25, the user instead selected Vikunja 2.7.1/SQLite for the professor's free-choice live demo. Vikunja's official Docker, permissions, proxy and release details were reviewed read-only; no live deployment was performed.
 - Keep the required tutorial as a short stopped exercise; add useful equipment-record/attachment/login/persistence and NAS backup evidence.
 - Architect reviewed this allocation and supports it as the simplest balanced implementation split preserving NAS isolation.
 
@@ -24,4 +24,4 @@ The final verification results and remote commit/comment are recorded in the tas
 
 ## Remaining obligations
 
-All runtime test rows remain unrun. Physical tags, current hardware, resource smoothness, Homebox behavior/security, NAS recovery and VPN must be tested after approval of the current revision.
+All runtime test rows remain unrun. Physical tags, current hardware, resource smoothness, Vikunja behavior/security, NAS recovery and VPN must be tested after approval of the current revision.

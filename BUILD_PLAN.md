@@ -64,7 +64,7 @@ Chaque invité de service a une seule carte finale. Seul OPNsense a une carte WA
 | Windows | Defender actif, pare-feu local, Sysmon 1/3, audit Security réel |
 | Ubuntu | SSH par clé, refus mot de passe/root, iptables persistant, rsyslog, auditd et protection |
 | NAS | SMB autorisé/refusé, lecture seule, dataset chiffré, clé privée et restauration de fichier |
-| Docker | Homebox/SQLite, inventaire/documents/authentification, persistance et récupération ; exercice du cours, historique des couches et Docker Bench |
+| Docker | Vikunja/SQLite, projets/tâches Kanban, pièces jointes, droits lecture/édition/admin, authentification, persistance et restauration ; exercice du cours, historique des couches et Docker Bench |
 | Réseau | Tags VLAN20/30 sur trunk Ethernet, ports d'accès restreints, règles entrantes/sortantes et absence de contournement |
 | VPN | Tunnel chiffré, application autorisée, administration/SMB/Grafana refusés |
 | Supervision | Métriques Ubuntu/Windows et disponibilité applicative réelles, panne/reprise observées |
@@ -78,9 +78,9 @@ Réutiliser les invités adaptés et les installations vérifiées. Ne pas impos
 
 OPNsense 26.7.7 avec correctifs disponibles et TrueNAS Community Edition 25.10.7 sont les références vérifiées pendant la préparation. Employer les éditions stables officielles, vérifier les empreintes/signatures et consigner ce qui a réellement été installé. Les numéros exacts des images Docker ne sont pas repris comme des faits sans manifeste consultable.
 
-Application finale : Homebox rootless avec SQLite, sur Ubuntu du PC B, derrière un petit proxy Nginx HTTPS. Un conteneur applicatif et le proxy, sans base externe ni worker supplémentaire. Démonstration : fiches équipement, documents/photos joints, connexion, persistance et sauvegarde NAS cohérente. Voir docs/APP.md pour les paramètres et sources officielles.
+Application finale : Vikunja 2.7.1 avec SQLite intégrée, sur Ubuntu du PC B, derrière le proxy Nginx HTTPS existant. Un conteneur applicatif et le proxy, sans base externe ni worker supplémentaire. Démonstration : tâches Kanban et pièces jointes, comptes éditeur et lecteur, modification autorisée/refusée, persistance et restauration depuis TrueNAS. Voir docs/APP.md pour les paramètres et sources officielles.
 
-L'atelier Docker demandé au cours reste un exercice court : construire et expliquer l'exemple getting-started, garder les preuves puis l'arrêter. Homebox est le seul service applicatif permanent ; ne pas construire Homebox depuis les sources pour cette séance.
+L'atelier Docker demandé au cours reste un exercice court : construire et expliquer l'exemple getting-started, garder les preuves puis l'arrêter. Vikunja est le seul service applicatif permanent ; ne pas compiler Vikunja depuis les sources pour cette séance.
 
 Les ports de l'application HTTPS8443 et de Grafana3001 sont distincts. Prometheus et ses collecteurs restent internes. Docker bridge conserve l'isolation réseau ; les règles INPUT et DOCKER-USER/FORWARD sont vérifiées ensemble. Aucun accès Docker distant ou conteneur privilégié non requis.
 
@@ -107,7 +107,7 @@ Les créneaux ci-dessous sont indicatifs à partir du début autorisé. Les tél
 |---|---|---|
 | Début, 30-45 min | Inventaire, sauvegarde des réglages, VMnet/MAC | Inventaire, stockage disponible, Ethernet |
 | Puis 1-2 h | OPNsense et VLANs ; contrôle du trunk avec B | SW-B et Ubuntu minimal ; contrôle du trunk avec A |
-| Puis 2-3 h | Windows, Sysmon/audit, règles et VPN | TrueNAS, Homebox, Ubuntu/audit, Docker et supervision |
+| Puis 2-3 h | Windows, Sysmon/audit, règles et VPN | TrueNAS, Vikunja, Ubuntu/audit, Docker et supervision |
 | Quand les deux sont prêts | Contrôles de transport, règles, partages et VPN | Contrôles croisés et restauration |
 | Dernières 1,5-2 h | Redémarrage, ressources, présentation, répétition | Même répétition, preuves et sauvegardes |
 
@@ -140,9 +140,9 @@ Exigences : brief de projet examiné localement, atelier Docker et grille déjà
 - [Réseau dédié VMware](https://knowledge.broadcom.com/external/article/307810/creating-subnets-in-vmware-workstation.html)
 - [TrueNAS 25.10.7 et empreintes](https://download.truenas.com/TrueNAS-SCALE-Goldeye/25.10.7/)
 - [Matériel TrueNAS](https://www.truenas.com/docs/scale/25.10/gettingstarted/scalehardwareguide/)
-- [Homebox maintenu](https://github.com/sysadminsmedia/homebox)
-- [Installation Homebox](https://github.com/sysadminsmedia/homebox/blob/main/docs/src/content/docs/en/quick-start/install.mdx)
-- [Proxy HTTPS Homebox](https://github.com/sysadminsmedia/homebox/blob/main/docs/src/content/docs/en/quick-start/configure/proxy.mdx)
+- [Vikunja, installation Docker et SQLite](https://vikunja.io/docs/installing/)
+- [Vikunja, exemple Docker SQLite](https://vikunja.io/docs/full-docker-example/)
+- [Vikunja, proxy HTTPS](https://vikunja.io/docs/reverse-proxy/)
 - [Exercice Docker du cours](https://github.com/docker/getting-started-app)
 - [Docker et iptables](https://docs.docker.com/engine/network/firewall-iptables/)
 - [Docker Bench for Security](https://github.com/docker/docker-bench-security)

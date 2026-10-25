@@ -9,7 +9,7 @@ Updated 2026-10-25, Africa/Tunis. Current work: revise the two-PC allocation and
 - Both old BUILD_PLAN.md and the supplied PDFs are proposals. Neither is assumed correct. Current recommendation is also provisional pending review and runtime checks.
 - User requested a more useful app and more actual work on B. Revised guests: A OPNsense3GiB + Windows4GiB =7GiB; B TrueNAS8GiB + Ubuntu2.5GiB + SW-B0.5GiB =11GiB. Same five guests,18GiB total. This balances setup responsibilities, not equal RAM; B capacity remains to verify.
 - Physical Ethernet now carries tagged VLAN20/30 between OPNsense A and SW-B. Ubuntu/NAS use separate access ports on B. MGMT99 remains separate on A. First approved20-30min checks physical tags and bidirectional forwarding; stop/report a failure rather than guessing drivers all day.
-- User rejected the tutorial app and Gitea, then asked for a lightweight inventory/document mix. Application is Homebox rootless + SQLite behind one small Nginx HTTPS proxy, no external database/worker. GitHub remains Codex coordination. The course sample is only a short stopped exercise. All guides are Markdown; repository PDFs/export tooling removed at user request.
+- The earlier Homebox inventory/document preference was superseded by the user's explicit decision to choose **Vikunja** for the professor's free-choice application. Vikunja 2.7.1 + bundled SQLite, persistent database/attachments and the existing Nginx HTTPS proxy require no extra VM, database, worker or network change. GitHub remains the Codex coordination channel. The tutorial sample stays a stopped exercise. Guides remain Markdown-only.
 - Read BUILD_PLAN.md, docs/MACHINE_A.md, docs/MACHINE_B.md, docs/LIAISON.md and docs/TEST_MATRIX.md for the current proposal.
 
 ## Approval and communication
@@ -18,12 +18,12 @@ Machine B follows its own user's or the peer's explicit authorization. Joint tes
 See docs/COORDINATION.md. This checkpoint is not itself a start approval.
 
 ## Requirements retained
-Presentation plus live demo, no separate report per user-supplied professor clarification. Windows Sysmon/Defender/local firewall/security audit; Ubuntu SSH keys/iptables/log collection/audit/protection; TrueNAS SMB/permissions/encryption/snapshot restoration; Homebox/SQLite plus the short Docker tutorial exercise, image history and Docker Bench; real Prometheus/Grafana; gateway firewall/NAT/filtering; restricted VPN; actual VLANs.
+Presentation plus live demo, no separate report per user-supplied professor clarification. Windows Sysmon/Defender/local firewall/security audit; Ubuntu SSH keys/iptables/log collection/audit/protection; TrueNAS SMB/permissions/encryption/snapshot restoration; Vikunja/SQLite plus the short Docker tutorial exercise, image history and Docker Bench; real Prometheus/Grafana; gateway firewall/NAT/filtering; restricted VPN; actual VLANs.
 No separate VM escape exercise/research; do not call ordinary isolation an escape. No public cloud, nested ESXi, AD or Kubernetes. Preserve existing unrelated guests/data, including Kali and ESXi.
 
 ## Evidence and limits
 - Four supplied PDFs (36pages) text-read; key diagram/tables visually inspected. They depend on an absent/uninspected kit_demain, switch application choice and omit explicit audit/workshop steps. Corrected guides remove that hidden dependency.
-- Previous A10/B8 private-trunk proposal was reviewed, then superseded by this explicit user request for more work on B. The architect supports A7/B11 as the simplest2/3VM split preserving NAS isolation, conditional on early tagged transport and resource checks. Homebox features/rootless/SQLite/proxy configuration verified in official docs; release v0.27.1 is non-prerelease and registry tag0.27.1-rootless/digest verified without pulling. No runtime pass is claimed.
+- Previous A10/B8 private-trunk proposal was superseded by the request for more work on B. A7/B11 remains conditional on early tagged transport and resource checks. Vikunja's official Docker/SQLite, permissions and reverse-proxy docs and v2.7.1 image tag/release were checked read-only. Actual runtime/security/footprint tests have not run.
 - Historical A hardware: i7-13700HX,15.71GiB visible,79.31GiB free disk on October23. Today's available resources, other PC hardware, installed guest states and forwarding behavior remain unverified.
 - Ubuntu26.04.1 is user-reported; Windows2025/OPNsense26.7/TrueNAS25.10.7 installers were previously observed, not boot-verified.
 - Blackboard project brief, workshop and grading evidence were inspected in prior discussion. Ignore placeholder due dates. Older report4points reassignment was not confirmed. Three students was the earlier assumption, not four workers.

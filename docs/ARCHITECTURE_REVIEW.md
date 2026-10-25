@@ -12,13 +12,13 @@ The former A10/B8 private-trunk/untagged-storage proposal was reviewed but place
 
 ## Application
 
-Homebox rootless + SQLite with one small HTTPS proxy is supported by the maintained project's documentation. It combines inventory, document attachments and maintenance tracking for the lab without an external DB, worker or new VM. It does not claim to be enterprise ITSM or a file-sync suite. Keep HTTPS8443 separate from Grafana3001. Release and rootless image tag/digest have been verified read-only. Persistence, TLS and actual footprint remain approved-setup checks.
+Vikunja 2.7.1 + SQLite intégrée, avec le proxy HTTPS Nginx existant, est documenté officiellement. Projets/tâches Kanban, pièces jointes et permissions Read/Read & Write/Admin permettent de démontrer les accès autorisés et refusés, sans base externe, worker ou nouvelle VM. Garder HTTPS8443 distinct de Grafana3001. Version/image vérifiées par lecture ; persistance, TLS, permissions et consommation de ressources restent à tester après accord.
 
-The Docker course sample remains a short exercise with retained build/history evidence, then is stopped. Homebox is the sole persistent application. Docker Bench evaluates Ubuntu's Docker host.
+The Docker course sample remains a short exercise with retained build/history evidence, then is stopped. Vikunja is the sole persistent application. Docker Bench evaluates Ubuntu's Docker host.
 
 ## Controls retained
 
-Bridge filtering/PVID0/no nativeVLAN1; source-preserving routing; INPUT and DOCKER-USER/FORWARD; private management; Windows Sysmon/Defender/audit; Ubuntu SSH/AV/auditd/rsyslog; restricted VPN; real Windows/Ubuntu/app monitoring; NAS ACL/encryption/restore. A dedicated NAS backup account/dataset receives consistent stopped-Homebox archives; live databases stay local to Ubuntu.
+Bridge filtering/PVID0/no nativeVLAN1; source-preserving routing; INPUT and DOCKER-USER/FORWARD; private management; Windows Sysmon/Defender/audit; Ubuntu SSH/AV/auditd/rsyslog; restricted VPN; real Windows/Ubuntu/app monitoring; NAS ACL/encryption/restore. A dedicated NAS backup account/dataset receives consistent stopped-Vikunja database-and-attachment archives; live databases stay local to Ubuntu.
 
 The same-subnet VMnet8 VPN rule checks reply-to, with management bypass removed for testing. Both hypervisor administrators remain trusted. Virtual mirror/snapshots are lab controls, not independent physical backup.
 

@@ -9,7 +9,7 @@ Le PC B héberge TrueNAS, Ubuntu et le switch VLAN SW-B. Le PC A héberge OPNsen
 | VM | RAM | vCPU | Disques virtuels | Rôle |
 |---|---:|---:|---|---|
 | NAS-LAB | 8 Gio | 2 | Boot 20 Gio + 2 disques de données de 20 Gio | TrueNAS, SMB, permissions, snapshots |
-| UBU-LAB | 2,5 Gio | 2 | 40 Gio | Homebox, sécurité, journaux et supervision |
+| UBU-LAB | 2,5 Gio | 2 | 40 Gio | Vikunja, sécurité, journaux et supervision |
 | SW-B | 0,5 Gio | 1 | 2 Gio | Commutation VLAN filtrée |
 | Total B | 11 Gio | 5 | 102 Gio au total | Ressources allouées, fluidité à mesurer |
 
@@ -33,19 +33,19 @@ SW-B est une VM Alpine neuve avec trois cartes : trunk VMnet12, accès Ubuntu VM
 
 Confirmer les noms d'interfaces par MAC avant d'appliquer la configuration. Ne pas ajouter VLAN 1, adresse de gestion, route ou DHCP. Retirer toute carte NAT temporaire d'installation. Rendre la configuration persistante uniquement après le contrôle manuel des ports et des tags.
 
-## 3. Ubuntu, Homebox et supervision
+## 3. Ubuntu, Vikunja et supervision
 
 UBU-LAB a une seule carte sur VMnet14, port d'accès VLAN 20 non tagué : 10.77.20.10/24, passerelle/DNS 10.77.20.1. Vérifier la MAC et la version réelle. Appliquer Netplan depuis la console avec retour arrière disponible ; retirer les cartes temporaires après mise à jour.
 
 Sécuriser SSH : établir une connexion par clé depuis MGMT avant de désactiver le mot de passe et root. Garder une console pendant les changements. Appliquer des règles iptables persistantes et tester ports autorisés/refusés avec des services actifs. Garder le backend iptables de Docker ; contrôler INPUT et DOCKER-USER/FORWARD, car INPUT seul ne filtre pas les ports publiés par Docker. Ne pas rendre Ubuntu routeur entre VLANs ni superposer un pare-feu hôte contradictoire.
 
-Configurer Homebox selon [APP.md](APP.md), sans recopier sa configuration ici. Homebox est l'unique application persistante : inventaire, documents/images joints et maintenance, image rootless et SQLite intégrée. Un petit Nginx publie HTTPS8443 ; Homebox7745 reste interne. Pas de base externe, worker, runner ou nouvelle VM.
+Configurer Vikunja selon [APP.md](APP.md), sans recopier sa configuration ici. Vikunja est l'unique application persistante : projets/tâches Kanban, pièces jointes et partage Read/Read & Write/Admin, image officielle 2.7.1 avec SQLite intégrée. Nginx publie HTTPS8443 ; Vikunja3456 reste sur le réseau Docker interne. Pas de base externe, worker, runner ou nouvelle VM.
 
-La démonstration Homebox couvre une fiche équipement avec pièce jointe et note de maintenance, l'accès authentifié et le refus d'un visiteur. Vérifier les limites de groupes/droits réellement disponibles, sans promettre un rôle lecture seule inexistant. Après recréation, comptes, fiche et pièces jointes doivent persister. Les données actives restent locales à Ubuntu ; aucun SQLite actif sur SMB.
+La démonstration Vikunja couvre un projet avec tâches et pièce jointe, un éditeur autorisé, un lecteur dont l'écriture est refusée et un visiteur non authentifié bloqué. Vérifier l'absence d'autres partages de projet qui élèveraient les droits du lecteur. Après recréation, comptes, tâches et pièces jointes persistent dans les montages locaux `db` et `files`. Ne pas stocker SQLite actif sur SMB.
 
-Le tutoriel de cours docker/getting-started-app reste un court exercice arrêté après la preuve de construction et l'inspection de l'historique des couches. Il ne devient pas le service permanent et ne remplace pas Homebox. Pour la sauvegarde, arrêter Homebox proprement, archiver ses données et sa configuration selon APP.md, copier l'archive vers le dataset NAS dédié avec le compte de sauvegarde, puis restaurer une copie dans un autre dossier local Ubuntu. Comparer cette copie sans écraser la base active.
+Le tutoriel de cours docker/getting-started-app reste un court exercice arrêté après la preuve de construction et l'inspection de l'historique des couches. Il ne devient pas le service permanent et ne remplace pas Vikunja. Pour la sauvegarde, arrêter Vikunja proprement, archiver ses données et sa configuration selon APP.md, copier l'archive vers le dataset NAS dédié avec le compte de sauvegarde, puis restaurer une copie dans un autre dossier local Ubuntu. Comparer cette copie sans écraser la base active.
 
-Prometheus écoute uniquement sur 127.0.0.1:9090 ; Grafana est séparé sur 10.77.20.10:3001. Garder une rétention courte (24 heures, plafond initial d'environ 512 Mio) et des cibles réelles : Ubuntu, Windows exporter 10.77.10.10:9182 et disponibilité de Homebox. Aucun générateur synthétique. Vérifier une panne de Homebox et la perte d'un collecteur séparément, puis observer le retour à l'état sain. Accès Grafana VPN refusé ; Windows n'a qu'un compte de lecture.
+Prometheus écoute uniquement sur 127.0.0.1:9090 ; Grafana est séparé sur 10.77.20.10:3001. Garder une rétention courte (24 heures, plafond initial d'environ 512 Mio) et des cibles réelles : Ubuntu, Windows exporter 10.77.10.10:9182 et disponibilité de Vikunja. Aucun générateur synthétique. Vérifier une panne de Vikunja et la perte d'un collecteur séparément, puis observer le retour à l'état sain. Accès Grafana VPN refusé ; Windows n'a qu'un compte de lecture.
 
 Rsyslog reçoit depuis OPNsense 10.77.20.1 uniquement en TCP 514. Vérifier un refus réel horodaté, la persistance et la rotation des journaux. Activer auditd avec une règle persistante sur un fichier de configuration du projet, modifier ce fichier et retrouver l'événement. Synchroniser les horloges en Africa/Tunis.
 
@@ -59,7 +59,7 @@ Créer un pool miroir avec les deux nouveaux disques de données. Ce miroir péd
 
 Pour le partage de démonstration, créer trois comptes : alice lecture/écriture, lecteur lecture seule et bob sans accès. Utiliser des groupes et ACL explicites, sans invité, root SMB ni entrée générale qui autorise bob. Vérifier que les ACL du dataset et les permissions du partage concordent. Activer SMB au démarrage et vérifier le chiffrement SMB depuis le client si requis ; ce contrôle est distinct du chiffrement du dataset au repos.
 
-Créer un dataset chiffré séparé tank/app-backups et un compte app-backup autorisé uniquement sur ce dataset. Ne pas rendre ce partage disponible aux comptes Windows de démonstration. Le pare-feu autorise Ubuntu vers NAS en TCP 445 uniquement ; l'ACL du NAS limite la sauvegarde à ce compte et ce dataset. Utiliser le partage seulement pour une archive cohérente après arrêt de Homebox, jamais comme montage de données actives.
+Créer un dataset chiffré séparé tank/app-backups et un compte app-backup autorisé uniquement sur ce dataset. Ne pas rendre ce partage disponible aux comptes Windows de démonstration. Le pare-feu autorise Ubuntu vers NAS en TCP 445 uniquement ; l'ACL du NAS limite la sauvegarde à ce compte et ce dataset. Utiliser le partage seulement pour une archive cohérente après arrêt de Vikunja, jamais comme montage de données actives.
 
 ## 5. Contrôles et état prêt
 
@@ -67,6 +67,6 @@ Depuis Windows, vérifier le partage SMB avec alice : lecture et écriture permi
 
 Après un fichier de référence, créer un snapshot, modifier ou supprimer le fichier, puis restaurer une copie et vérifier son contenu. Un rollback du dataset annule tous les changements depuis le snapshot ; fermer SMB et préférer une restauration de fichier/clone.
 
-Depuis Ubuntu, réaliser l'archive Homebox uniquement avec le compte app-backup et après arrêt du service. Restaurer dans un dossier distinct, confirmer la fiche et le hash d'une pièce jointe, puis ne pas remplacer les données actives. Vérifier après redémarrage que le dataset est déverrouillé et SMB actif.
+Depuis Ubuntu, réaliser l'archive Vikunja uniquement avec le compte app-backup et après arrêt du service. Restaurer dans un dossier distinct, confirmer une tâche et le hash d'une pièce jointe, puis ne pas remplacer les données actives. Vérifier après redémarrage que le dataset est déverrouillé et SMB actif.
 
 Poster versions, ressources mesurées, IP/MAC, preuves d'accès autorisé/refusé, chiffrement, snapshot/restauration et résultats Ubuntu. Indiquer « prêt pour les tests communs » seulement après les contrôles locaux réels.

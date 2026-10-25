@@ -49,17 +49,17 @@ Installer windows_exporter depuis sa source officielle. Autoriser TCP 9182 uniqu
 
 ## 6. Contrat avec les services du PC B
 
-Ubuntu sur B garde l'adresse 10.77.20.10. OPNsense envoie ses journaux à cette adresse en TCP 514. Ubuntu collecte les métriques Windows sur TCP 9182. WIN-LAB utilise Homebox sur HTTPS 8443, Grafana 3001 en lecture et le partage TrueNAS prévu pour les essais SMB. L'accès VPN à Homebox est limité à HTTPS 8443 ; SSH, NAS et Grafana restent refusés depuis le VPN.
+Ubuntu sur B garde l'adresse 10.77.20.10. OPNsense envoie ses journaux à cette adresse en TCP 514. Ubuntu collecte les métriques Windows sur TCP 9182. WIN-LAB utilise Vikunja sur HTTPS 8443, Grafana 3001 en lecture et le partage TrueNAS prévu pour les essais SMB. L'accès VPN à Vikunja est limité à HTTPS 8443 ; SSH, NAS et Grafana restent refusés depuis le VPN.
 
-La configuration Homebox est décrite dans [APP.md](APP.md). GitHub reste le canal de coordination du projet ; l'instance Homebox locale est une démonstration séparée.
+La configuration Vikunja est décrite dans [APP.md](APP.md). GitHub reste le canal de coordination du projet ; l'instance Vikunja locale est une démonstration séparée.
 
 ## 7. VPN sur OPNsense
 
 Le client OpenVPN de l'hôte A rejoint le WAN de FW-LAB via VMnet8. Ce test simule un côté WAN VMware et ne prouve pas un accès depuis l'Internet public. Créer une instance OpenVPN UDP 1194, chiffrement AEAD moderne, compression désactivée et TLS 1.2 minimum, avec CA, certificat serveur et certificat utilisateur dédiés. Autoriser UDP 1194 du client VMnet8 vers le WAN ; pour ce client du même sous-réseau WAN, vérifier le reply-to sur cette seule règle et le désactiver seulement si nécessaire. Garder profil et clés hors du dépôt.
 
-Utiliser le tunnel 10.78.0.0/24 et les routes nécessaires vers Homebox et le réseau NAS pour vérifier aussi le refus. Autoriser uniquement Homebox HTTPS TCP 8443 depuis le VPN. Refuser SSH 22, SMB 445 et Grafana 3001 avec journaux. Ne pas pousser une route par défaut.
+Utiliser le tunnel 10.78.0.0/24 et les routes nécessaires vers Vikunja et le réseau NAS pour vérifier aussi le refus. Autoriser uniquement Vikunja HTTPS TCP 8443 depuis le VPN. Refuser SSH 22, SMB 445 et Grafana 3001 avec journaux. Ne pas pousser une route par défaut.
 
-Pour le test, retirer seulement les routes MGMT ajoutées pour le laboratoire et désactiver temporairement cet adaptateur hôte ; garder la console VMware. Déconnecté, l'application est inaccessible ; connecté, Homebox est accessible mais les ressources interdites le restent ; après déconnexion, l'accès disparaît. Rétablir ensuite MGMT.
+Pour le test, retirer seulement les routes MGMT ajoutées pour le laboratoire et désactiver temporairement cet adaptateur hôte ; garder la console VMware. Déconnecté, l'application est inaccessible ; connecté, Vikunja est accessible mais les ressources interdites le restent ; après déconnexion, l'accès disparaît. Rétablir ensuite MGMT.
 
 ## 8. État et preuves
 

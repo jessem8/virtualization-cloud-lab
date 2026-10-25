@@ -18,4 +18,4 @@ Post short progress or blocker updates with the current PR revision and actual e
 
 When local checks are complete, each Codex can say **ready for joint tests** and give the supporting evidence. People coordinate timing and scope after both sides are ready; no extra approval ritual is needed for those joint tests.
 
-Readiness concerns the next agreed test, not necessarily the whole machine. The first joint test is the physical VLAN trunk after only the minimal network setup; do not wait for Homebox/NAS services before checking this dependency.
+Readiness concerns the next agreed test, not necessarily the whole machine. The first joint test is the physical VLAN trunk after only the minimal network setup; do not wait for Vikunja/NAS services before checking this dependency.
