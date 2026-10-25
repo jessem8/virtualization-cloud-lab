@@ -16,33 +16,31 @@ Les documents préparent les travaux. Aucun invité, réseau, VPN, NAS ou scéna
 
 | PC | Invités et allocation initiale | Total invité |
 |---|---|---|
-| A - jessem8 | OPNsense 3 Gio ; Windows 4 Gio ; Ubuntu 2,5 Gio ; switch Alpine 0,5 Gio | 10 Gio |
-| B - sanadzhioua | TrueNAS 8 Gio | 8 Gio |
+| A - jessem8 | OPNsense 3 Gio ; Windows 4 Gio | 7 Gio |
+| B - sanadzhioua | TrueNAS 8 Gio ; Ubuntu 2,5 Gio ; switch Alpine 0,5 Gio | 11 Gio |
 
 Le PC A dispose historiquement d'environ 15,7 Gio visibles et d'un i7-13700HX. La RAM et l'espace disponibles aujourd'hui restent à relever. Le PC B est supposé avoir au moins 16 Gio ; cette hypothèse doit être confirmée. Ces sommes n'incluent pas le système hôte, Codex, les navigateurs et les surcoûts VMware.
 
-L'architecture précédente A=7/B=11 Gio plaçait la charge la plus lourde sur le PC B. La nouvelle répartition conserve cinq VM, rapproche la charge des deux machines et évite de transporter des tags VLAN dans le pilote Ethernet physique. Le switch reste une VM distincte afin de séparer la commutation de l'application.
+Cette révision déplace Ubuntu, l'application, la supervision et le switch vers B : A gère réseau/Windows/VPN, B gère stockage/services. Les cinq VM et les 18 Gio alloués au total restent identiques. Le travail est mieux réparti ; la mémoire n'est pas égale, et B garde moins de marge. Vérifier sa capacité avant installation. Aucun nouveau composant n'est ajouté.
 
 ## 3. Schéma physique et logique
 
 ```text
 PC A : WIN-LAB -> OPNsense -> WAN VMware NAT -> Wi-Fi
                      |
-           trunk virtuel privé VLAN20/30
+           Ethernet tagué VLAN20/30
                      |
-                    SW-A
+PC B :              SW-B
               /             \
        accès VLAN20     accès VLAN30
-         UBU-LAB       câble non tagué
-                             |
-PC B :                    NAS-LAB
+         UBU-LAB           NAS-LAB
 ```
 
 MGMT relie localement l'hôte A à OPNsense pour l'administration. Windows a son propre réseau CLIENTS. Les VLANs réels sont SERVEURS20 et STOCKAGE30 ; MGMT et CLIENTS ne sont pas présentés comme des VLANs.
 
-Le filtrage VLAN doit être activé sur SW-A. Son port Ubuntu accepte seulement VLAN20, son port stockage seulement VLAN30, et son trunk seulement les deux tags. Aucun VLAN natif, IP de gestion ou routage dans le switch. OPNsense assure le routage et les règles entre zones.
+Le filtrage VLAN est activé sur SW-B. Son port Ubuntu accepte seulement VLAN20, son port stockage seulement VLAN30, son trunk seulement ces deux tags. Aucun VLAN natif, IP de gestion ou routage dans le switch. OPNsense sur A filtre les échanges entre les zones.
 
-Le câble est une extension non taguée du port d'accès stockage, pas un trunk. La capacité de VMware à transporter les MAC derrière le switch reste à tester dans les deux sens. Les administrateurs des hôtes restent de confiance.
+Le câble est maintenant un trunk 802.1Q20/30. VMware, les cartes Ethernet et leurs pilotes doivent laisser passer les tags et les MAC dans les deux sens. Consacrer les 20-30 premières minutes de configuration réseau autorisée à ce contrôle, avant les services. En cas d'échec, conserver captures/erreur et arrêter pour revoir le point précis ; ne pas passer la journée à changer des pilotes au hasard. Les hôtes restent de confiance.
 
 ## 4. Adressage et interfaces
 
@@ -66,8 +64,8 @@ Chaque invité de service a une seule carte finale. Seul OPNsense a une carte WA
 | Windows | Defender actif, pare-feu local, Sysmon 1/3, audit Security réel |
 | Ubuntu | SSH par clé, refus mot de passe/root, iptables persistant, rsyslog, auditd et protection |
 | NAS | SMB autorisé/refusé, lecture seule, dataset chiffré, clé privée et restauration de fichier |
-| Docker | Application de tâches/SQLite, volume persistant, image construite, historique des couches, Docker Bench examiné |
-| Réseau | Tags VLAN20/30 sur trunk privé, ports d'accès restreints, règles entrantes/sortantes et absence de contournement |
+| Docker | Homebox/SQLite, inventaire/documents/authentification, persistance et récupération ; exercice du cours, historique des couches et Docker Bench |
+| Réseau | Tags VLAN20/30 sur trunk Ethernet, ports d'accès restreints, règles entrantes/sortantes et absence de contournement |
 | VPN | Tunnel chiffré, application autorisée, administration/SMB/Grafana refusés |
 | Supervision | Métriques Ubuntu/Windows et disponibilité applicative réelles, panne/reprise observées |
 | Exploitation | Redémarrage, règles/services persistants, ressources et démonstration fluide |
@@ -80,18 +78,20 @@ Réutiliser les invités adaptés et les installations vérifiées. Ne pas impos
 
 OPNsense 26.7.7 avec correctifs disponibles et TrueNAS Community Edition 25.10.7 sont les références vérifiées pendant la préparation. Employer les éditions stables officielles, vérifier les empreintes/signatures et consigner ce qui a réellement été installé. Les numéros exacts des images Docker ne sont pas repris comme des faits sans manifeste consultable.
 
-Application : petit exemple officiel docker/getting-started-app avec SQLite. Nginx sert de proxy HTTPS, pas de remplacement silencieux de l'atelier Docker. Les versions du code, de la base Node et des images seront fixées et enregistrées lors de la préparation approuvée.
+Application finale : Homebox rootless avec SQLite, sur Ubuntu du PC B, derrière un petit proxy Nginx HTTPS. Un conteneur applicatif et le proxy, sans base externe ni worker supplémentaire. Démonstration : fiches équipement, documents/photos joints, connexion, persistance et sauvegarde NAS cohérente. Voir docs/APP.md pour les paramètres et sources officielles.
+
+L'atelier Docker demandé au cours reste un exercice court : construire et expliquer l'exemple getting-started, garder les preuves puis l'arrêter. Homebox est le seul service applicatif permanent ; ne pas construire Homebox depuis les sources pour cette séance.
 
 Les ports de l'application HTTPS8443 et de Grafana3001 sont distincts. Prometheus et ses collecteurs restent internes. Docker bridge conserve l'isolation réseau ; les règles INPUT et DOCKER-USER/FORWARD sont vérifiées ensemble. Aucun accès Docker distant ou conteneur privilégié non requis.
 
-Les PDF précédents dépendaient d'un kit_demain non fourni et non retrouvé dans Downloads. Cette proposition ne demande pas d'exécuter ce kit. Les configurations sont créées, relues et versionnées pendant les tâches attribuées, puis exécutées seulement dans le périmètre approuvé. Aucun script absent n'est présenté comme prêt ou contrôlé.
+Les guides sont désormais uniquement en Markdown. Les anciens PDF et leur chaîne d'export sont retirés du dépôt ; les originaux locaux restent inchangés. Ne pas exécuter un kit externe absent : les configurations d'exploitation seront créées/relues dans les tâches approuvées. Aucun script absent n'est présenté comme prêt.
 
 ## 7. Préserver la fluidité
 
-1. Garder 8 Gio pour TrueNAS, les allocations du tableau et un historique Prometheus court.
+1. Garder 8 Gio pour TrueNAS, 11 Gio invités au total sur B, 7 sur A et un historique Prometheus court. B doit confirmer au moins 16 Gio physiques et sa marge réelle ; un total théorique ne suffit pas.
 2. Installer et mettre à jour les invités séparément ; construire les images et lancer ClamAV hors répétition complète.
 3. Ne lancer aucune VM d'un autre cours ; garder les disques actifs hors OneDrive et éviter les longues chaînes de snapshots.
-4. Commencer avec deux vCPU par invité de service, un pour SW-A ; ne pas attribuer tous les processeurs logiques à chaque VM.
+4. Commencer avec deux vCPU par invité de service, un pour SW-B ; ne pas attribuer tous les processeurs logiques à chaque VM.
 5. Mesurer tous les invités ensemble pendant une répétition d'au moins 10 minutes : navigation/app, petite copie SMB, collecte et VPN.
 6. Relever RAM disponible/engagée et pagination des hôtes, swap/OOM des invités et temps de réponse. Objectifs de départ : au moins environ 2 Gio disponibles par hôte, pas de pagination/swap soutenue et des actions courantes répondant en quelques secondes.
 
@@ -106,8 +106,8 @@ Les créneaux ci-dessous sont indicatifs à partir du début autorisé. Les tél
 | Créneau relatif | PC A | PC B |
 |---|---|---|
 | Début, 30-45 min | Inventaire, sauvegarde des réglages, VMnet/MAC | Inventaire, stockage disponible, Ethernet |
-| Puis 1-2 h | OPNsense/SW-A, VLAN20 local ; installations séquencées | Installation et préparation TrueNAS |
-| Puis 2-3 h | Windows, application, audit, Docker et supervision | Dataset, ACL, chiffrement et preuves locales |
+| Puis 1-2 h | OPNsense et VLANs ; contrôle du trunk avec B | SW-B et Ubuntu minimal ; contrôle du trunk avec A |
+| Puis 2-3 h | Windows, Sysmon/audit, règles et VPN | TrueNAS, Homebox, Ubuntu/audit, Docker et supervision |
 | Quand les deux sont prêts | Contrôles de transport, règles, partages et VPN | Contrôles croisés et restauration |
 | Dernières 1,5-2 h | Redémarrage, ressources, présentation, répétition | Même répétition, preuves et sauvegardes |
 
@@ -131,7 +131,7 @@ Le VPN prévu est un tunnel réel sur WAN simulé VMware. Il ne prouve pas un ac
 
 ## 11. Références et état de vérification
 
-Exigences : brief de projet examiné localement, atelier Docker et grille déjà inspectés ; clarification de présentation transmise par l'utilisateur. Les anciens documents sont conservés dans sources/original comme références historiques, sans autorité d'exécution.
+Exigences : brief de projet examiné localement, atelier Docker et grille déjà inspectés ; clarification de présentation transmise par l'utilisateur. Les anciens documents sont des références historiques, pas une autorité d'exécution. Leurs copies PDF ont été retirées à la demande de l'utilisateur ; l'historique Git conserve la révision précédente.
 
 - [OPNsense 26.7](https://docs.opnsense.org/releases/CE_26.7.html)
 - [VLANs OPNsense](https://docs.opnsense.org/manual/how-tos/vlan_and_lagg.html)
@@ -140,7 +140,10 @@ Exigences : brief de projet examiné localement, atelier Docker et grille déjà
 - [Réseau dédié VMware](https://knowledge.broadcom.com/external/article/307810/creating-subnets-in-vmware-workstation.html)
 - [TrueNAS 25.10.7 et empreintes](https://download.truenas.com/TrueNAS-SCALE-Goldeye/25.10.7/)
 - [Matériel TrueNAS](https://www.truenas.com/docs/scale/25.10/gettingstarted/scalehardwareguide/)
-- [Application Docker de l'atelier](https://github.com/docker/getting-started-app)
+- [Homebox maintenu](https://github.com/sysadminsmedia/homebox)
+- [Installation Homebox](https://github.com/sysadminsmedia/homebox/blob/main/docs/src/content/docs/en/quick-start/install.mdx)
+- [Proxy HTTPS Homebox](https://github.com/sysadminsmedia/homebox/blob/main/docs/src/content/docs/en/quick-start/configure/proxy.mdx)
+- [Exercice Docker du cours](https://github.com/docker/getting-started-app)
 - [Docker et iptables](https://docs.docker.com/engine/network/firewall-iptables/)
 - [Docker Bench for Security](https://github.com/docker/docker-bench-security)
 - [Sysmon Microsoft](https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon)

@@ -1,33 +1,27 @@
 # Architecture review
 
-2026-10-25. Read-only review requested by the user. Recommendation, not runtime acceptance.
+Updated2026-10-25. Current recommendation follows the user's request for a more useful app and more implementation on B. It remains subject to peer review and runtime checks.
 
-## Decision
+## Current split
 
-Use five guests: A=OPNsense3 + Windows4 + Ubuntu2.5 + Alpine switch0.5GiB (10GiB); B=TrueNAS8GiB. Keep real tagged VLAN20/30 on a private trunk inside A. Extend only the storage access port across untagged Ethernet to B. This keeps VM count unchanged, balances the proposed allocations and removes physical VLAN-tag driver dependence.
+A=OPNsense3 + Windows4 =7GiB (2VMs). B=TrueNAS8 + Ubuntu2.5 + SW-B0.5 =11GiB (3VMs). Five guests and18GiB total, unchanged. This redistributes setup/CPU responsibilities; it does not equalize RAM. B has less host headroom and must confirm its capacity before allocation.
 
-The previous A7/B11 physical tagged-trunk design remains a plausible alternative if actually tested; it is not assumed correct. Combining switching with the Ubuntu application guest saves only0.5GiB and expands its trusted role, so it was rejected.
+Use OPNsense on A and filtering SW-B on B, with a tagged20/30 Ethernet trunk. Ubuntu and NAS have separate untagged access ports. Keep MGMT99 separate from Windows clients. Physical tag transport is the early20-30minute network gate; preserve exact errors/captures and stop if it fails, rather than changing drivers all day.
 
-## Corrections integrated
+The former A10/B8 private-trunk/untagged-storage proposal was reviewed but placed most setup on A. It is superseded by this explicit user decision. A shared Ubuntu/NAS VLAN was rejected because it weakens the required separation. No overlay, extra gateway or VM is added.
 
-- Enable bridge VLAN filtering/defaultPVID0; exact tagged trunk20/30 and untagged access memberships; remove nativeVLAN1, IP/IPv6/DHCP/routes/SSH on SW-A.
-- Use dedicated Ethernet bridges, no Windows IP/ICS or host sharing on that NIC. The trusted hypervisor administrator remains outside the guest-isolation guarantee.
-- Keep a separate virtual management LAN; client Windows cannot administer NAS/firewall/Ubuntu. This adds no VM.
-- Use Docker bridge and verify INPUT plus DOCKER-USER/FORWARD, preserving required Docker forwarding.
-- Restore task/SQLite app, image-layer history, Docker Bench, Windows security audit and Ubuntu auditd. Extend real monitoring to Windows and app availability.
-- Separate app8443 and Grafana3001; restricted VPN reaches app only.
-- Check same-subnet WAN reply-to for OpenVPN; test routes and remove management bypass during demonstration.
-- Keep TrueNAS8GiB, private recovery keys, actual restore and honest virtual-disk/mirror/snapshot limits.
-- Remove references that require an unavailable kit; prepare reviewable configuration files during the assigned implementation.
+## Application
 
-## Gates and recovery
+Homebox rootless + SQLite with one small HTTPS proxy is supported by the maintained project's documentation. It combines inventory, document attachments and maintenance tracking for the lab without an external DB, worker or new VM. It does not claim to be enterprise ITSM or a file-sync suite. Keep HTTPS8443 separate from Grafana3001. Release and rootless image tag/digest have been verified read-only. Persistence, TLS and actual footprint remain approved-setup checks.
 
-The first approved work is inventory and the smallest network path. Verify foreign-MAC forwarding, ARP/unicast both ways, private tags and untagged cable; a physical link LED is insufficient. Then prove policies, services, persistence and simultaneous resources. Use docs/TEST_MATRIX.md.
+The Docker course sample remains a short exercise with retained build/history evidence, then is stopped. Homebox is the sole persistent application. Docker Bench evaluates Ubuntu's Docker host.
 
-Record only project VMnet/NIC-binding/route/config changes and undo those if needed. Never use whole-host restore/defaults or delete unrelated guests. If transport fails, collect captures before proposing a different topology.
+## Controls retained
 
-## Evidence and limits
+Bridge filtering/PVID0/no nativeVLAN1; source-preserving routing; INPUT and DOCKER-USER/FORWARD; private management; Windows Sysmon/Defender/audit; Ubuntu SSH/AV/auditd/rsyslog; restricted VPN; real Windows/Ubuntu/app monitoring; NAS ACL/encryption/restore. A dedicated NAS backup account/dataset receives consistent stopped-Homebox archives; live databases stay local to Ubuntu.
 
-Reviewed local checkpoint/build plan and relevant PDF content plus primary documentation: Linux bridge, OPNsense VLAN/firewall/OpenVPN, Docker bridge/host/iptables, TrueNAS hardware and Broadcom dedicated subnet guidance. Broadcom's article spans older Workstation versions; actual installed behavior remains a test obligation.
+The same-subnet VMnet8 VPN rule checks reply-to, with management bypass removed for testing. Both hypervisor administrators remain trusted. Virtual mirror/snapshots are lab controls, not independent physical backup.
 
-Architecture review by the architect agent was integrated by the main agent. No boot, installation, live capture, restored data, VPN tunnel or resource rehearsal occurred in this review. B hardware/guest state and A's current available capacity remain unknown.
+## Verification and limits
+
+The architect supports A7/B11 as the simplest2/3VM split preserving NAS isolation, conditional on the early trunk gate. B capacity, current guest state, driver behavior and full-load performance remain unknown. No guest was started or changed, and no live test ran during this revision. Markdown replaces PDF outputs; document checks are not runtime evidence.

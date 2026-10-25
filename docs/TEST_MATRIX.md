@@ -1,52 +1,50 @@
 # Matrice de vérification
 
-Plan proposé le 25 octobre 2026. Tous les contrôles du laboratoire sont non exécutés à cette date de préparation. Les contrôles de documents ne valident pas ces résultats.
-
-Après accord de démarrage, indiquer pour chaque ligne : date, révision de configuration, source/destination/port, attendu, observé, preuve expurgée et résultat. Un contrôle non réalisé reste « non exécuté », un échec reste visible. Un refus doit être accompagné d'une preuve que le service fonctionne depuis une source autorisée.
+Révision Homebox et répartition A7/B11 du 25 octobre 2026. Tous les contrôles du laboratoire sont non exécutés. Après accord, noter date, révision, source/destination/port, attendu, observé et preuve expurgée. Un service doit fonctionner depuis une source autorisée avant de démontrer un refus.
 
 | ID | Contrôle | Résultat attendu / preuve | Responsable | État initial |
 |---|---|---|---|---|
-| T01 | Inventaire | Versions réelles, RAM/disque libres, MAC/VMnet ; autres travaux préservés | A et B | Non exécuté |
-| T02 | Commutation locale | Bridge filtrant ; VLAN20/30 seuls, aucun VLAN1/IP ; état persistant | A | Non exécuté |
-| T03 | Transport commun | Tags20/30 sur trunk privé ; NAS non tagué sur câble ; ARP/unicast aller/retour | A+B | Non exécuté |
-| T04 | Accès VLAN restreint | Tag30 venant du port d'accès Ubuntu refusé ; VLAN20 normal continue | A | Non exécuté |
-| T05 | Règles entre zones | Windows->app/SMB autorisé ; Windows->SSH/NAS admin refusé avec logs | A+B | Non exécuté |
-| T06 | Sysmon | Événements1 et3 réellement générés par les actions de test | A | Non exécuté |
-| T07 | Audit/firewall Windows | Politique d'audit et4624/4625 ; service local autorisé puis bloqué | A | Non exécuté |
-| T08 | SSH | Clé MGMT autorisée ; mot de passe/root refusés ; accès console conservé | A | Non exécuté |
-| T09 | Pare-feu Ubuntu/Docker | INPUT et DOCKER-USER/FORWARD actifs ; ports publiés limités ; refus et persistance | A | Non exécuté |
-| T10 | Audit/journaux Ubuntu | Événement auditd sur fichier test ; blocage OPNsense reçu par rsyslog ; rotation | A | Non exécuté |
-| T11 | Protection | Defender/signatures vérifiés ; scan ClamAV borné avec date et résultat | A | Non exécuté |
-| T12 | Application | Tâches modifiables ; volume SQLite conservé après recréation ; HTTPS vérifié | A | Non exécuté |
-| T13 | Atelier Docker | Source/image enregistrées ; image history expliqué ; Bench examiné avec constats/corrections | A | Non exécuté |
-| T14 | Métriques | Ubuntu et Windows identifiés ; valeurs réelles ; ports internes non exposés | A | Non exécuté |
-| T15 | Panne/reprise | Sonde app et perte collecteur observées séparément, puis retour sain | A | Non exécuté |
-| T16 | Permissions NAS | Alice RW ; lecteur RO avec écriture refusée ; bob refusé sans confusion1219 | B avec A | Non exécuté |
-| T17 | Données NAS | Dataset chiffré ; clé privée exportée ; fichier restauré et comparé | B avec A | Non exécuté |
-| T18 | Entrée/sortie | WAN direct->services refusé ; sortie interdite vers service contrôlé refusée avec log | A | Non exécuté |
-| T19 | VPN restreint | Déconnecté/connecté/déconnecté ; app autorisée ; NAS445/SSH22/Grafana3001 refusés | A avec B | Non exécuté |
-| T20 | Redémarrage | Bridge, règles, services, dataset/partage et accès principaux restaurés | A+B | Non exécuté |
-| T21 | Fluidité | Tous invités ensemble >=10min ; RAM/pagination/swap et réponses consignées | A+B | Non exécuté |
-| T22 | Présentation | Parcours chronologique, schéma, limites, responsabilités et répétition | Groupe | Non exécuté |
+| T01 | Inventaire | RAM/espace/versions/MAC/VMnet réels ; B au moins16Gio à confirmer | A+B | Non exécuté |
+| T02 | SW-B | Filtrage/PVID0 ; trunk20/30 ; accès20/30 ; aucun VLAN1/IP ; persistance | B | Non exécuté |
+| T03 | Trunk physique, premier contrôle réseau20-30min | Tags20/30 aux deux extrémités et Ethernet ; accès non tagués ; ARP/unicast bidirectionnels | A+B | Non exécuté |
+| T04 | Restriction VLAN | Tag30 émis depuis accès Ubuntu refusé ; trafic20 normal conservé | B avec A | Non exécuté |
+| T05 | Zones | Windows->Homebox/SMB permis ; Windows->SSH/NAS admin refusé avec logs | A+B | Non exécuté |
+| T06 | Sysmon | Événements1/3 réels | A | Non exécuté |
+| T07 | Audit/firewall Windows | Stratégie audit,4624/4625 ; service actif autorisé puis bloqué | A | Non exécuté |
+| T08 | SSH Ubuntu | Clé MGMT permise ; mot de passe/root refusés ; pas de lockout | B avec A | Non exécuté |
+| T09 | Pare-feu Ubuntu/Docker | INPUT+DOCKER-USER/FORWARD ; publications limitées ; persistance | B | Non exécuté |
+| T10 | Audit/logs Ubuntu | auditd réel ; blocage OPNsense reçu par rsyslog ; rotation | B avec A | Non exécuté |
+| T11 | Protection | Defender/signatures et scan ClamAV datés, sans gros scan pendant répétition | A+B | Non exécuté |
+| T12 | Homebox | Fiche et pièce jointe, accès authentifié et visiteur refusé ; comptes/contenu persistants après recréation | B avec A | Non exécuté |
+| T13 | Atelier Docker | Tutoriel court construit/historique retenu puis arrêté ; image Homebox/digest/couches ; Bench et corrections | B | Non exécuté |
+| T14 | Monitoring | Ubuntu/Windows identifiés ; métriques réelles ; Prometheus/collecteurs non exposés | B avec A | Non exécuté |
+| T15 | Panne/reprise | Indisponibilité Homebox et perte collecteur séparées, puis retour sain | B | Non exécuté |
+| T16 | ACL NAS | AliceRW ; lecteurRO et écriture refusée ; bob refusé sans confusion1219 | B avec A | Non exécuté |
+| T17 | Snapshot/chiffrement | Dataset chiffré, clé privée, fichier restauré et comparé | B avec A | Non exécuté |
+| T18 | Entrée/sortie | WAN direct->services refusé ; sortie interdite vers service contrôlé avec log | A avec B | Non exécuté |
+| T19 | VPN | Déconnecté/connecté/déconnecté ; Homebox8443 autorisé ; NAS445/SSH22/Grafana3001 refusés | A avec B | Non exécuté |
+| T20 | Redémarrage | Switch/règles/services/dataset et accès principaux persistants | A+B | Non exécuté |
+| T21 | Fluidité | Tous invités >=10min ; RAM/pagination/swap/temps réponse réels ; aucune surcharge soutenue | A+B | Non exécuté |
+| T22 | Présentation | Schéma/rôles/chronologie/limites et répétition | Groupe | Non exécuté |
+| T23 | Sauvegarde Homebox->NAS | Homebox arrêté pendant archive data/config ; compte NAS dédié ; copie restaurée avec fiche/pièce jointe vérifiées | B avec A | Non exécuté |
 
 ## Précisions
 
-- T03/T05/T16/T17/T19/T20/T21 impliquent les deux côtés : attendre leurs confirmations de disponibilité. Les contrôles locaux du périmètre approuvé peuvent précéder.
-- T04 ne consiste pas à créer une interface persistante supplémentaire sur Ubuntu. Utiliser un essai temporaire identifié et le retirer ; conserver la connexion normale.
-- T09 distingue un service uniquement lié à loopback/interne d'un service actif bloqué par une règle. Un port fermé ne prouve pas un filtrage efficace.
-- T12 : une recréation conserve le volume nommé ; ne pas utiliser une commande supprimant les volumes. Les sauvegardes/restaurations se font sur une copie cohérente.
-- T18 : utiliser une destination de test contrôlée, par exemple un service borné sur le côté WAN du laboratoire. Vérifier ce service depuis ce côté autorisé avant de prouver le refus depuis une VM. Ne pas sonder des systèmes tiers au hasard. Les règles hôtes temporaires sont limitées au réseau de test puis retirées.
-- T19 : désactiver temporairement le chemin MGMT de l'hôte et vérifier les routes du tunnel. Pousser la route NAS de test pour que le refus soit journalisé dans OPNsense. Ce test reste un WAN simulé.
-- T21 : objectifs de départ d'environ2Gio disponibles par hôte, absence de pagination/swap soutenue, actions courantes en quelques secondes. Si ces objectifs échouent, consigner et ajuster avant de dire que le laboratoire est fluide.
-- Les logs, captures et résultats publiés ne contiennent ni secrets, profils VPN, clés NAS ou exports de configuration bruts. Les preuves privées restent sur les machines.
-
-## Fiche courte de résultat
+- T03 est le premier contrôle commun après la base réseau minimale des deux côtés. Ne pas attendre la fin des installations applicatives. Si les tags/unicast échouent au bout de20-30minutes, partager captures/erreur et arrêter les changements non ciblés.
+- Le câble est tagué. Une communication non taguée ou le seul état « connecté » ne valide pas T03. Tenir compte des offloads en recoupant les captures.
+- T04 reste temporaire ; ne pas modifier l'IP principale d'Ubuntu. Les ports d'accès du switch doivent rejeter les tags non autorisés.
+- T09 distingue un port uniquement lié à loopback/interne d'un service actif bloqué par une règle. Un port fermé ne prouve pas le filtrage.
+- T12 recrée le conteneur en gardant les volumes ; ne pas exécuter une commande supprimant les volumes. Homebox est le seul service applicatif permanent.
+- T18 utilise un service contrôlé côté WAN, vérifié depuis ce côté avant le refus depuis l'invité ; pas de sondage de systèmes tiers au hasard.
+- T19 retire temporairement le chemin MGMT de l'hôte et vérifie les routes du tunnel. Pousser la route NAS pour que le refus arrive à OPNsense. Cela reste un WAN simulé.
+- T21 : objectifs d'environ2Gio disponibles par hôte, pas de pagination/swap soutenue, actions courantes en quelques secondes. B=11Gio invités exige une mesure ; un tableau ne suffit pas.
+- T23 ne monte pas la base SQLite active sur SMB. L'archive contient des secrets et reste privée. Le conteneur Homebox n'a pas les identifiants de sauvegarde NAS.
+- Les preuves publiées excluent mots de passe, clés, profilsVPN et exports bruts.
 
 ```text
 ID / date / révision :
 Source -> destination : port/protocole
-Attendu :
-Observé :
+Attendu / observé :
 Preuve expurgée :
 Résultat : réussi / échoué / bloqué / non exécuté
 Correction ou limite :

@@ -17,3 +17,5 @@ Each machine owner stays within their assigned scope. Do not edit shared plan or
 Post short progress or blocker updates with the current PR revision and actual evidence. Include measured host resources and relevant addresses/configuration, and distinguish expected from observed results. Mark unrun checks as unrun; a script alone does not show that a live test passed. Machine B's 16 GB RAM figure remains an unverified assumption until measured.
 
 When local checks are complete, each Codex can say **ready for joint tests** and give the supporting evidence. People coordinate timing and scope after both sides are ready; no extra approval ritual is needed for those joint tests.
+
+Readiness concerns the next agreed test, not necessarily the whole machine. The first joint test is the physical VLAN trunk after only the minimal network setup; do not wait for Homebox/NAS services before checking this dependency.

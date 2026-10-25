@@ -27,3 +27,4 @@ config.xml
 *.ovf
 *.log
 *.bak
+*.pdf

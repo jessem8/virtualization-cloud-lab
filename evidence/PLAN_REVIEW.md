@@ -1,27 +1,27 @@
 # Planning review evidence
 
-Prepared 2026-10-25. This records document work only.
+Updated2026-10-25. Current task changes documents and GitHub only.
 
-## Inputs and authority
-- Four user-supplied PDFs:01_PC_A (7pages),02_PC_B (8),03_Liaison_VMs (6),Feuille_de_route_2_PC_1_jour (15):36pages total text-read. Network diagram, firewall/storage/test tables visually inspected.
-- Original assignment paragraphs extracted locally without modifying the source.
-- Earlier workshop/grid evidence retained as source context, not as proof either architecture is correct.
-- Current human corrections: at most2PCs today; together with Ethernet; TrueNAS; both plans provisional; neutral wording/simple Git; jessem8=A; collaborator sanadzhioua=B.
-- Architect read-only recommendation and decisions in docs/ARCHITECTURE_REVIEW.md.
+## Inputs
 
-## Review changes
-Redistributed guests A10/B8GiB, untagged storage cable/private tagged trunk, management separation, explicit auditing, Docker workshop steps, real Windows/app monitoring, app/Grafana port separation, resource targets and restart evidence. Removed any need to assume the unprovided kit_demain exists or has passed checks.
+The user-supplied four PDFs (36pages), assignment and prior workshop/grid evidence were reviewed previously. They are proposals, not proof of correctness. Original Downloads files remain unchanged; current repository PDF copies/exports/tooling are removed at the user's request. Their previous revision remains in Git history.
 
-## Verification completed
-- Eleven Markdown files checked: relative links resolved; required features retained; no obvious private-key/token patterns found.
-- Four generated PDFs,14 A4 pages: extraction, headings, text bounds, rendering and visual inspection; final hashes matched. See PDF_VALIDATION.md.
-- Original PDF copy hashes matched the unchanged Downloads files.
-- Git diff whitespace check passed. This is not a complete security audit of arbitrary content.
-- Private GitHub repository verified; sanadzhioua has confirmed write access. The planning PR carries the start request; its URL/head are checked during publication.
-- Local evidence helper receipts are recorded. Native hook binding has not been independently verified.
+Latest requirements: replace the tutorial app with a useful open-source service, move more actual work to B, keep two PCs and all required controls, use Markdown only, update the existing PR and leave commit comment ".".
 
-## Runtime obligations
-All T01-T22 lab controls remain non exécuté. No guest was created, booted, installed or changed; no host adapter, route, VMnet or firewall was modified; no joint test occurred. Smoothness and security behavior await approved implementation and measured evidence.
+## Decisions
 
-## Approval state
-The planning PR requests sanadzhioua review/approval for Machine A before its work starts. Repository publication and invitation do not supply that approval. GitHub is the coordination surface; no deployment workflow or monitor is added.
+- A7/B11GiB: move Ubuntu, application, monitoring and switching to B; keep OPNsense/Windows/VPN on A. Same five guests and18GiB total.
+- Physical trunk20/30 replaces the private trunk/storage-only cable. Check it in the first20-30minutes of approved network work. B hardware/headroom remain unverified.
+- Gitea was rejected before publication. The user chose a lightweight inventory/documents mix: Homebox rootless/SQLite with a small HTTPS proxy, no externalDB/worker/newVM. Official docs, non-prerelease release and exact rootless image tag/digest were retrieved read-only.
+- Keep the required tutorial as a short stopped exercise; add useful equipment-record/attachment/login/persistence and NAS backup evidence.
+- Architect reviewed this allocation and supports it as the simplest balanced implementation split preserving NAS isolation.
+
+## Verification
+
+Before push: check all Markdown links and current allocation/ownership/ports; ensure no tracked PDFs/export tools; compare original input hashes with the previous manifest; inspect staged changes/exclusions. No deployment, image pull, Docker build or live test is part of this revision.
+
+The final verification results and remote commit/comment are recorded in the task receipt and PR. Native hook binding is not independently verified.
+
+## Remaining obligations
+
+All runtime test rows remain unrun. Physical tags, current hardware, resource smoothness, Homebox behavior/security, NAS recovery and VPN must be tested after approval of the current revision.

@@ -1,42 +1,35 @@
 # Virtualization and Cloud laboratory
 
-Private planning and coordination for a student lab on at most two physical PCs. The proposal keeps the required security features and plans five guests across the two machines. Runtime performance and network behavior still need testing after approval.
+Private planning for a secure student lab on two physical PCs. Current proposal: **Homebox with SQLite**, five guests, shared work across both machines. No infrastructure has been deployed by this planning task.
 
-**Current state: planning review. Machine A has not started implementation.**
+## Plan and tasks
 
-## Read the proposal
-
-Until the planning PR is merged, use its branch `docs/two-pc-plan` and reviewed commit, rather than the initial default branch.
+Use the current head of [PR #1](https://github.com/jessem8/virtualization-cloud-lab/pull/1), branch `docs/two-pc-plan`, until reviewed and merged.
 
 - [Plan de travail](BUILD_PLAN.md)
-- [Machine A: network, Windows and Ubuntu](docs/MACHINE_A.md)
-- [Machine B: TrueNAS](docs/MACHINE_B.md)
-- [Connection, addressing and firewall policy](docs/LIAISON.md)
-- [Test matrix - all lab checks initially unrun](docs/TEST_MATRIX.md)
-- [GitHub coordination](docs/COORDINATION.md)
-- [Architecture review and remaining limits](docs/ARCHITECTURE_REVIEW.md)
+- [Machine A - OPNsense, Windows and VPN](docs/MACHINE_A.md)
+- [Machine B - TrueNAS, Ubuntu, Homebox, monitoring and switch](docs/MACHINE_B.md)
+- [Homebox setup and demonstration](docs/APP.md)
+- [Addressing, VLANs and access rules](docs/LIAISON.md)
+- [Test matrix - live checks unrun](docs/TEST_MATRIX.md)
+- [Simple GitHub coordination](docs/COORDINATION.md)
+- [Architecture review](docs/ARCHITECTURE_REVIEW.md)
 
-The four corrected French PDF guides are in [output/pdf](output/pdf). Their editable Markdown sources are linked above. Original input PDFs and matching hashes are in [sources/original](sources/original), retained as historical references only.
+Documentation is Markdown only. PDF copies, exports and generation tooling have been removed. Original input files in the user's Downloads folder were not changed.
 
-## Two machines
+## Allocation
 
-| Machine | Owner | Proposed guests | Guest RAM |
+| Machine | Owner | Guests | Planned guest RAM |
 |---|---|---|---|
-| A | jessem8 | OPNsense, Windows, Ubuntu, Alpine switch | 10GiB |
-| B | sanadzhioua | TrueNAS | 8GiB |
+| A | jessem8 | OPNsense3GiB, Windows4GiB | 7GiB |
+| B | sanadzhioua | TrueNAS8GiB, Ubuntu2.5GiB, SW-B0.5GiB | 11GiB |
 
-The private VLAN trunk stays inside A; the Ethernet cable is an untagged storage access link to B. Both hosts remain on Wi-Fi for Internet. B's hardware and both machines' current free resources remain to be confirmed.
+This moves actual Ubuntu/application/switch work to B; total guest RAM remains18GiB. B's hardware and free memory are unverified. Ethernet carries tagged VLAN20/30; verify it at the start of approved network work and stop/report a failure promptly. Ubuntu and NAS remain separate zones.
 
-## Start and progress
+Homebox provides equipment records, document/image attachments and maintenance tracking. Use its rootless application container, SQLite and one small Nginx HTTPS proxy; no external database or runner. GitHub remains the Codex coordination channel. The course sample is a short exercise, not another persistent application.
 
-sanadzhioua reviews the planning PR and confirms whether Machine A may start on that revision. A normal approval review or explicit comment is sufficient. No automatic deployment is configured. Machine B follows its own user's or the peer's explicit authorization.
+## Start
 
-Each Codex posts short progress/blocker comments in the same PR and reports when ready for joint tests. Do not modify guest or host networks during the planning review. Documentation checks and read-only inventory are permitted.
+sanadzhioua reviews this material revision and approves or comments whether A may start. B follows its own user's or peer's explicit authorization. Both sides post brief progress/blocker comments in PR #1 and coordinate joint tests after local readiness. Documentation/read-only inventory may precede approval; guest/network changes may not.
 
-For the other Codex, the first task is: **read this proposal, inspect Machine B hardware read-only, report any mismatch, and review Machine A's start request.** Do not treat this README as approval to deploy.
-
-## Files and verification
-
-[Planning evidence](evidence/PLAN_REVIEW.md) and [PDF checks](evidence/PDF_VALIDATION.md) distinguish document checks from live lab results. Rebuild PDFs with the installed Python dependencies using `python tools/build_guides.py`; see the script's help for checks/rendering.
-
-No passwords, private keys, VPN profiles, recovery keys, raw firewall/NAS exports or VM images belong in this repository. Keep operational configurations containing secrets in private local storage.
+[Review evidence](evidence/PLAN_REVIEW.md) separates source/document checks from runtime results. No credentials, keys, VPN profiles, secret-bearing exports or VM images belong in Git.
