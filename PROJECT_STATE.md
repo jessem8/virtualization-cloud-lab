@@ -34,7 +34,7 @@ Editable guides and generated PDFs live in this repository. Original Downloads P
 Do not publish credentials, keys, VPN profiles, raw configuration exports or VM images. Repository: https://github.com/jessem8/virtualization-cloud-lab (private, verified). Branch: docs/two-pc-plan. sanadzhioua write access was verified after the invitation was accepted. Use the planning PR for its current revision and approval.
 
 ## Next action
-Complete publication of the reviewed documents and request approval in the planning PR, then wait before implementation. Once the other participant approves, record the reviewed revision and begin the bounded machine tasks. All live lab tests remain unrun.
+Planning PR https://github.com/jessem8/virtualization-cloud-lab/pull/1 is open; sanadzhioua is requested as reviewer and has write access. Publication and document checks are complete. Wait for the other participant's approval before Machine A implementation. Record the reviewed revision when approval arrives. All live lab tests remain unrun.
 
 ## Lessons
 1. Treat plans as hypotheses and preserve later user corrections.
