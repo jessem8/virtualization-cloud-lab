@@ -1,0 +1,18 @@
+{
+  "name": "two-pc-lab-diagram",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "start": "node serve.mjs"
+  },
+  "dependencies": {
+    "three": "0.186.1",
+    "gsap": "3.15.0",
+    "@fontsource/space-grotesk": "5.3.0",
+    "@fontsource/ibm-plex-sans": "5.3.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  }
+}

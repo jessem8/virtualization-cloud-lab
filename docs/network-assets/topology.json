@@ -1,0 +1,682 @@
+{
+  "revision": "diagramme-2026-10-27",
+  "sourceRevision": "921eebf",
+  "title": "Le laboratoire, en perspective.",
+  "subtitle": "Deux machines physiques. Des frontières visibles.",
+  "updated": "27 octobre 2026",
+  "hosts": [
+    {
+      "id": "a",
+      "name": "PC A",
+      "owner": "jessem8",
+      "cpu": "Intel i7-13700HX",
+      "ram": "15,71 Gio utilisables",
+      "free": "2,59 Gio disponibles · mesure du 27/10",
+      "disk": "36,79 Gio libres · mesure du 27/10",
+      "planned": "7 Gio invités prévus",
+      "x": -9
+    },
+    {
+      "id": "b",
+      "name": "PC B",
+      "owner": "sanadzhioua",
+      "cpu": "AMD Ryzen 7 7840HS",
+      "ram": "15,29 Gio utilisables",
+      "free": "4,41 Gio disponibles · déclaration du 26/10",
+      "disk": "122,8 Gio libres · déclaration du 26/10",
+      "planned": "Allocation à réconcilier",
+      "x": 9
+    }
+  ],
+  "nodes": [
+    {
+      "id": "fw",
+      "number": "01",
+      "name": "OPNsense",
+      "kind": "VM · passerelle",
+      "host": "a",
+      "position": [
+        -6.3,
+        1.5,
+        0
+      ],
+      "color": "#dfaa65",
+      "status": "Prévu · non testé",
+      "ip": "10.77.10.1 / .20.1 / .30.1 / .99.1",
+      "purpose": "Route les communications entre zones et applique les règles d’accès. Seule VM avec un accès WAN.",
+      "resources": "3 Gio · 2 vCPU · disque 20 Gio prévus",
+      "interfaces": [
+        [
+          "WAN",
+          "VMnet8",
+          "DHCP · NAT VMware"
+        ],
+        [
+          "MGMT",
+          "VMnet13",
+          "10.77.99.1/24 · non tagué"
+        ],
+        [
+          "CLIENTS",
+          "VMnet10",
+          "10.77.10.1/24 · non tagué"
+        ],
+        [
+          "TRUNK",
+          "VMnet12",
+          "Parent sans IP · tags 20/30"
+        ],
+        [
+          "VLAN20",
+          "TRUNK.20",
+          "10.77.20.1/24"
+        ],
+        [
+          "VLAN30",
+          "TRUNK.30",
+          "10.77.30.1/24"
+        ]
+      ],
+      "controls": [
+        "Règles entrantes par interface ; réponses stateful.",
+        "Aucun NAT entre les zones du laboratoire.",
+        "OpenVPN UDP1194 ; application TCP8443 seulement depuis le VPN.",
+        "Journaux refusés envoyés à Ubuntu en TCP514."
+      ],
+      "next": "Créer ou vérifier la VM et associer chaque interface à sa MAC. Capturer ensuite le trunk avec B.",
+      "evidence": "Aucun démarrage ou filtrage du laboratoire vérifié.",
+      "source": "docs/MACHINE_A.md · docs/LIAISON.md"
+    },
+    {
+      "id": "windows",
+      "number": "02",
+      "name": "Windows",
+      "kind": "VM · poste client",
+      "host": "a",
+      "position": [
+        -12,
+        1.5,
+        1.5
+      ],
+      "color": "#86b49c",
+      "status": "Prévu · non testé",
+      "ip": "10.77.10.10/24",
+      "purpose": "Poste de démonstration : utilise InvoiceShelf et le partage NAS autorisé. Les protections locales restent actives.",
+      "resources": "4 Gio · 2 vCPU · disque 60 Gio prévus",
+      "interfaces": [
+        [
+          "CLIENTS",
+          "VMnet10",
+          "10.77.10.10/24"
+        ],
+        [
+          "Passerelle / DNS",
+          "OPNsense",
+          "10.77.10.1"
+        ]
+      ],
+      "controls": [
+        "Sysmon : événements 1 et 3.",
+        "Defender, pare-feu local et audit 4624/4625.",
+        "windows_exporter TCP9182 accessible depuis Ubuntu seulement.",
+        "HTTPS8443 et SMB445 autorisés selon les règles."
+      ],
+      "next": "Vérifier l’édition et le démarrage ; configurer protections et exporter.",
+      "evidence": "Installation et contrôles non vérifiés.",
+      "source": "docs/MACHINE_A.md"
+    },
+    {
+      "id": "mgmt",
+      "number": "M",
+      "name": "Administration A",
+      "kind": "Interface de l’hôte A",
+      "host": "a",
+      "position": [
+        -8.7,
+        1,
+        4.4
+      ],
+      "color": "#92a6c5",
+      "status": "Prévu · non testé",
+      "ip": "10.77.99.254/24",
+      "purpose": "Accès de gestion depuis l’hôte A. MGMT est un réseau non tagué, pas un VLAN99.",
+      "resources": "Interface hôte · aucune VM supplémentaire",
+      "interfaces": [
+        [
+          "MGMT",
+          "VMnet13 host-only",
+          "10.77.99.254/24"
+        ],
+        [
+          "Passerelle de projet",
+          "OPNsense",
+          "10.77.99.1 · pas de route par défaut"
+        ]
+      ],
+      "controls": [
+        "Administration OPNsense/TrueNAS en HTTPS et Ubuntu en SSH par clé.",
+        "Retirer les routes de gestion pendant la démonstration VPN pour éviter un contournement."
+      ],
+      "next": "Vérifier les routes et les chevauchements avant configuration.",
+      "evidence": "Aucune interface ou route modifiée pour ce diagramme.",
+      "source": "docs/LIAISON.md"
+    },
+    {
+      "id": "wan",
+      "number": "W",
+      "name": "WAN simulé",
+      "kind": "Réseau VMware NAT",
+      "host": "a",
+      "position": [
+        -12,
+        1,
+        -3.5
+      ],
+      "color": "#90a9b5",
+      "status": "Prévu · non testé",
+      "ip": "VMnet8 · DHCP",
+      "purpose": "Le WAN d’OPNsense utilise le NAT VMware et le Wi-Fi de l’hôte. Ce montage ne prouve pas un accès depuis Internet public.",
+      "resources": "Réseau virtuel existant à préserver",
+      "interfaces": [
+        [
+          "WAN OPNsense",
+          "VMnet8",
+          "NAT VMware"
+        ],
+        [
+          "Sortie hôte",
+          "Wi-Fi",
+          "Internet pour les mises à jour"
+        ]
+      ],
+      "controls": [
+        "Aucun service interne directement publié sur le WAN.",
+        "Seul UDP1194 prévu pour le client VPN de test."
+      ],
+      "next": "Relever la plage et l’adresse WAN réelles.",
+      "evidence": "Plage WAN et accès Internet du pare-feu non vérifiés.",
+      "source": "docs/MACHINE_A.md"
+    },
+    {
+      "id": "vpn",
+      "number": "V",
+      "name": "Client VPN",
+      "kind": "Client de test sur l’hôte A",
+      "host": "a",
+      "position": [
+        -3.8,
+        1,
+        -3.9
+      ],
+      "color": "#a0a5ca",
+      "status": "Prévu · non testé",
+      "ip": "Tunnel 10.78.0.0/24",
+      "purpose": "Client OpenVPN sur A, connecté au WAN simulé via VMnet8. Il ne représente pas un troisième PC physique.",
+      "resources": "Application hôte · aucune VM supplémentaire",
+      "interfaces": [
+        [
+          "Transport",
+          "VMnet8 → WAN OPNsense",
+          "UDP1194"
+        ],
+        [
+          "Tunnel",
+          "OpenVPN",
+          "10.78.0.0/24"
+        ]
+      ],
+      "controls": [
+        "Autoriser InvoiceShelf HTTPS8443.",
+        "Refuser SSH22, NAS SMB445 et Grafana3001.",
+        "Comparer déconnecté / connecté / déconnecté sans chemin MGMT."
+      ],
+      "next": "Créer les certificats et règles, puis réaliser les tests de connexion.",
+      "evidence": "Aucun tunnel ou accès VPN du laboratoire vérifié.",
+      "source": "docs/MACHINE_A.md"
+    },
+    {
+      "id": "switch",
+      "number": "03",
+      "name": "Alpine SW-B",
+      "kind": "VM · commutateur L2",
+      "host": "b",
+      "position": [
+        4.3,
+        1.5,
+        0
+      ],
+      "color": "#dfaa65",
+      "status": "Déclaré par B · live ISO",
+      "ip": "Sans adresse IP",
+      "purpose": "Sépare les ports d’accès Ubuntu et TrueNAS. Ajoute ou retire les tags sur le trunk ; ne route pas entre VLANs.",
+      "resources": "0,5 Gio · 1 vCPU · disque 2 Gio préparés",
+      "interfaces": [
+        [
+          "TRUNK",
+          "VMnet12",
+          "VLAN20/30 tagués · sans PVID"
+        ],
+        [
+          "UBUNTU",
+          "VMnet14",
+          "Accès VLAN20 · PVID20"
+        ],
+        [
+          "NAS",
+          "VMnet11",
+          "Accès VLAN30 · PVID30"
+        ]
+      ],
+      "controls": [
+        "Bridge VLAN filtering ; PVID par défaut 0.",
+        "Aucun VLAN natif, VLAN1, IP de gestion ou routage.",
+        "Refuser un tag30 provenant du port d’accès Ubuntu."
+      ],
+      "next": "Installer Alpine et ajouter les trois cartes. Associer leurs MAC puis configurer le bridge.",
+      "evidence": "B déclare le login live Alpine atteint. Pas installé ; aucune carte réseau configurée.",
+      "source": "evidence/PC_B_STATUS.md · 26/10/2026"
+    },
+    {
+      "id": "ubuntu",
+      "number": "04",
+      "name": "Ubuntu",
+      "kind": "VM · services",
+      "host": "b",
+      "position": [
+        11,
+        1.5,
+        -3.3
+      ],
+      "color": "#80b9b4",
+      "status": "Déclaré par B · préparé",
+      "ip": "10.77.20.10/24",
+      "purpose": "Héberge Docker, InvoiceShelf, la supervision et les journaux. Les conteneurs sont des services de cette VM, pas des VM supplémentaires.",
+      "resources": "Plan : 2,5 Gio ; B : Desktop 4 Gio préparés. Allocation à décider.",
+      "interfaces": [
+        [
+          "SERVEURS",
+          "VMnet14",
+          "Accès VLAN20 non tagué"
+        ],
+        [
+          "Adresse / passerelle",
+          "IPv4",
+          "10.77.20.10 → 10.77.20.1"
+        ],
+        [
+          "Application",
+          "Nginx → Docker bridge",
+          "HTTPS8443 → InvoiceShelf8080 interne"
+        ]
+      ],
+      "controls": [
+        "SSH par clé depuis MGMT ; root et mot de passe refusés.",
+        "iptables + DOCKER-USER/FORWARD ; auditd, rsyslog TCP514, ClamAV.",
+        "Prometheus interne9090 ; Grafana3001 ; collecte Windows9182.",
+        "SQLite local ; sauvegarde cohérente vers NAS après arrêt de l’application."
+      ],
+      "next": "Installer et vérifier Ubuntu ; réconcilier la mémoire ; déployer InvoiceShelf2.4.7 avec son proxy HTTPS.",
+      "evidence": "B déclare une configuration VM et des disques vides ; non démarrée, sans carte réseau.",
+      "source": "evidence/PC_B_STATUS.md · décision InvoiceShelf du 27/10"
+    },
+    {
+      "id": "nas",
+      "number": "05",
+      "name": "TrueNAS",
+      "kind": "VM · stockage",
+      "host": "b",
+      "position": [
+        11.4,
+        1.5,
+        3.1
+      ],
+      "color": "#b0a0c6",
+      "status": "Déclaré par B · préparé",
+      "ip": "10.77.30.10/24",
+      "purpose": "Stockage SMB, permissions par compte, dataset chiffré et snapshots. Le dataset de sauvegarde de l’application est distinct du partage de démonstration.",
+      "resources": "Plan : 8 Gio minimum ; B : 6 Gio préparés. Écart à résoudre.",
+      "interfaces": [
+        [
+          "STOCKAGE",
+          "VMnet11",
+          "Accès VLAN30 non tagué"
+        ],
+        [
+          "Adresse / passerelle",
+          "IPv4",
+          "10.77.30.10 → 10.77.30.1"
+        ],
+        [
+          "SMB",
+          "TCP445",
+          "Comptes et ACL dédiés"
+        ]
+      ],
+      "controls": [
+        "alice : lecture/écriture ; lecteur : lecture seule ; bob : refus.",
+        "Dataset chiffré ; clé privée hors dépôt ; restauration de fichier.",
+        "app-backup limité au dataset de sauvegarde.",
+        "Les disques virtuels sur le même SSD ne sont pas une sauvegarde physique indépendante."
+      ],
+      "next": "Résoudre l’allocation de 6/8 Gio avant validation ; installer puis vérifier ACL, chiffrement et restauration.",
+      "evidence": "B déclare une configuration VM et des disques vides ; non démarrée, sans carte réseau.",
+      "source": "evidence/PC_B_STATUS.md · 26/10/2026"
+    },
+    {
+      "id": "proxy",
+      "number": "P",
+      "name": "Nginx HTTPS",
+      "kind": "Conteneur · entrée applicative",
+      "host": "b",
+      "parent": "ubuntu",
+      "position": [
+        8.4,
+        3.2,
+        -3.6
+      ],
+      "color": "#80b9b4",
+      "status": "Prévu · non déployé",
+      "ip": "10.77.20.10:8443",
+      "purpose": "Termine HTTPS pour InvoiceShelf. Le backend applicatif reste sur le réseau Docker interne.",
+      "resources": "Dans Ubuntu · conteneur léger",
+      "interfaces": [
+        [
+          "Entrée",
+          "TCP8443",
+          "Réseau privé / VPN autorisé"
+        ],
+        [
+          "Backend",
+          "Docker bridge",
+          "InvoiceShelf:8080 interne"
+        ]
+      ],
+      "controls": [
+        "Certificat approuvé sur le client de démonstration.",
+        "Aucune publication WAN ni accès direct au backend."
+      ],
+      "next": "Configurer le certificat, l’adresse applicative et les paramètres de session.",
+      "evidence": "Configuration prévue ; aucun conteneur lancé.",
+      "source": "Décision applicative · 27/10/2026"
+    },
+    {
+      "id": "app",
+      "number": "A",
+      "name": "InvoiceShelf",
+      "kind": "Conteneur · facturation",
+      "host": "b",
+      "parent": "ubuntu",
+      "position": [
+        11,
+        4.2,
+        -3.3
+      ],
+      "color": "#80b9b4",
+      "status": "Choisi · non déployé",
+      "ip": "Port8080 interne",
+      "purpose": "Démonstration d’une petite entreprise : clients fictifs, factures, dépenses, PDF et permissions par rôle.",
+      "resources": "Version2.4.7 stable · une application avec SQLite",
+      "interfaces": [
+        [
+          "Accès utilisateur",
+          "Proxy Nginx",
+          "HTTPS8443"
+        ],
+        [
+          "Données",
+          "Volume local Ubuntu",
+          "SQLite + fichiers persistants"
+        ]
+      ],
+      "controls": [
+        "Rôle comptable et rôle consultation à configurer puis vérifier.",
+        "Accès non authentifié refusé sur les ressources privées.",
+        "Volumes persistants ; archive après arrêt puis restauration isolée."
+      ],
+      "next": "Vérifier login, rôles, facture/PDF, consommation et restauration sur la VM.",
+      "evidence": "Documentation, code2.4.7 et publication d’image vérifiés. Aucun comportement local vérifié.",
+      "source": "https://docs.invoiceshelf.com/install/docker.html"
+    },
+    {
+      "id": "data",
+      "number": "D",
+      "name": "SQLite & fichiers",
+      "kind": "Volume persistant · pas une VM",
+      "host": "b",
+      "parent": "ubuntu",
+      "position": [
+        13.7,
+        3.1,
+        -3.1
+      ],
+      "color": "#b0a0c6",
+      "status": "Prévu · non créé",
+      "ip": "Stockage local Ubuntu",
+      "purpose": "Conserve base, documents et configuration nécessaires à la récupération. La base active ne réside pas sur SMB.",
+      "resources": "Volume Docker local · capacité à mesurer",
+      "interfaces": [
+        [
+          "Stockage actif",
+          "Ubuntu",
+          "Volume local"
+        ],
+        [
+          "Sauvegarde",
+          "Archive cohérente → NAS",
+          "Compte app-backup restreint"
+        ]
+      ],
+      "controls": [
+        "Conserver aussi la clé applicative/configuration privée.",
+        "Restaurer une copie séparée et vérifier la facture/PDF.",
+        "Un snapshot NAS ne remplace pas la sauvegarde cohérente de l’application."
+      ],
+      "next": "Documenter les chemins persistants exacts après installation.",
+      "evidence": "Aucune donnée ou sauvegarde créée.",
+      "source": "Architecture de sauvegarde proposée"
+    },
+    {
+      "id": "monitor",
+      "number": "S",
+      "name": "Supervision",
+      "kind": "Services dans Ubuntu",
+      "host": "b",
+      "parent": "ubuntu",
+      "position": [
+        11.1,
+        3.1,
+        -6.2
+      ],
+      "color": "#90a9b5",
+      "status": "Prévu · non déployé",
+      "ip": "Grafana:3001 · Prometheus interne9090",
+      "purpose": "Prometheus collecte les cibles ; Grafana affiche les résultats. La disponibilité de l’application est sondée séparément des métriques système.",
+      "resources": "Rétention courte prévue · consommation à mesurer",
+      "interfaces": [
+        [
+          "Windows exporter",
+          "TCP9182",
+          "Ubuntu → Windows"
+        ],
+        [
+          "Grafana",
+          "TCP3001",
+          "Windows / MGMT"
+        ],
+        [
+          "Prometheus",
+          "Loopback / réseau interne",
+          "Non exposé au VPN"
+        ]
+      ],
+      "controls": [
+        "Métriques réelles uniquement ; scénarios visuels clairement simulés.",
+        "Distinguer application arrêtée et exporter indisponible.",
+        "VPN → Grafana refusé."
+      ],
+      "next": "Configurer les collecteurs et une sonde applicative ; observer panne et reprise.",
+      "evidence": "Aucune métrique du laboratoire collectée.",
+      "source": "docs/MACHINE_B.md · docs/TEST_MATRIX.md"
+    }
+  ],
+  "links": [
+    {
+      "id": "clients",
+      "from": "windows",
+      "to": "fw",
+      "label": "CLIENTS · VMnet10 · non tagué",
+      "zone": "client",
+      "kind": "network",
+      "fromPort": "CLIENTS · VMnet10",
+      "toPort": "CLIENTS · VMnet10"
+    },
+    {
+      "id": "mgmt",
+      "from": "mgmt",
+      "to": "fw",
+      "label": "MGMT · VMnet13 · non tagué",
+      "zone": "mgmt",
+      "kind": "network",
+      "fromPort": "MGMT · VMnet13",
+      "toPort": "MGMT · VMnet13"
+    },
+    {
+      "id": "wan",
+      "from": "wan",
+      "to": "fw",
+      "label": "WAN simulé · VMnet8 NAT",
+      "zone": "wan",
+      "kind": "network",
+      "fromPort": "NAT · VMnet8",
+      "toPort": "WAN · VMnet8"
+    },
+    {
+      "id": "vpn",
+      "from": "vpn",
+      "to": "fw",
+      "label": "OpenVPN · UDP1194",
+      "zone": "vpn",
+      "kind": "network",
+      "fromPort": "OpenVPN · UDP1194",
+      "toPort": "Interface VPN"
+    },
+    {
+      "id": "trunk20",
+      "from": "fw",
+      "to": "switch",
+      "label": "Ethernet · VLAN20 tagué",
+      "zone": "20",
+      "kind": "network",
+      "fromPort": "TRUNK.20 · OPNsense",
+      "toPort": "TRUNK · SW-B"
+    },
+    {
+      "id": "trunk30",
+      "from": "fw",
+      "to": "switch",
+      "label": "Ethernet · VLAN30 tagué",
+      "zone": "30",
+      "kind": "network",
+      "fromPort": "TRUNK.30 · OPNsense",
+      "toPort": "TRUNK · SW-B"
+    },
+    {
+      "id": "access20",
+      "from": "switch",
+      "to": "ubuntu",
+      "label": "VMnet14 · accès20 non tagué",
+      "zone": "20",
+      "kind": "network",
+      "fromPort": "Accès20 · VMnet14",
+      "toPort": "eth0 · Ubuntu"
+    },
+    {
+      "id": "access30",
+      "from": "switch",
+      "to": "nas",
+      "label": "VMnet11 · accès30 non tagué",
+      "zone": "30",
+      "kind": "network",
+      "fromPort": "Accès30 · VMnet11",
+      "toPort": "eth0 · TrueNAS"
+    },
+    {
+      "id": "https",
+      "from": "ubuntu",
+      "to": "proxy",
+      "label": "HTTPS8443",
+      "zone": "20",
+      "kind": "service",
+      "fromPort": "Ubuntu :8443",
+      "toPort": "Nginx HTTPS"
+    },
+    {
+      "id": "backend",
+      "from": "proxy",
+      "to": "app",
+      "label": "Docker bridge · TCP8080 interne",
+      "zone": "20",
+      "kind": "service",
+      "fromPort": "Nginx proxy",
+      "toPort": "InvoiceShelf :8080"
+    },
+    {
+      "id": "sqlite",
+      "from": "app",
+      "to": "data",
+      "label": "Volume persistant local",
+      "zone": "local",
+      "kind": "storage",
+      "fromPort": "InvoiceShelf",
+      "toPort": "Volume local Ubuntu"
+    },
+    {
+      "id": "prom",
+      "from": "ubuntu",
+      "to": "monitor",
+      "label": "Services locaux Ubuntu",
+      "zone": "wan",
+      "kind": "service",
+      "fromPort": "Ubuntu",
+      "toPort": "Supervision locale"
+    }
+  ],
+  "issues": [
+    {
+      "node": "fw",
+      "title": "Transport Ethernet non vérifié",
+      "text": "Valider tags20/30, ARP et unicast bidirectionnel avec A et B avant les tests applicatifs communs.",
+      "owner": "A+B"
+    },
+    {
+      "node": "nas",
+      "title": "TrueNAS : écart mémoire 6/8 Gio",
+      "text": "B a préparé 6 Gio ; le plan retient 8 Gio minimum. La fluidité simultanée n’est pas démontrée.",
+      "owner": "B"
+    },
+    {
+      "node": "ubuntu",
+      "title": "Ubuntu : édition et ressources",
+      "text": "B a préparé Desktop4 Gio ; le plan prévoit2,5 Gio. Choisir une allocation mesurée, sans inventer de capacité libre.",
+      "owner": "B"
+    },
+    {
+      "node": "app",
+      "title": "InvoiceShelf à installer et vérifier",
+      "text": "Login, permissions, PDF, persistance et restauration restent à effectuer.",
+      "owner": "B"
+    },
+    {
+      "node": "fw",
+      "title": "Cartes et MAC à associer",
+      "text": "Les noms réels d’interfaces, VMnets et chevauchements doivent être relevés sur les deux machines.",
+      "owner": "A+B"
+    },
+    {
+      "node": "vpn",
+      "title": "Chemin VPN sans contournement",
+      "text": "Le client de test sur A ne doit pas conserver un chemin MGMT donnant accès aux mêmes services.",
+      "owner": "A"
+    }
+  ]
+}
