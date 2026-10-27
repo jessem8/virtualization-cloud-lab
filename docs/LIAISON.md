@@ -1,6 +1,6 @@
 # Liaison des deux PC et règles
 
-Plan proposé le 25 octobre 2026. Les deux PC sont présents et reliés par Ethernet dédié ; le Wi-Fi fournit Internet. Cette architecture reste une proposition jusqu'à sa revue. Aucun tag, partage, routage ou test n'est déclaré fonctionnel ici.
+Mis à jour le 27 octobre 2026. Les deux PC sont présents et reliés par Ethernet dédié ; le Wi-Fi fournit Internet. Cette liaison est la cible prévue. Aucun tag, partage, routage ou test n'est déclaré fonctionnel ici.
 
 ## 1. Architecture
 
@@ -70,26 +70,26 @@ Les règles OPNsense s'appliquent à l'entrée de l'interface ; réponses statef
 | Source | Destination | Autorisation |
 |---|---|---|
 | Hôte A 10.77.99.254 / MGMT | OPNsense et interface TrueNAS | HTTPS 443 |
-| MGMT | Ubuntu | SSH 22 par clé, Vikunja 8443, Grafana 3001 |
-| Windows 10.77.10.10 | Ubuntu | Vikunja HTTPS 8443 ; Grafana 3001 en lecture |
+| MGMT | Ubuntu | SSH 22 par clé, InvoiceShelf 8443, Grafana 3001 |
+| Windows 10.77.10.10 | Ubuntu | InvoiceShelf HTTPS 8443 ; Grafana 3001 en lecture |
 | Windows 10.77.10.10 | TrueNAS | SMB TCP 445 pour les essais de comptes/ACL |
 | Ubuntu 10.77.20.10 | Windows | windows_exporter TCP 9182 seulement |
 | OPNsense 10.77.20.1 | Ubuntu | Rsyslog TCP 514 seulement |
-| Ubuntu 10.77.20.10 | NAS 10.77.30.10 | SMB TCP 445 uniquement pour l'archive Vikunja arrêtée ; compte et dataset de sauvegarde dédiés |
+| Ubuntu 10.77.20.10 | NAS 10.77.30.10 | SMB TCP 445 uniquement pour l'archive InvoiceShelf arrêtée ; compte et dataset de sauvegarde dédiés |
 | Client VPN de l'hôte A via VMnet8 | WAN OPNsense | OpenVPN UDP 1194 seulement |
-| VPN | Ubuntu | Vikunja HTTPS TCP 8443 seulement |
+| VPN | Ubuntu | InvoiceShelf HTTPS TCP 8443 seulement |
 | Chaque zone | Passerelle de sa zone | DNS 53 et NTP 123 selon besoin |
 | Invités autorisés | Internet, hors réseaux privés | HTTP/HTTPS nécessaires aux mises à jour |
 
-L'accès VPN vers SSH 22, NAS SMB 445 et Grafana 3001 est refusé avec preuve OPNsense. Pousser la route NAS au client VPN pour que ce refus passe par le pare-feu. L'accès direct WAN vers services internes est refusé. Le compte/dataset NAS de sauvegarde est restreint par ACL en plus de la règle réseau ; Windows n'y accède pas. Vikunja garde son authentification et ses droits applicatifs. Vikunja local n'est pas GitHub et ne change pas la coordination du projet.
+L'accès VPN vers SSH 22, NAS SMB 445 et Grafana 3001 est refusé avec preuve OPNsense. Pousser la route NAS au client VPN pour que ce refus passe par le pare-feu. L'accès direct WAN vers les services internes est refusé. Le compte et le dataset NAS de sauvegarde sont restreints par ACL en plus de la règle réseau ; Windows n'y accède pas. InvoiceShelf garde ses propres comptes et rôles.
 
-L'application Docker expose Vikunja en HTTPS 8443 ; Grafana 3001 est distinct. Prometheus reste sur 127.0.0.1:9090 dans Ubuntu. Nginx publie seulement HTTPS8443 du laboratoire vers le backend Vikunja3456 non publié sur l'hôte ; aucune exposition Internet ni règle générale. LIAISON décrit les interfaces ; la configuration détaillée de l'application est dans APP.md.
+Le proxy Nginx publie HTTPS8443 et relaie vers le service InvoiceShelf au port 8080 sur le réseau Docker privé ; 8080 n'est pas publié sur l'hôte. Grafana 3001 reste distinct. Prometheus reste sur 127.0.0.1:9090 dans Ubuntu. Aucune exposition Internet ni règle générale n'est prévue. La configuration de l'application est dans APP.md.
 
 ## 6. Premier contrôle et tests communs
 
 Après autorisation et préparation des deux trunks, consacrer les premières 20–30 minutes au seul transport des tags 20/30 entre FW-LAB et SW-B. Capturer côté trunk sur les deux hôtes ; vérifier une communication attendue sur chaque VLAN et l'absence de VLAN natif. Si le transport échoue, conserver captures/erreur, rapporter le blocage et arrêter avant toute configuration approfondie. Ne pas passer la journée à deviner des réglages de pilote.
 
-Après ce passage, vérifier les accès autorisés et refusés avec des services actifs et les journaux correspondants ; vérifier que le port d'accès VLAN 20 rejette un tag VLAN 30 ajouté en essai, tout en gardant Ubuntu sur son accès normal. Vérifier les comptes SMB, l'archive/restauration Vikunja arrêtée, les métriques réelles, le cycle VPN et la persistance après redémarrage. Un ping ou un port fermé seul ne prouve pas une règle efficace.
+Après ce passage, vérifier les accès autorisés et refusés avec des services actifs et les journaux correspondants ; vérifier que le port d'accès VLAN 20 rejette un tag VLAN 30 ajouté en essai, tout en gardant Ubuntu sur son accès normal. Vérifier les comptes SMB, l'archive/restauration InvoiceShelf après arrêt, les métriques réelles, le cycle VPN et la persistance après redémarrage. Un ping ou un port fermé seul ne prouve pas une règle efficace.
 
 Les contrôles entre PC commencent quand chaque côté indique être prêt et que les personnes coordonnent le moment. Aucune approbation supplémentaire n'est nécessaire pour ces essais. Tous les résultats restent « non exécutés » jusqu'à une observation réelle ; un script ne constitue pas un résultat.
 

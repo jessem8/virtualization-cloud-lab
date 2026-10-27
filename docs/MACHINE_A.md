@@ -1,6 +1,6 @@
 # PC A — pare-feu et Windows
 
-Plan proposé le 25 octobre 2026. À examiner dans la PR avant toute modification du laboratoire. Ce guide ne prouve aucune exécution.
+Mis à jour le 27 octobre 2026. L'utilisateur a autorisé la configuration de PC A, qui suivra dans une tâche distincte. Ce guide décrit la cible ; il ne prouve aucune exécution.
 
 Le PC A de jessem8 héberge OPNsense et Windows. Le PC B de sanadzhioua héberge TrueNAS, Ubuntu et le switch VLAN SW-B. Ubuntu et le switch ne sont pas hébergés sur A.
 
@@ -16,7 +16,7 @@ Les ressources actuellement libres sur A restent à vérifier. Les mesures histo
 
 ## 2. Préparation
 
-Après l'autorisation de démarrage, relever les ressources disponibles, les versions VMware, les VM et leurs états, les cartes Ethernet, MAC et VMnet. Réutiliser une VM Windows seulement après avoir vérifié son édition, son démarrage et son état. Windows Server 2025 Evaluation est une option déjà observée, pas une installation confirmée. Ne pas ajouter de domaine AD ni supprimer ou réinitialiser les autres VM.
+Au début de la configuration de A, relever les ressources disponibles, les versions VMware, les VM et leurs états, les cartes Ethernet, MAC et VMnet. Réutiliser une VM Windows seulement après avoir vérifié son édition, son démarrage et son état. Windows Server 2025 Evaluation est une option déjà observée, pas une installation confirmée. Ne pas ajouter de domaine AD ni supprimer ou réinitialiser les autres VM.
 
 Le câble direct utilise la carte Ethernet dédiée de A. Dans VMware, associer le réseau ponté à cette carte précise, pas au choix automatique. Sur cette carte hôte uniquement, conserver VMware Bridge Protocol et retirer IPv4, IPv6, le client/partage Microsoft et ICS. Aucun adressage hôte, DHCP, réseau natif ou IPv6 link-local sur ce lien. Ne pas modifier le Wi-Fi.
 
@@ -37,7 +37,7 @@ FW-LAB conserve quatre cartes finales, affectées selon leur MAC : WAN, MGMT, CL
 
 Créer les interfaces VLAN 20 (10.77.20.1/24) et VLAN 30 (10.77.30.1/24) sur TRUNK. Le parent TRUNK n'a pas d'adresse IP, de réseau non tagué ni de VLAN natif. Les règles d'accès entre zones sont dans LIAISON.md ; ne pas remplacer les règles précises par un accès général.
 
-OPNsense 26.7.7 est la version de référence préparée, pas une version installée vérifiée. Relever la version réelle et appliquer les correctifs disponibles après accord. Vérifier l'offload checksum/TSO/LRO selon les recommandations VMware, la résolution DNS/NTP et le NAT de sortie des zones prévues. Ne pas ouvrir l'administration depuis CLIENTS ou le WAN.
+OPNsense 26.7.7 est la version de référence préparée, pas une version installée vérifiée. Relever la version réelle et appliquer les correctifs disponibles dans le cadre de cette configuration. Vérifier l'offload checksum/TSO/LRO selon les recommandations VMware, la résolution DNS/NTP et le NAT de sortie des zones prévues. Ne pas ouvrir l'administration depuis CLIENTS ou le WAN.
 
 ## 5. Windows
 
@@ -49,17 +49,17 @@ Installer windows_exporter depuis sa source officielle. Autoriser TCP 9182 uniqu
 
 ## 6. Contrat avec les services du PC B
 
-Ubuntu sur B garde l'adresse 10.77.20.10. OPNsense envoie ses journaux à cette adresse en TCP 514. Ubuntu collecte les métriques Windows sur TCP 9182. WIN-LAB utilise Vikunja sur HTTPS 8443, Grafana 3001 en lecture et le partage TrueNAS prévu pour les essais SMB. L'accès VPN à Vikunja est limité à HTTPS 8443 ; SSH, NAS et Grafana restent refusés depuis le VPN.
+Ubuntu sur B garde l'adresse 10.77.20.10. OPNsense envoie ses journaux à cette adresse en TCP 514. Ubuntu collecte les métriques Windows sur TCP 9182. WIN-LAB utilise InvoiceShelf sur HTTPS 8443, Grafana 3001 en lecture et le partage TrueNAS prévu pour les essais SMB. L'accès VPN à InvoiceShelf est limité à HTTPS 8443 ; SSH, NAS et Grafana restent refusés depuis le VPN.
 
-La configuration Vikunja est décrite dans [APP.md](APP.md). GitHub reste le canal de coordination du projet ; l'instance Vikunja locale est une démonstration séparée.
+La configuration InvoiceShelf est décrite dans [APP.md](APP.md). GitHub reste le canal de coordination du projet ; InvoiceShelf est une démonstration locale séparée.
 
 ## 7. VPN sur OPNsense
 
 Le client OpenVPN de l'hôte A rejoint le WAN de FW-LAB via VMnet8. Ce test simule un côté WAN VMware et ne prouve pas un accès depuis l'Internet public. Créer une instance OpenVPN UDP 1194, chiffrement AEAD moderne, compression désactivée et TLS 1.2 minimum, avec CA, certificat serveur et certificat utilisateur dédiés. Autoriser UDP 1194 du client VMnet8 vers le WAN ; pour ce client du même sous-réseau WAN, vérifier le reply-to sur cette seule règle et le désactiver seulement si nécessaire. Garder profil et clés hors du dépôt.
 
-Utiliser le tunnel 10.78.0.0/24 et les routes nécessaires vers Vikunja et le réseau NAS pour vérifier aussi le refus. Autoriser uniquement Vikunja HTTPS TCP 8443 depuis le VPN. Refuser SSH 22, SMB 445 et Grafana 3001 avec journaux. Ne pas pousser une route par défaut.
+Utiliser le tunnel 10.78.0.0/24 et les routes nécessaires vers InvoiceShelf et le réseau NAS pour vérifier aussi le refus. Autoriser uniquement InvoiceShelf HTTPS TCP 8443 depuis le VPN. Refuser SSH 22, SMB 445 et Grafana 3001 avec journaux. Ne pas pousser une route par défaut.
 
-Pour le test, retirer seulement les routes MGMT ajoutées pour le laboratoire et désactiver temporairement cet adaptateur hôte ; garder la console VMware. Déconnecté, l'application est inaccessible ; connecté, Vikunja est accessible mais les ressources interdites le restent ; après déconnexion, l'accès disparaît. Rétablir ensuite MGMT.
+Pour le test, retirer seulement les routes MGMT ajoutées pour le laboratoire et désactiver temporairement cet adaptateur hôte ; garder la console VMware. Déconnecté, l'application est inaccessible ; connecté, InvoiceShelf est accessible mais les ressources interdites le restent ; après déconnexion, l'accès disparaît. Rétablir ensuite MGMT.
 
 ## 8. État et preuves
 

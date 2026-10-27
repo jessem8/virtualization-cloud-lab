@@ -1,6 +1,6 @@
 # Plan de travail - deux PC
 
-Proposition du 25 octobre 2026. Les anciens plans et les PDF fournis ont été examinés comme des propositions, pas comme des configurations validées. Le présent plan attend une revue dans GitHub avant de commencer les modifications du laboratoire.
+Mis à jour le 27 octobre 2026. Les anciens plans et les PDF fournis restent des références historiques, pas des configurations validées. L’utilisateur a directement autorisé la configuration du PC A dans la prochaine tâche dédiée ; cette autorisation n’attend pas une validation par un pair ou une PR.
 
 ## 1. Objectif et périmètre
 
@@ -10,18 +10,18 @@ Livrable pédagogique : présentation et démonstration, sans rapport séparé s
 
 Conserver Windows, Ubuntu, TrueNAS, une application Docker, OPNsense, deux VLANs 802.1Q, un VPN restreint et Prometheus/Grafana. Aucun cloud public, ESXi imbriqué, Kubernetes, domaine AD ou plateforme supplémentaire n'est nécessaire.
 
-Les documents préparent les travaux. Aucun invité, réseau, VPN, NAS ou scénario n'est déclaré fonctionnel avant son contrôle. La préparation des guides n'autorise pas leur exécution.
+Ce plan décrit une cible. Aucun invité, réseau, VPN, NAS ou scénario n'est déclaré fonctionnel avant son contrôle réel.
 
 ## 2. Répartition proposée
 
-| PC | Invités et allocation initiale | Total invité |
+| PC | Invités et allocation cible | Total invité |
 |---|---|---|
 | A - jessem8 | OPNsense 3 Gio ; Windows 4 Gio | 7 Gio |
 | B - sanadzhioua | TrueNAS 8 Gio ; Ubuntu 2,5 Gio ; switch Alpine 0,5 Gio | 11 Gio |
 
-Le PC A dispose historiquement d'environ 15,7 Gio visibles et d'un i7-13700HX. La RAM et l'espace disponibles aujourd'hui restent à relever. Le PC B est supposé avoir au moins 16 Gio ; cette hypothèse doit être confirmée. Ces sommes n'incluent pas le système hôte, Codex, les navigateurs et les surcoûts VMware.
+La capacité actuellement disponible sur chaque hôte reste à confirmer. L’inventaire transmis pour B indique des VM préparées à 6 Gio pour TrueNAS et 4 Gio pour Ubuntu Desktop, contre des cibles de 8 Gio et 2,5 Gio. Confirmer avec Sanad la RAM physique libre et le choix des allocations avant de les modifier ; voir [état de B](evidence/PC_B_STATUS.md). Les totaux invités n’incluent pas l’hôte, Codex, les navigateurs ni VMware.
 
-Cette révision déplace Ubuntu, l'application, la supervision et le switch vers B : A gère réseau/Windows/VPN, B gère stockage/services. Les cinq VM et les 18 Gio alloués au total restent identiques. Le travail est mieux réparti ; la mémoire n'est pas égale, et B garde moins de marge. Vérifier sa capacité avant installation. Aucun nouveau composant n'est ajouté.
+Ubuntu, l’application, la supervision et le switch restent prévus sur B ; A gère le réseau, Windows et le VPN. Les cinq VM et les allocations du tableau sont des cibles, pas une mesure de capacité ni une preuve de démarrage simultané.
 
 ## 3. Schéma physique et logique
 
@@ -64,7 +64,7 @@ Chaque invité de service a une seule carte finale. Seul OPNsense a une carte WA
 | Windows | Defender actif, pare-feu local, Sysmon 1/3, audit Security réel |
 | Ubuntu | SSH par clé, refus mot de passe/root, iptables persistant, rsyslog, auditd et protection |
 | NAS | SMB autorisé/refusé, lecture seule, dataset chiffré, clé privée et restauration de fichier |
-| Docker | Vikunja/SQLite, projets/tâches Kanban, pièces jointes, droits lecture/édition/admin, authentification, persistance et restauration ; exercice du cours, historique des couches et Docker Bench |
+| Docker | InvoiceShelf 2.4.7/SQLite locale, comptes et rôle limité, facture fictive et PDF, persistance et restauration ; exercice du cours, couches d’image et Docker Bench |
 | Réseau | Tags VLAN20/30 sur trunk Ethernet, ports d'accès restreints, règles entrantes/sortantes et absence de contournement |
 | VPN | Tunnel chiffré, application autorisée, administration/SMB/Grafana refusés |
 | Supervision | Métriques Ubuntu/Windows et disponibilité applicative réelles, panne/reprise observées |
@@ -76,19 +76,19 @@ La matrice complète est docs/TEST_MATRIX.md. Toutes ses lignes commencent « no
 
 Réutiliser les invités adaptés et les installations vérifiées. Ne pas imposer un retour à Windows Server 2022 ou Ubuntu 24.04 uniquement pour suivre un ancien PDF. Contrôler l'édition réellement démarrée et la compatibilité des commandes avant modification.
 
-OPNsense 26.7.7 avec correctifs disponibles et TrueNAS Community Edition 25.10.7 sont les références vérifiées pendant la préparation. Employer les éditions stables officielles, vérifier les empreintes/signatures et consigner ce qui a réellement été installé. Les numéros exacts des images Docker ne sont pas repris comme des faits sans manifeste consultable.
+OPNsense 26.7.7 et TrueNAS Community Edition 25.10.7 sont les versions de référence de la préparation ; vérifier leur disponibilité stable, les empreintes/signatures et ce qui est réellement installé.
 
-Application finale : Vikunja 2.7.1 avec SQLite intégrée, sur Ubuntu du PC B, derrière le proxy Nginx HTTPS existant. Un conteneur applicatif et le proxy, sans base externe ni worker supplémentaire. Démonstration : tâches Kanban et pièces jointes, comptes éditeur et lecteur, modification autorisée/refusée, persistance et restauration depuis TrueNAS. Voir docs/APP.md pour les paramètres et sources officielles.
+Application finale : image officielle InvoiceShelf 2.4.7 sur Ubuntu B, SQLite dans le stockage local persistant d’Ubuntu et Nginx terminant HTTPS sur 8443 vers le service interne `webapp:8080`. Pas de base externe, de worker séparé ou de montage SMB actif pour SQLite. Démonstration : comptes/permissions, facture fictive, génération PDF, persistance et restauration depuis une archive cohérente. Voir [docs/APP.md](docs/APP.md).
 
-L'atelier Docker demandé au cours reste un exercice court : construire et expliquer l'exemple getting-started, garder les preuves puis l'arrêter. Vikunja est le seul service applicatif permanent ; ne pas compiler Vikunja depuis les sources pour cette séance.
+L’atelier Docker du cours reste court : construire et expliquer `docker/getting-started-app`, montrer ses couches puis l’arrêter. InvoiceShelf est le seul service applicatif permanent.
 
-Les ports de l'application HTTPS8443 et de Grafana3001 sont distincts. Prometheus et ses collecteurs restent internes. Docker bridge conserve l'isolation réseau ; les règles INPUT et DOCKER-USER/FORWARD sont vérifiées ensemble. Aucun accès Docker distant ou conteneur privilégié non requis.
+L’application HTTPS 8443 et Grafana 3001 sont des services distincts. Prometheus et ses collecteurs restent internes ; le collecteur Windows utilise 9182 et le syslog d’Ubuntu TCP 514. Les règles hôte Docker et DOCKER-USER/FORWARD sont examinées ensemble. Aucun accès Docker distant ou conteneur privilégié n’est requis.
 
-Les guides sont désormais uniquement en Markdown. Les anciens PDF et leur chaîne d'export sont retirés du dépôt ; les originaux locaux restent inchangés. Ne pas exécuter un kit externe absent : les configurations d'exploitation seront créées/relues dans les tâches approuvées. Aucun script absent n'est présenté comme prêt.
+Les guides actuels sont en Markdown ; les PDF retirés restent des références historiques. Les configurations d'exploitation seront créées et vérifiées pendant leur tâche dédiée.
 
 ## 7. Préserver la fluidité
 
-1. Garder 8 Gio pour TrueNAS, 11 Gio invités au total sur B, 7 sur A et un historique Prometheus court. B doit confirmer au moins 16 Gio physiques et sa marge réelle ; un total théorique ne suffit pas.
+1. Cibler 8 Gio pour TrueNAS, 11 Gio invités au total sur B, 7 sur A et un historique Prometheus court. Avant d’augmenter l’allocation TrueNAS, confirmer la RAM physique disponible et la marge réelle de B ; voir [état de B](evidence/PC_B_STATUS.md).
 2. Installer et mettre à jour les invités séparément ; construire les images et lancer ClamAV hors répétition complète.
 3. Ne lancer aucune VM d'un autre cours ; garder les disques actifs hors OneDrive et éviter les longues chaînes de snapshots.
 4. Commencer avec deux vCPU par invité de service, un pour SW-B ; ne pas attribuer tous les processeurs logiques à chaque VM.
@@ -99,27 +99,17 @@ Ces objectifs sont des seuils de travail, pas une certification de performance. 
 
 Conserver au moins 20 Gio physiques libres au démarrage et arrêter les écritures non nécessaires si l'espace devient insuffisant. Ni thin provisioning ni miroir de VMDK ne créent de capacité physique.
 
-## 8. Travail de la journée
+## 8. Ordre de travail
 
-Les créneaux ci-dessous sont indicatifs à partir du début autorisé. Les téléchargements, l'état initial des VM et les corrections peuvent les prolonger. Trois étudiants ont été évoqués ; ne pas planifier automatiquement quatre personnes.
+1. Terminer la présentation et aligner les documents. Cette étape ne modifie ni les VM ni les réseaux.
+2. Configurer le PC A dans la prochaine tâche dédiée, sous l’autorisation directe donnée le 27 octobre.
+3. Rencontrer Sanad pour finir le PC B et confirmer ses allocations de ressources.
+4. Quand les deux côtés indiquent qu’ils sont prêts, tester ensemble le trunk VLAN20/30 pendant 20 à 30 minutes. En cas d’échec, conserver l’erreur et s’arrêter pour diagnostiquer.
+5. Continuer alors avec le filtrage, InvoiceShelf, les partages NAS, le VPN, la supervision, la restauration et la répétition de charge.
 
-| Créneau relatif | PC A | PC B |
-|---|---|---|
-| Début, 30-45 min | Inventaire, sauvegarde des réglages, VMnet/MAC | Inventaire, stockage disponible, Ethernet |
-| Puis 1-2 h | OPNsense et VLANs ; contrôle du trunk avec B | SW-B et Ubuntu minimal ; contrôle du trunk avec A |
-| Puis 2-3 h | Windows, Sysmon/audit, règles et VPN | TrueNAS, Vikunja, Ubuntu/audit, Docker et supervision |
-| Quand les deux sont prêts | Contrôles de transport, règles, partages et VPN | Contrôles croisés et restauration |
-| Dernières 1,5-2 h | Redémarrage, ressources, présentation, répétition | Même répétition, preuves et sauvegardes |
+## 9. Coordination
 
-Garder le chemin réseau prioritaire. Un blocage prolongé se partage avec l'erreur exacte avant d'ajouter un nouveau composant. La contrainte « aujourd'hui » ne transforme pas un test absent en succès. Les fonctions de sécurité requises passent avant les améliorations décoratives ou un nouvel outil.
-
-## 9. Échanges GitHub
-
-Un dépôt privé, une PR de plan et deux responsabilités de machine suffisent. sanadzhioua relit la proposition et confirme si le PC A peut commencer sur la révision courante. Une approbation GitHub normale ou un commentaire explicite de cet autre participant suffit ; pas de commande spéciale ni de workflow de déploiement.
-
-Chaque Codex travaille sur sa machine et publie de courts points d'avancement et des preuves sans secrets. Le PC B peut commencer son périmètre quand son utilisateur ou l'autre participant l'y autorise. Les tests entre machines attendent que les deux côtés indiquent qu'ils sont prêts et coordonnent leur disponibilité.
-
-Voir docs/COORDINATION.md. La présence du dépôt, une invitation ou les PDF ne constituent pas un accord de démarrage. Une modification importante de topologie/sécurité se revoit avant exécution. Les contrôles de documents et l'inventaire en lecture seule sont permis pendant la préparation.
+Le dépôt privé et une PR suffisent pour partager le plan, les progrès et les preuves. La PR sert à coordonner ; elle n’est pas un prérequis à la configuration du PC A, directement autorisée par l’utilisateur le 27 octobre. Finir le PC B avec Sanad, après autorisation de la personne responsable de ce PC. Lancer les tests entre machines quand les deux côtés indiquent qu’ils sont prêts. Revoir ensemble les changements importants de topologie ou de sécurité avant de les appliquer. Ne pas publier de secrets. Voir [docs/COORDINATION.md](docs/COORDINATION.md).
 
 ## 10. Présentation et sauvegardes
 
@@ -140,13 +130,14 @@ Exigences : brief de projet examiné localement, atelier Docker et grille déjà
 - [Réseau dédié VMware](https://knowledge.broadcom.com/external/article/307810/creating-subnets-in-vmware-workstation.html)
 - [TrueNAS 25.10.7 et empreintes](https://download.truenas.com/TrueNAS-SCALE-Goldeye/25.10.7/)
 - [Matériel TrueNAS](https://www.truenas.com/docs/scale/25.10/gettingstarted/scalehardwareguide/)
-- [Vikunja, installation Docker et SQLite](https://vikunja.io/docs/installing/)
-- [Vikunja, exemple Docker SQLite](https://vikunja.io/docs/full-docker-example/)
-- [Vikunja, proxy HTTPS](https://vikunja.io/docs/reverse-proxy/)
+- [InvoiceShelf 2.4.7, version stable](https://github.com/InvoiceShelf/InvoiceShelf/releases/tag/2.4.7)
+- [InvoiceShelf, guide Docker officiel](https://github.com/InvoiceShelf/docker)
+- [InvoiceShelf 2.4.7, exemple Docker SQLite](https://github.com/InvoiceShelf/InvoiceShelf/blob/2.4.7/docker/production/docker-compose.sqlite.yml)
+- [InvoiceShelf 2.4.7, permissions](https://github.com/InvoiceShelf/InvoiceShelf/blob/2.4.7/config/abilities.php)
 - [Exercice Docker du cours](https://github.com/docker/getting-started-app)
 - [Docker et iptables](https://docs.docker.com/engine/network/firewall-iptables/)
 - [Docker Bench for Security](https://github.com/docker/docker-bench-security)
 - [Sysmon Microsoft](https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon)
 - [Windows exporter](https://github.com/prometheus-community/windows_exporter)
 
-Les sources techniques principales ont été consultées pendant la revue ; elles n'établissent pas la compatibilité effective des pilotes de ces deux PC. État actuel : architecture relue, documents préparés ; aucune installation, capture VLAN, mesure de charge, restauration ou connexion VPN exécutée dans cette préparation.
+Les artefacts officiels InvoiceShelf 2.4.7 ont été consultés le 27 octobre pour confirmer l’image, le port interne, les variables SQLite, les chemins persistants et la clé applicative. Les autres sources techniques n’établissent pas la compatibilité effective des pilotes de ces PC. État actuel : documents préparés ; aucune installation, capture VLAN, mesure de charge, restauration ou connexion VPN exécutée dans cette mise à jour.

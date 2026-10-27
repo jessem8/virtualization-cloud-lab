@@ -1,0 +1,10 @@
+import {createServer} from 'node:http';
+import {readFile,stat} from 'node:fs/promises';
+import {fileURLToPath} from 'node:url';
+import {dirname,join,extname,resolve,sep} from 'node:path';
+const docs=resolve(dirname(fileURLToPath(import.meta.url)),'../docs'),assets=resolve(docs,'network-assets'),port=Number(process.env.LAB_DIAGRAM_PORT||3187);
+const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.svg':'image/svg+xml','.woff2':'font/woff2','.txt':'text/plain; charset=utf-8','.md':'text/plain; charset=utf-8','.png':'image/png'};
+const allowed=new Set(['/','/network-lab-3d.html','/network-lab-2d.svg','/DIAGRAM_DESIGN.md']);
+const server=createServer(async(req,res)=>{try{if(req.method!=='GET'&&req.method!=='HEAD'){res.writeHead(405);return res.end();}const pathname=decodeURIComponent(new URL(req.url,'http://127.0.0.1').pathname);if(!allowed.has(pathname)&&!pathname.startsWith('/network-assets/')){res.writeHead(404);return res.end('Not found');}const file=resolve(docs,'.'+(pathname==='/'?'/network-lab-3d.html':pathname));if(!file.startsWith(docs+sep)||pathname.startsWith('/network-assets/')&&!file.startsWith(assets+sep)){res.writeHead(403);return res.end();}const info=await stat(file);if(!info.isFile()){res.writeHead(404);return res.end();}res.writeHead(200,{'Content-Type':types[extname(file)]||'application/octet-stream','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'"});res.end(req.method==='HEAD'?undefined:await readFile(file));}catch{res.writeHead(404);res.end('Not found');}});
+server.on('error',e=>{console.error(e.code==='EADDRINUSE'?'Port3187 déjà utilisé. Réutiliser le diagramme existant ou choisir LAB_DIAGRAM_PORT.':e.message);process.exitCode=1;});
+server.listen(port,'127.0.0.1',()=>console.log('Diagramme : http://127.0.0.1:'+port+' · écoute locale uniquement'));

@@ -1,47 +1,80 @@
-# Project state
+# Project checkpoint
 
-Updated 2026-10-25, Africa/Tunis. Current work: revise the two-PC allocation and application, keep Markdown only, and update the existing GitHub PR. Infrastructure implementation has not started.
+Updated 27 October 2026, Africa/Tunis.
 
-## Current request and decisions
-- User asks to finish today on at most two physical PCs, smoothly and securely, keeping wording and GitHub coordination simple.
-- Both PCs are together and an Ethernet cable is available. This supersedes the earlier separate-home/Wi-Fi-only assumption.
-- User's machine is A (GitHub jessem8). Other machine is B (GitHub sanadzhioua); user explicitly requested collaborator access.
-- Both old BUILD_PLAN.md and the supplied PDFs are proposals. Neither is assumed correct. Current recommendation is also provisional pending review and runtime checks.
-- User requested a more useful app and more actual work on B. Revised guests: A OPNsense3GiB + Windows4GiB =7GiB; B TrueNAS8GiB + Ubuntu2.5GiB + SW-B0.5GiB =11GiB. Same five guests,18GiB total. This balances setup responsibilities, not equal RAM; B capacity remains to verify.
-- Physical Ethernet now carries tagged VLAN20/30 between OPNsense A and SW-B. Ubuntu/NAS use separate access ports on B. MGMT99 remains separate on A. First approved20-30min checks physical tags and bidirectional forwarding; stop/report a failure rather than guessing drivers all day.
-- The earlier Homebox inventory/document preference was superseded by the user's explicit decision to choose **Vikunja** for the professor's free-choice application. Vikunja 2.7.1 + bundled SQLite, persistent database/attachments and the existing Nginx HTTPS proxy require no extra VM, database, worker or network change. GitHub remains the Codex coordination channel. The tutorial sample stays a stopped exercise. Guides remain Markdown-only.
-- Read BUILD_PLAN.md, docs/MACHINE_A.md, docs/MACHINE_B.md, docs/LIAISON.md and docs/TEST_MATRIX.md for the current proposal.
+## Start here
 
-## Approval and communication
-User authorized preparing/publishing documentation, creating a private remote repository/PR, adding sanadzhioua and communicating through GitHub. User requires review/approval before Machine A begins guest or network work. A normal approval or explicit start comment from the other participant on the current plan revision is enough. Keep the handoff simple; no autonomous provisioning, polling daemon or additional approval ceremonies.
-Machine B follows its own user's or the peer's explicit authorization. Joint tests wait for both sides to report ready. Direct later human directions govern.
-See docs/COORDINATION.md. This checkpoint is not itself a start approval.
+The current task finishes the desktop network presenter, reviews it, aligns the repository and pushes branch `docs/two-pc-plan` to the existing [PR #1](https://github.com/jessem8/virtualization-cloud-lab/pull/1). The next task is **full Machine A configuration in a new chat**. Do not repeat the diagram design phase.
 
-## Requirements retained
-Presentation plus live demo, no separate report per user-supplied professor clarification. Windows Sysmon/Defender/local firewall/security audit; Ubuntu SSH keys/iptables/log collection/audit/protection; TrueNAS SMB/permissions/encryption/snapshot restoration; Vikunja/SQLite plus the short Docker tutorial exercise, image history and Docker Bench; real Prometheus/Grafana; gateway firewall/NAT/filtering; restricted VPN; actual VLANs.
-No separate VM escape exercise/research; do not call ordinary isolation an escape. No public cloud, nested ESXi, AD or Kubernetes. Preserve existing unrelated guests/data, including Kali and ESXi.
+The user explicitly authorized Machine A configuration. No peer or PR start approval is pending. The agreed sequence is:
+1. Finish/review/push this presenter and save this checkpoint.
+2. In a new chat, guide the beginner through configuring Machine A (this PC).
+3. Meet Sanad and finish Machine B.
+4. Connect the two PCs, check the trunk, then complete the application/security/recovery demonstration together.
 
-## Evidence and limits
-- Four supplied PDFs (36pages) text-read; key diagram/tables visually inspected. They depend on an absent/uninspected kit_demain, switch application choice and omit explicit audit/workshop steps. Corrected guides remove that hidden dependency.
-- Previous A10/B8 private-trunk proposal was superseded by the request for more work on B. A7/B11 remains conditional on early tagged transport and resource checks. Vikunja's official Docker/SQLite, permissions and reverse-proxy docs and v2.7.1 image tag/release were checked read-only. Actual runtime/security/footprint tests have not run.
-- Historical A hardware: i7-13700HX,15.71GiB visible,79.31GiB free disk on October23. Today's available resources, other PC hardware, installed guest states and forwarding behavior remain unverified.
-- Ubuntu26.04.1 is user-reported; Windows2025/OPNsense26.7/TrueNAS25.10.7 installers were previously observed, not boot-verified.
-- Blackboard project brief, workshop and grading evidence were inspected in prior discussion. Ignore placeholder due dates. Older report4points reassignment was not confirmed. Three students was the earlier assumption, not four workers.
-- PDF versions/images previously claimed verified do not imply the scripts exist or work. Pin actual software during approved setup.
-- No guest boot, installation, host network change, integration test, VPN connection, NAS restoration or simultaneous performance test occurred in this documentation task.
+Keep instructions short and concrete. Mention an uncertainty only when it affects the next action. Do not mistake the presenter's simulations for working VM/network results.
 
-## Repository and outputs
-Only editable Markdown guides remain in the current repository tree. PDF outputs, original PDF copies and generation tooling are removed. Downloads originals remain unchanged. Prior plans are recoverable in Git history; earlier local checkpoints also remain in ignored .local-history.
-Do not publish credentials, keys, VPN profiles, raw configuration exports or VM images. Repository: https://github.com/jessem8/virtualization-cloud-lab (private, verified). Branch: docs/two-pc-plan. sanadzhioua write access was verified after the invitation was accepted. Use the planning PR for its current revision and approval.
+## Fixed scope and application
 
-## Next action
-Planning PR https://github.com/jessem8/virtualization-cloud-lab/pull/1 is open; sanadzhioua is requested as reviewer and has write access. This revision updates app/allocation and needs review of the current PR head. Wait for the other participant's approval before Machine A implementation. Record the reviewed revision when approval arrives. All live lab tests remain unrun.
+Two physical PCs, five VM. French explanations with standard technical names. Presentation plus live demo; no separate report according to the professor clarification provided by the user. No public cloud, nested ESXi, AD, Kubernetes or VM escape exercise. Preserve unrelated guests and data, including Kali/ESXi.
 
-## Lessons
-1. Treat plans as hypotheses and preserve later user corrections.
-2. Physical tag transport is an explicit gate when Ubuntu and NAS are hosted behind SW-B.
-3. Separate real VLAN evidence from VMnet/subnet labels.
-4. Balance implementation responsibilities as well as RAM, without removing required security.
-5. Keep guest data outside synchronization and preserve unrelated work.
-6. Distinguish source review, static checks and actual runtime evidence.
-7. One shared planning PR and short progress comments are enough for this lab.
+The final app is **InvoiceShelf2.4.7**, on Ubuntu B. It demonstrates a fictitious company, invoices/PDF, expenses, login/roles, persistence and recovery. Older Homebox/Vikunja choices are superseded.
+
+Read the current operational guides: BUILD_PLAN.md, docs/MACHINE_A.md, docs/MACHINE_B.md, docs/LIAISON.md, docs/APP.md, docs/TEST_MATRIX.md and docs/COORDINATION.md. They are aligned to InvoiceShelf and the direct A authorization.
+
+## Machines and interfaces
+
+| PC | Owner | Guests and RAM target |
+|---|---|---|
+| A | jessem8 | OPNsense3 Gio + Windows4 Gio |
+| B | sanadzhioua | Alpine SW-B0.5 Gio + Ubuntu2.5 Gio + TrueNAS8 Gio |
+
+B's26 October snapshot reports Alpine live ISO login only, not installed; Ubuntu Desktop4 Gio and TrueNAS6 Gio prepared with empty disks and no adapters. Reconcile those prepared allocations with Sanad before changing B. See evidence/PC_B_STATUS.md.
+
+A's27 October pre-reboot read-only snapshot: i7-13700HX,15.71 Gio visible,2.59 Gio available and36.79 Gio free on C:. Refresh inventory in the new chat; the PC has since restarted. Keep active VM disks outside OneDrive. Previously observed installers are inventory references, not a requirement to replace a suitable existing guest.
+
+| Network | Mapping and address |
+|---|---|
+| WAN | OPNsense DHCP on existing VMnet8 NAT; Wi-Fi is host Internet |
+| MGMT | VMnet13 host-only, non-tagged10.77.99.0/24; OPNsense .1, host A .254 |
+| CLIENTS | VMnet10 private, non-tagged10.77.10.0/24; OPNsense .1, Windows .10 |
+| TRUNK | VMnet12 explicitly bridged to dedicated Ethernet on each PC; tags20/30 only; parent without IP/native VLAN |
+| SERVEURS20 | OPNsense10.77.20.1; SW-B access VMnet14; Ubuntu10.77.20.10 |
+| STOCKAGE30 | OPNsense10.77.30.1; SW-B access VMnet11; TrueNAS10.77.30.10 |
+| VPN | OpenVPN10.78.0.0/24, UDP1194; client app on host A through simulated WAN |
+
+MGMT is not VLAN99. CLIENTS is not VLAN10. SW-B is L2 without IP/routing. Ubuntu→NAS must travel **B/tag20 → OPNsense A → B/tag30**. No NAT between lab zones. Restrict access ports and remove temporary service-guest NAT adapters before joint validation.
+
+## Service contract
+
+- Ubuntu B: Nginx HTTPS8443 → InvoiceShelf8080 on private Docker bridge. Only8443 is published.
+- Official InvoiceShelf2.4.7 image uses local SQLite at /var/www/html/storage/app/database.sqlite, persistent storage and Modules mounts. APP.md records tagged official configuration sources and private key handling.
+- SQLite stays local. Stop the app, archive its persistent/configuration data coherently, resume, then send the archive to the restricted NAS app-backup dataset. Restore a separate copy.
+- Prometheus on Ubuntu polls Windows exporter9182; Grafana3001 displays metrics. Prometheus9090 is internal. OPNsense sends logs to Ubuntu TCP514.
+- VPN allows application8443 only; deny SSH22, NAS445 and Grafana3001. Remove the host's MGMT bypass during that demonstration.
+- Required OS/security work remains: Defender/firewall/Sysmon/audit on Windows; SSH keys/iptables/audit/logging/protection on Ubuntu; SMB ACLs/encryption/snapshots on NAS; Docker course exercise/history and Docker Bench.
+
+## Presenter delivery
+
+Entry: docs/network-lab-3d.html. Launch `powershell -NoProfile -File diagram/start.ps1`, then http://127.0.0.1:3187/. The server is loopback-only and serves explicitly allowed presenter files/assets. Node uses the bundled runtime when present, otherwise PATH.
+
+Sources: diagram/app.mjs, scene.mjs, scenarios.mjs, map.mjs, icons.mjs; facts in docs/network-assets/topology.json. Rebuild from diagram/ with `node build.mjs`; dependencies are locked, node_modules ignored. Fonts/assets are local. docs/network-lab.html preserves B's earlier diagram.
+
+The final pass adds named ports, directional packet travel, VLAN tag changes, firewall decision markers, selectable links, functional device expansions, Ubuntu/Docker containment and local-volume distinction. Breadcrumbs and return preserve the scenario/step. Full screen, manual/automatic play, reduced motion,2D fallback and SVG export remain available. Desktop presentation only; phone checks are explicitly excluded.
+
+Astra supplied a read-only critique; a separate final source review identified internal-link visibility, encoded asset traversal and2D direction issues. All three were corrected. See evidence/DIAGRAM_VERIFICATION.md for actual checks and review scope.
+
+## Current handoff status
+
+No VM or host network was changed in this presenter task. Machine A configuration is the next work item; Machine B completion and joint integration follow it. Keep the detailed implementation results in the existing machine evidence files as work proceeds, rather than repeatedly listing every pending check in conversation.
+
+Git base brought in B's four commits through921eebf. Publish this delivery on the existing shared branch/PR; do not merge or force-push unless the user asks. Keep secrets, VM images, VPN profiles and private recovery/configuration exports out of Git.
+
+## Lessons to retain
+
+- Make the packet path and enforcement points explain the architecture; decorative3D alone does not.
+- Separate a local storage relation from a VLAN link.
+- Keep request/response captions aligned to animation direction.
+- Inspection should preserve the walkthrough and ownership context.
+- Human instructions supersede the old start-approval gate.
+- Inventory and configure A next; do not restart planning or add another platform.

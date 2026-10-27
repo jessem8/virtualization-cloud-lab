@@ -1,35 +1,36 @@
 # Virtualization and Cloud laboratory
 
-Private planning for a secure student lab on two physical PCs. Current proposal: **Vikunja with SQLite**, five guests, shared work across both machines. No infrastructure has been deployed by this planning task.
+Secure student lab on two physical PCs. Current application target: **InvoiceShelf 2.4.7 with local SQLite** on Ubuntu B. The deployment and live network checks remain pending; the application guide and machine plans now match this choice.
 
-## Plan and tasks
+## Interactive presentation
 
-Use the current head of [PR #1](https://github.com/jessem8/virtualization-cloud-lab/pull/1), branch `docs/two-pc-plan`, until reviewed and merged.
+Run `powershell -NoProfile -File diagram/start.ps1` and open http://127.0.0.1:3187/. The desktop presenter is in French: click a component to inspect its cutaway, use **Retour au réseau** to return, or follow an application, VPN, backup or monitoring path. **F** toggles full screen.
 
-- [Plan de travail](BUILD_PLAN.md)
-- [Machine A - OPNsense, Windows and VPN](docs/MACHINE_A.md)
-- [Machine B - TrueNAS, Ubuntu, Vikunja, monitoring and switch](docs/MACHINE_B.md)
-- [Vikunja setup and demonstration](docs/APP.md)
-- [Addressing, VLANs and access rules](docs/LIAISON.md)
-- [Test matrix - live checks unrun](docs/TEST_MATRIX.md)
-- [Simple GitHub coordination](docs/COORDINATION.md)
+- [Presenter source](docs/network-lab-3d.html)
+- [Usage, design and configuration truth](docs/DIAGRAM_DESIGN.md)
+- [Actual diagram verification and limits](evidence/DIAGRAM_VERIFICATION.md)
+- [Standalone network SVG](docs/network-lab-2d.svg)
+- [Earlier diagram from B](docs/network-lab.html)
+
+The animations explain expected paths; they are not live traffic or evidence of successful security tests. Assets and fonts are local. The server listens only on 127.0.0.1.
+
+## Plan and coordination
+
+Use [PR #1](https://github.com/jessem8/virtualization-cloud-lab/pull/1) for the shared plan and brief progress updates.
+
+- [Project decisions and current limits](PROJECT_STATE.md)
+- [Work plan](BUILD_PLAN.md)
 - [Architecture review](docs/ARCHITECTURE_REVIEW.md)
+- [Application: InvoiceShelf 2.4.7](docs/APP.md)
+- [Machine A: OPNsense, Windows and VPN](docs/MACHINE_A.md)
+- [Machine B: TrueNAS, Ubuntu, monitoring and switch](docs/MACHINE_B.md)
+- [Addressing, VLANs and access rules](docs/LIAISON.md)
+- [Live test matrix: unrun](docs/TEST_MATRIX.md)
+- [GitHub coordination](docs/COORDINATION.md)
+- [B's declared preparation](evidence/PC_B_STATUS.md)
 
-Documentation is Markdown only. PDF copies, exports and generation tooling have been removed. Original input files in the user's Downloads folder were not changed.
+A hosts OPNsense and Windows. B hosts SW-B, Ubuntu and TrueNAS. A dedicated Ethernet trunk carries tags 20/30. CLIENTS and MGMT are separate non-tagged networks. Ubuntu→NAS must cross OPNsense on A in VLAN 20 and return to B in VLAN 30.
 
-## Allocation
+The user directly authorized PC A configuration in the next task; no peer or PR approval is pending. B reports TrueNAS at 6 Gio prepared / 8 Gio target and Ubuntu Desktop at 4 Gio prepared / 2.5 Gio target. Physical RAM and simultaneous capacity are unverified. Joint tests begin after both sides report ready.
 
-| Machine | Owner | Guests | Planned guest RAM |
-|---|---|---|---|
-| A | jessem8 | OPNsense3GiB, Windows4GiB | 7GiB |
-| B | sanadzhioua | TrueNAS8GiB, Ubuntu2.5GiB, SW-B0.5GiB | 11GiB |
-
-This moves actual Ubuntu/application/switch work to B; total guest RAM remains18GiB. B's hardware and free memory are unverified. Ethernet carries tagged VLAN20/30; verify it at the start of approved network work and stop/report a failure promptly. Ubuntu and NAS remain separate zones.
-
-Vikunja provides collaborative projects, Kanban tasks, attachments and Read/Read & Write/Admin project permissions. Use one official application container, SQLite and the existing small Nginx HTTPS proxy; no external database or runner. GitHub remains the Codex coordination channel. The course sample is a short exercise, not another persistent application.
-
-## Start
-
-sanadzhioua reviews this material revision and approves or comments whether A may start. B follows its own user's or peer's explicit authorization. Both sides post brief progress/blocker comments in PR #1 and coordinate joint tests after local readiness. Documentation/read-only inventory may precede approval; guest/network changes may not.
-
-[Review evidence](evidence/PLAN_REVIEW.md) separates source/document checks from runtime results. No credentials, keys, VPN profiles, secret-bearing exports or VM images belong in Git.
+Keep credentials, private keys, VPN profiles, sensitive exports and VM images out of Git.

@@ -1,27 +1,38 @@
 # Architecture review
 
-Updated2026-10-25. Current recommendation follows the user's request for a more useful app and more implementation on B. It remains subject to peer review and runtime checks.
+Updated 27 October 2026. This is the current target architecture; guest, network and application behavior still require live verification. The user authorized PC A configuration in the next task. PC B will be finished with Sanad, and joint tests start when both sides report ready.
 
-## Current split
+## Two-PC split and resources
 
-A=OPNsense3 + Windows4 =7GiB (2VMs). B=TrueNAS8 + Ubuntu2.5 + SW-B0.5 =11GiB (3VMs). Five guests and18GiB total, unchanged. This redistributes setup/CPU responsibilities; it does not equalize RAM. B has less host headroom and must confirm its capacity before allocation.
+| PC | Guest targets | Current resource evidence |
+|---|---|---|
+| A — jessem8 | OPNsense 3 Gio; Windows 4 Gio | Available host RAM and disk space must be checked before work. |
+| B — sanadzhioua | TrueNAS 8 Gio; Ubuntu 2.5 Gio; SW-B 0.5 Gio | B reports TrueNAS prepared at 6 Gio and Ubuntu Desktop at 4 Gio. Physical RAM and usable headroom remain unverified. |
 
-Use OPNsense on A and filtering SW-B on B, with a tagged20/30 Ethernet trunk. Ubuntu and NAS have separate untagged access ports. Keep MGMT99 separate from Windows clients. Physical tag transport is the early20-30minute network gate; preserve exact errors/captures and stop if it fails, rather than changing drivers all day.
+The five guests and 18 Gio are plan allocations, not proof that they can all run together. Confirm B’s actual capacity and prepared guest settings before changing allocations; see [B’s status](../evidence/PC_B_STATUS.md).
 
-The former A10/B8 private-trunk/untagged-storage proposal was reviewed but placed most setup on A. It is superseded by this explicit user decision. A shared Ubuntu/NAS VLAN was rejected because it weakens the required separation. No overlay, extra gateway or VM is added.
+## Network separation
 
-## Application
+A uses VMnet10 for untagged Windows clients, VMnet13 for untagged MGMT at 10.77.99.0/24, and VMnet12 bridged to its dedicated Ethernet card for tagged VLANs 20 and 30. MGMT is a network, not VLAN 99.
 
-Vikunja 2.7.1 + SQLite intégrée, avec le proxy HTTPS Nginx existant, est documenté officiellement. Projets/tâches Kanban, pièces jointes et permissions Read/Read & Write/Admin permettent de démontrer les accès autorisés et refusés, sans base externe, worker ou nouvelle VM. Garder HTTPS8443 distinct de Grafana3001. Version/image vérifiées par lecture ; persistance, TLS, permissions et consommation de ressources restent à tester après accord.
+On B, SW-B connects Ubuntu through VMnet14 as an untagged VLAN 20 access port and TrueNAS through VMnet11 as an untagged VLAN 30 access port. The physical Ethernet trunk carries only tagged VLANs 20 and 30 between the switches. Ubuntu-to-NAS traffic must go from B in VLAN 20 through OPNsense on A and back to B in VLAN 30. A shared Ubuntu/NAS VLAN was rejected because it removes this separation.
 
-The Docker course sample remains a short exercise with retained build/history evidence, then is stopped. Vikunja is the sole persistent application. Docker Bench evaluates Ubuntu's Docker host.
+When both sides are ready, check tag transport for 20–30 minutes before configuring the services. If it fails, keep the captures and error and diagnose the specific link.
 
-## Controls retained
+## Application and service paths
 
-Bridge filtering/PVID0/no nativeVLAN1; source-preserving routing; INPUT and DOCKER-USER/FORWARD; private management; Windows Sysmon/Defender/audit; Ubuntu SSH/AV/auditd/rsyslog; restricted VPN; real Windows/Ubuntu/app monitoring; NAS ACL/encryption/restore. A dedicated NAS backup account/dataset receives consistent stopped-Vikunja database-and-attachment archives; live databases stay local to Ubuntu.
+Use the official InvoiceShelf 2.4.7 image with SQLite on Ubuntu’s local persistent storage. Nginx terminates HTTPS on 8443 and forwards to the private Docker service `webapp:8080`; port 8080 is not published externally. InvoiceShelf has application accounts and roles for the fictitious-invoice and PDF demonstration. SQLite must not be stored on active SMB.
 
-The same-subnet VMnet8 VPN rule checks reply-to, with management bypass removed for testing. Both hypervisor administrators remain trusted. Virtual mirror/snapshots are lab controls, not independent physical backup.
+A client on A’s VMnet8 NAT network simulates the VPN’s outside path. The VPN is to reach InvoiceShelf HTTPS 8443 only; SSH 22, SMB 445 and Grafana 3001 remain denied. This does not demonstrate Internet access.
 
-## Verification and limits
+Ubuntu hosts Prometheus locally and Grafana on 3001. Prometheus collects Windows exporter metrics on 9182; OPNsense sends Ubuntu syslog over TCP 514. These paths, the application, restore, TLS and resource usage remain untested.
 
-The architect supports A7/B11 as the simplest2/3VM split preserving NAS isolation, conditional on the early trunk gate. B capacity, current guest state, driver behavior and full-load performance remain unknown. No guest was started or changed, and no live test ran during this revision. Markdown replaces PDF outputs; document checks are not runtime evidence.
+## Controls and recovery
+
+Retain filtering on both OPNsense and SW-B, separate access ports, host firewalls, Windows Defender/Sysmon/audit, Ubuntu SSH/audit/logging, NAS ACLs, encryption and the restricted VPN. Review both host firewall and Docker forwarding rules for published ports.
+
+For recovery, stop InvoiceShelf before archiving its local `storage`, `Modules` and configuration together. Transfer the consistent archive to the restricted `tank/app-backups` dataset with the dedicated backup account, then test a separate local restore copy. Keep active SQLite off SMB and secrets out of Git.
+
+## Verification state
+
+All live lab checks remain unrun. No VM, host network or guest was changed in this documentation update.

@@ -1,32 +1,32 @@
 # Matrice de vérification
 
-Révision Vikunja et répartition A7/B11 du 25 octobre 2026. Tous les contrôles du laboratoire sont non exécutés. Après accord, noter date, révision, source/destination/port, attendu, observé et preuve expurgée. Un service doit fonctionner depuis une source autorisée avant de démontrer un refus.
+Révision du 27 octobre 2026 (InvoiceShelf 2.4.7). Tous les contrôles restent non exécutés. Pour chaque essai, noter la date, la révision, la source, la destination et le port, puis l’attendu, l’observé et une preuve expurgée. Vérifier le service depuis une source autorisée avant de démontrer un refus.
 
 | ID | Contrôle | Résultat attendu / preuve | Responsable | État initial |
 |---|---|---|---|---|
-| T01 | Inventaire | RAM/espace/versions/MAC/VMnet réels ; B au moins16Gio à confirmer | A+B | Non exécuté |
+| T01 | Inventaire | RAM, espace, versions, MAC et VMnet réels ; capacité libre de B à confirmer (TrueNAS préparé à 6 Gio et Ubuntu Desktop à 4 Gio, cibles 8 et 2,5 Gio) | A+B | Non exécuté |
 | T02 | SW-B | Filtrage/PVID0 ; trunk20/30 ; accès20/30 ; aucun VLAN1/IP ; persistance | B | Non exécuté |
-| T03 | Trunk physique, premier contrôle réseau20-30min | Tags20/30 aux deux extrémités et Ethernet ; accès non tagués ; ARP/unicast bidirectionnels | A+B | Non exécuté |
+| T03 | Trunk physique, premier contrôle (20–30 min) | Tags VLAN 20/30 aux deux extrémités ; accès non tagués ; ARP et unicast bidirectionnels | A+B | Non exécuté |
 | T04 | Restriction VLAN | Tag30 émis depuis accès Ubuntu refusé ; trafic20 normal conservé | B avec A | Non exécuté |
-| T05 | Zones | Windows->Vikunja/SMB permis ; Windows->SSH/NAS admin refusé avec logs | A+B | Non exécuté |
+| T05 | Zones | Windows vers InvoiceShelf et SMB autorisés ; SSH Ubuntu et administration TrueNAS refusés avec journaux | A+B | Non exécuté |
 | T06 | Sysmon | Événements1/3 réels | A | Non exécuté |
 | T07 | Audit/firewall Windows | Stratégie audit,4624/4625 ; service actif autorisé puis bloqué | A | Non exécuté |
 | T08 | SSH Ubuntu | Clé MGMT permise ; mot de passe/root refusés ; pas de lockout | B avec A | Non exécuté |
 | T09 | Pare-feu Ubuntu/Docker | INPUT+DOCKER-USER/FORWARD ; publications limitées ; persistance | B | Non exécuté |
 | T10 | Audit/logs Ubuntu | auditd réel ; blocage OPNsense reçu par rsyslog ; rotation | B avec A | Non exécuté |
 | T11 | Protection | Defender/signatures et scan ClamAV datés, sans gros scan pendant répétition | A+B | Non exécuté |
-| T12 | Vikunja | Projet/tâche et pièce jointe ; éditeur autorisé, lecteur modification refusée, visiteur refusé ; comptes/tâches/fichiers persistants après recréation | B avec A | Non exécuté |
-| T13 | Atelier Docker | Tutoriel court construit/historique retenu puis arrêté ; image Vikunja/digest/couches ; Bench et corrections | B | Non exécuté |
+| T12 | InvoiceShelf | Facture et PDF fictifs ; administrateur autorisé, rôle limité en lecture seule ; compte et données persistent après recréation | B avec A | Non exécuté |
+| T13 | Atelier Docker | Exemple du cours construit, historique conservé puis arrêté ; digest et couches de l’image InvoiceShelf ; Docker Bench et corrections | B | Non exécuté |
 | T14 | Monitoring | Ubuntu/Windows identifiés ; métriques réelles ; Prometheus/collecteurs non exposés | B avec A | Non exécuté |
-| T15 | Panne/reprise | Indisponibilité Vikunja et perte collecteur séparées, puis retour sain | B | Non exécuté |
+| T15 | Panne/reprise | Indisponibilité InvoiceShelf et perte d’un collecteur testées séparément, puis retour à l’état sain | B | Non exécuté |
 | T16 | ACL NAS | AliceRW ; lecteurRO et écriture refusée ; bob refusé sans confusion1219 | B avec A | Non exécuté |
 | T17 | Snapshot/chiffrement | Dataset chiffré, clé privée, fichier restauré et comparé | B avec A | Non exécuté |
 | T18 | Entrée/sortie | WAN direct->services refusé ; sortie interdite vers service contrôlé avec log | A avec B | Non exécuté |
-| T19 | VPN | Déconnecté/connecté/déconnecté ; Vikunja8443 autorisé ; NAS445/SSH22/Grafana3001 refusés | A avec B | Non exécuté |
+| T19 | VPN | Accès déconnecté, connecté puis déconnecté ; InvoiceShelf HTTPS 8443 autorisé ; NAS SMB 445, SSH 22 et Grafana 3001 refusés | A avec B | Non exécuté |
 | T20 | Redémarrage | Switch/règles/services/dataset et accès principaux persistants | A+B | Non exécuté |
 | T21 | Fluidité | Tous invités >=10min ; RAM/pagination/swap/temps réponse réels ; aucune surcharge soutenue | A+B | Non exécuté |
 | T22 | Présentation | Schéma/rôles/chronologie/limites et répétition | Groupe | Non exécuté |
-| T23 | Sauvegarde Vikunja->NAS | Vikunja arrêté pendant archive db/files/config ; compte NAS dédié ; restauration isolée avec tâche et pièce jointe vérifiées | B avec A | Non exécuté |
+| T23 | Sauvegarde InvoiceShelf vers NAS | InvoiceShelf arrêté pendant l’archive de storage, Modules et configuration ; compte NAS dédié ; facture et PDF vérifiés après restauration isolée | B avec A | Non exécuté |
 
 ## Précisions
 
@@ -34,11 +34,11 @@ Révision Vikunja et répartition A7/B11 du 25 octobre 2026. Tous les contrôles
 - Le câble est tagué. Une communication non taguée ou le seul état « connecté » ne valide pas T03. Tenir compte des offloads en recoupant les captures.
 - T04 reste temporaire ; ne pas modifier l'IP principale d'Ubuntu. Les ports d'accès du switch doivent rejeter les tags non autorisés.
 - T09 distingue un port uniquement lié à loopback/interne d'un service actif bloqué par une règle. Un port fermé ne prouve pas le filtrage.
-- T12 recrée le conteneur en gardant les volumes ; ne pas exécuter une commande supprimant les volumes. Vikunja est le seul service applicatif permanent.
+- T12 recrée le conteneur en gardant les volumes ; ne pas exécuter une commande qui les supprime. InvoiceShelf est le seul service applicatif permanent.
 - T18 utilise un service contrôlé côté WAN, vérifié depuis ce côté avant le refus depuis l'invité ; pas de sondage de systèmes tiers au hasard.
 - T19 retire temporairement le chemin MGMT de l'hôte et vérifie les routes du tunnel. Pousser la route NAS pour que le refus arrive à OPNsense. Cela reste un WAN simulé.
 - T21 : objectifs d'environ2Gio disponibles par hôte, pas de pagination/swap soutenue, actions courantes en quelques secondes. B=11Gio invités exige une mesure ; un tableau ne suffit pas.
-- T23 ne monte pas la base SQLite active sur SMB. L'archive contient des secrets et reste privée. Le conteneur Vikunja n'a pas les identifiants de sauvegarde NAS.
+- T23 arrête InvoiceShelf avant d’archiver SQLite et ses fichiers locaux. L’archive contient des secrets et reste privée. Le conteneur InvoiceShelf n’a pas les identifiants de sauvegarde NAS.
 - Les preuves publiées excluent mots de passe, clés, profilsVPN et exports bruts.
 
 ```text

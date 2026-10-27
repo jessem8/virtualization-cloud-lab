@@ -3,3 +3,11 @@
 *.json text eol=lf
 *.yml text eol=lf
 *.sh text eol=lf
+
+*.mjs text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.yaml text eol=lf
+docs/network-assets/diagram.bundle.js -whitespace linguist-generated=true
+docs/network-lab-2d.svg linguist-generated=true
+docs/network-assets/*-LICENSE.txt -whitespace linguist-vendored=true
