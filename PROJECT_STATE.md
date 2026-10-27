@@ -4,7 +4,7 @@ Updated 27 October 2026, Africa/Tunis.
 
 ## Start here
 
-The current task finishes the desktop network presenter, reviews it, aligns the repository and pushes branch `docs/two-pc-plan` to the existing [PR #1](https://github.com/jessem8/virtualization-cloud-lab/pull/1). The next task is **full Machine A configuration in a new chat**. Do not repeat the diagram design phase.
+The desktop presenter is finished, reviewed and pushed in delivery commit f546293 on branch `docs/two-pc-plan`, in the existing [PR #1](https://github.com/jessem8/virtualization-cloud-lab/pull/1). The repository guides are aligned. The next task is **full Machine A configuration in a new chat**. Do not repeat the diagram design phase.
 
 The user explicitly authorized Machine A configuration. No peer or PR start approval is pending. The agreed sequence is:
 1. Finish/review/push this presenter and save this checkpoint.
@@ -68,7 +68,7 @@ Astra supplied a read-only critique; a separate final source review identified i
 
 No VM or host network was changed in this presenter task. Machine A configuration is the next work item; Machine B completion and joint integration follow it. Keep the detailed implementation results in the existing machine evidence files as work proceeds, rather than repeatedly listing every pending check in conversation.
 
-Git base brought in B's four commits through921eebf. Publish this delivery on the existing shared branch/PR; do not merge or force-push unless the user asks. Keep secrets, VM images, VPN profiles and private recovery/configuration exports out of Git.
+Git base brought in B's four commits through921eebf. Presenter delivery f546293 is published on the shared branch/PR; this checkpoint records its completion. Use the branch's latest head. Do not merge or force-push unless the user asks. Keep secrets, VM images, VPN profiles and private recovery/configuration exports out of Git.
 
 ## Lessons to retain
 
