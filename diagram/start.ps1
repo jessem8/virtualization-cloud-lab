@@ -7,7 +7,7 @@ $taskServer = Join-Path $PSScriptRoot 'serve.mjs'
 $taskUrl = 'http://127.0.0.1:3187/'
 try {
     $taskResponse = Invoke-WebRequest -Uri ($taskUrl + 'network-assets/topology.json') -TimeoutSec 2
-    if (($taskResponse.Content | ConvertFrom-Json).revision -ne 'diagramme-2026-10-27') { throw 'Port occupé par une autre application.' }
+    if (($taskResponse.Content | ConvertFrom-Json).revision -ne 'diagramme-2026-10-28') { throw 'Port occupé par une autre application.' }
 } catch {
     if (Get-NetTCPConnection -LocalPort 3187 -State Listen -ErrorAction SilentlyContinue) { throw 'Le port3187 est occupé. Arrêter son propriétaire ou définir LAB_DIAGRAM_PORT pour un lancement manuel.' }
     Start-Process -FilePath $taskNode -ArgumentList @('"' + $taskServer + '"') -WorkingDirectory $PSScriptRoot -WindowStyle Hidden

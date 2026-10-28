@@ -1,5 +1,5 @@
 {
-  "revision": "diagramme-2026-10-27",
+  "revision": "diagramme-2026-10-28",
   "sourceRevision": "921eebf",
   "title": "Le laboratoire, en perspective.",
   "subtitle": "Deux machines physiques. Des frontières visibles.",
@@ -640,6 +640,14 @@
       "fromPort": "Ubuntu",
       "toPort": "Supervision locale"
     }
+  ],
+  "policy": [
+    {"id": "clients-app", "from": "CLIENTS", "to": "10.77.20.10", "port": "TCP8443", "action": "allow", "label": "CLIENTS → InvoiceShelf HTTPS8443"},
+    {"id": "vpn-app", "from": "VPN", "to": "10.77.20.10", "port": "TCP8443", "action": "allow", "label": "VPN → InvoiceShelf HTTPS8443"},
+    {"id": "vpn-nas", "from": "VPN", "to": "10.77.30.10", "port": "TCP445", "action": "deny", "label": "VPN → NAS SMB445"},
+    {"id": "backup-nas", "from": "SERVEURS20", "to": "10.77.30.10", "port": "TCP445", "action": "allow", "label": "Ubuntu → NAS SMB445 (sauvegarde)"},
+    {"id": "prom-windows", "from": "SERVEURS20", "to": "10.77.10.10", "port": "TCP9182", "action": "allow", "label": "Prometheus → Windows exporter9182"},
+    {"id": "default", "from": "*", "to": "*", "port": "*", "action": "deny", "label": "Refus final journalisé"}
   ],
   "issues": [
     {

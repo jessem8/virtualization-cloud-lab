@@ -7,7 +7,7 @@ const here=dirname(fileURLToPath(import.meta.url)),out=join(here,'../docs/networ
 await mkdir(out,{recursive:true});
 await build({entryPoints:[join(here,'app.mjs')],bundle:true,format:'esm',outfile:join(out,'diagram.bundle.js'),minify:true,target:'es2022',legalComments:'eof',logLevel:'info'});
 for(const [pkg,file]of [['space-grotesk','space-grotesk-latin-600-normal.woff2'],['ibm-plex-sans','ibm-plex-sans-latin-400-normal.woff2'],['ibm-plex-sans','ibm-plex-sans-latin-600-normal.woff2']])await copyFile(join(here,'node_modules/@fontsource',pkg,'files',file),join(out,file));
-for(const [pkg,name]of [['three','THREE-LICENSE.txt'],['gsap','GSAP-LICENSE.txt'],['@fontsource/space-grotesk','SPACE-GROTESK-LICENSE.txt'],['@fontsource/ibm-plex-sans','IBM-PLEX-LICENSE.txt']])await copyFile(join(here,'node_modules',pkg,pkg==='gsap'?'README.md':'LICENSE'),join(out,name));
+for(const [pkg,name,file='LICENSE']of [['three','THREE-LICENSE.txt'],['gsap','GSAP-LICENSE.txt','README.md'],['@fontsource/space-grotesk','SPACE-GROTESK-LICENSE.txt'],['@fontsource/ibm-plex-sans','IBM-PLEX-LICENSE.txt'],['camera-controls','CAMERA-CONTROLS-LICENSE.txt'],['postprocessing','POSTPROCESSING-LICENSE.txt','LICENSE.md']])await copyFile(join(here,'node_modules',pkg,file),join(out,name));
 const data=JSON.parse(await readFile(join(out,'topology.json'),'utf8'));
 await writeFile(join(out,'../network-lab-2d.svg'),makeMap(data,[],0,'fw',true));
 console.log('Bundle, fonts, licences et plan SVG produits. Aucun CDN requis.');

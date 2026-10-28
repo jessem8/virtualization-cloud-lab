@@ -7,10 +7,12 @@
     "start": "node serve.mjs"
   },
   "dependencies": {
-    "three": "0.186.1",
-    "gsap": "3.15.0",
+    "@fontsource/ibm-plex-sans": "5.3.0",
     "@fontsource/space-grotesk": "5.3.0",
-    "@fontsource/ibm-plex-sans": "5.3.0"
+    "camera-controls": "3.1.2",
+    "gsap": "3.15.0",
+    "postprocessing": "6.39.5",
+    "three": "0.186.1"
   },
   "devDependencies": {
     "esbuild": "0.28.2"
