@@ -2,6 +2,10 @@
 
 Updated 28 October 2026, Africa/Tunis.
 
+## PC B — actualisation du 28 octobre
+
+Sanad a installé et configuré SW-B ; les VLAN locaux et l'absence d'adresses sur ses ports ont été observés après redémarrage. Ubuntu Desktop est dans son installateur, avec une carte NAT temporaire ; TrueNAS reste à installer. Le port Ubuntu de SW-B utilise VMnet10 sur B, au lieu de VMnet14 dans les guides. Voir [l'état observé de B](evidence/PC_B_STATUS.md). Les tests de trafic local et de trunk entre les PC restent à faire. Les anciennes mentions ci-dessous décrivant B au 26 octobre sont historiques.
+
 ## 28 October learning and demonstration refinement
 
 The learning/presenter task copied an older A stopping point. This is superseded by the installation and management-access screenshots in the Machine A chat and the 28 October applied browser configuration below. B remains at its recorded prepared-guest state; no provisioning occurred in the learning/presenter task.
