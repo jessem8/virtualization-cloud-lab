@@ -2,6 +2,26 @@
 
 Updated 28 October 2026, Africa/Tunis.
 
+## WIN-LAB installed and CLIENTS connectivity verified — 28 October
+
+Windows Server 2025 Standard Evaluation with Desktop Experience is installed. The user installed VMware Tools 13.1.0, restarted Windows and ran Codex CLI inside the guest. The user supplied LabSetup.zip for read-only review on the host; its scripts were inspected, not executed on the host. The ZIP contains pre-restart reports; later user-supplied console output confirms the post-restart state.
+
+- Hostname WIN-LAB, WORKGROUP, UTC+01:00; rename, CBS and Windows Update restart flags all false in the supplied post-restart output.
+- Recorded update installation results include KB5127690 and KB5126646. Saved VMware guest metadata reports build 26100.33650. The post-restart check returned to the prompt, but its separate update-offer JSON was not supplied; zero remaining applicable updates is not claimed.
+- Defender signatures 1.463.12.0 dated 28 October, quick scan completed, no threat-detection records in the supplied report; antivirus, real-time, behavior, IOAV and network inspection protections enabled.
+- All Windows Firewall profiles enabled, dropped-packet logging enabled with 16 MiB limit.
+- Sysmon 15.22 service automatic/running; supplied evidence records process events 1 (records 73/75) and network event 3 (record 80). Logon auditing records successful 4624 (1327) and a controlled failed 4625 (1329, nonexistent test account).
+- windows_exporter 0.32.0 service automatic/running. Local /metrics returned HTTP 200 with build info. Supplied firewall audit found one compatible allow rule, TCP 9182 restricted to Ubuntu 10.77.20.10. Remote permitted/denied traffic and actual Prometheus scraping remain untested.
+- Latest supplied resource snapshot: 1.65 GiB available guest RAM and 41.14 GiB free guest disk; not a simultaneous two-PC load test.
+
+Windows used temporary NAT for installation/downloads. The prepared MAC-checked transition script was reviewed and then run by the user inside the guest, setting 10.77.10.10/24 with gateway/DNS 10.77.10.1. An initial DNS timeout led to a host-side VMX check: Windows was configured on VMnet0 while OPNsense CLIENTS used VMnet10. After correction to Custom VMnet10, the user ran Resolve-DnsName against 10.77.10.1 successfully and curl.exe HTTPS to www.microsoft.com returned HTTP/1.1 200 OK (response dated 28 October 20:37:16 GMT). Both FW-LAB and WIN-LAB were running at the host check. This verifies the supplied guest DNS/HTTPS path through OPNsense; it does not prove NTP, all firewall enforcement, IPv6 transport or cross-PC connectivity.
+
+Next: configure restricted OpenVPN on FW-LAB, retain VMnet10 as Windows's final network, obtain B readiness and coordinate trunk/application/NAS/monitoring/restore tests. No VPN or joint-test pass is claimed. Original ZIP, binaries and raw logs remain outside Git; only this summary is published.
+
+## Continuation inspection — 28 October
+
+Unbound General shows enabled, port 53 and All interfaces; the ACL page shows default Allow and no custom entries. NTP General also shows All interfaces, and NTP Status shows an active peer with reach 373. This verifies the displayed configuration and upstream time synchronization, not guest DNS/NTP access or WAN isolation. No configuration was changed. Later host snapshot: 6.24 GiB available physical RAM of 15.71 GiB and 76.23 GiB free on C:. An earlier 2.61 GiB available reading was a point-in-time snapshot, not proof of a blocker. A Windows Server evaluation ISO is present in Downloads; integrity and installed edition are unverified.
+
 ## Current state — 28 October (supersedes historical installation notes below)
 
 OPNsense is installed and its wizard completed in Chrome on 28 October. Hostname FW-LAB.internal, timezone Africa/Tunis. MAC-verified interfaces: WAN em0 DHCP 192.168.53.136/24 (gateway 192.168.53.2); MGMT em1 10.77.99.1/24; CLIENTS em2 10.77.10.1/24; TRUNK em3 with no IP. VLAN device vlan01/tag20 and vlan02/tag30 use em3; assigned/enabled as SERVEURS20 10.77.20.1/24 and STOCKAGE30 10.77.30.1/24. The interface overview reports these addresses and routes. Host VMnet13 address 10.77.99.254/24 and absence of a default route on it were checked. The dedicated Ethernet bindings were rechecked after the user's changes: IPv4, IPv6, Microsoft client and file sharing are disabled; VMware Bridge Protocol remains enabled. User screenshot shows Internet Connection Sharing unchecked. DHCP/DNS listening scope, NTP, VPN and cross-PC VLAN behavior still require work or verification; firewall rules are now configured as recorded below, with traffic tests pending. No B changes were made. Resume here, not at the installer; see evidence/PC_A_STATUS.md.
