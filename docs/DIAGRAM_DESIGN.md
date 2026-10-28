@@ -1,6 +1,6 @@
 # Diagramme interactif du laboratoire
 
-Version du 27 octobre 2026. Présentateur de bureau pour la démonstration devant le professeur. Une maquette explique le réseau prévu ; elle ne configure aucune VM et ne mesure aucun trafic.
+Version du 28 octobre 2026. Présentateur de bureau pour la démonstration devant le professeur. Une maquette explique le réseau prévu ; elle ne configure aucune VM et ne mesure aucun trafic.
 
 ## Lancer
 
@@ -14,7 +14,11 @@ Pour arrêter : terminer seulement le processus Node exécutant diagram/serve.mj
 - Retour au parcours, visible dans la coupe, referme l’inspection sans perdre le scénario ni l’étape. Le fil Réseau → PC → VM → service permet aussi le retour au parent. Vue globale, Échap et la fermeture du panneau conservent le parcours.
 - Équipements et Connexions gardent les positions stables. Sécurité révèle les volumes CLIENTS/SERVEURS/STOCKAGE, explique trois barrières et propose les parcours VPN autorisé/refusé.
 - Choisir un parcours en bas, puis Lire/Pause ou les flèches d’étape. Les flèches clavier fonctionnent hors des champs. Une étape manuelle anime son seul trajet.
-- Plein écran (ou F) ouvre la présentation avec un en-tête compact et plus de place pour la scène. Quitter le plein écran, F et Échap permettent de sortir.
+- Plein écran (ou F) masque l’en-tête, la barre d’outils, la légende, la bande de transport, le choix des trajets et les notes « À dire » : il ne reste que la scène et une bande de récit sombre (titre, texte, flèches). Le bouton « Quitter le plein écran » et le curseur s’effacent après quelques secondes d’inactivité ; Échap, F ou un mouvement de souris les ramènent. Préparer le trajet, le quiz ou la panne avant d’entrer en plein écran.
+- Caméra : glisser avec le bouton gauche pour tourner, avec le bouton droit pour déplacer ; la molette zoome vers le curseur. La cible reste bornée au laboratoire. Pendant un récit, la caméra cadre chaque étape en douceur ; une manipulation manuelle suspend ce cadrage jusqu’à l’étape suivante. Options → Caméra libre le désactive. Double-clic ou Vue globale recentre.
+- Paquet : P ou « Ouvrir le paquet » éclate la trame en couches (Ethernet, tag802.1Q, IP, TCP, données) avec leurs valeurs ; P ou Échap la referme et le trajet reprend.
+- Et si… ? : choisir une ou plusieurs pannes (câble trunk, SW-B, règle CLIENTS → 8443, conteneur InvoiceShelf, VLAN supprimés sur B) puis rejouer un trajet. La maquette arrête le paquet au point de rupture et l’explique ; Tout rétablir revient au trajet normal. Aucune VM n’est modifiée.
+- Mode quiz étudiants : six questions s’affichent avant les étapes clés de la présentation ; 1, 2, 3 répondent, Entrée ou → montre la réponse en3D. Score à la fin.
 - Configuration et état réel, dans le composant, conserve les interfaces, les protections attendues et les preuves disponibles.
 - Options regroupe vue du dessus, plan2D, export SVG, points ouverts et mouvement réduit.
 
@@ -28,7 +32,9 @@ Matériaux graphite et métal aux arêtes adoucies. Pictogrammes SVG dessinés d
 
 Transport : câble et canaux plus épais, cartouche explicite802.1Q ; un refus s’arrête au pare-feu. Coupes : plateaux séparés et légendes nommées pour les fonctions. La signature est Ubuntu→NAS : VLAN20 vers A, routage sur OPNsense, VLAN30 retour vers B.
 
-Three.js0.186.1 et GSAP3.15.0 séparent scène, animation et UI. Rendu à la demande ; densité plafonnée à1,5 ; pas de bloom ni d’ombres temps réel. Les tweens sont arrêtés ou remplacés lors d’une nouvelle interaction.
+Three.js0.186.1 et GSAP3.15.0 séparent scène, animation et UI ; camera-controls3.1.2 pilote la caméra et postprocessing6.39.5 la finition. Rendu à la demande ; densité plafonnée à1,5. Qualité haute : environnement d’éclairage, ombres douces recalculées seulement quand la disposition change, bloom sélectif sur les LED, écrans et paquet, tone mapping ACES, contour au survol, SMAA et vignette. Qualité économe (Options, ou automatique si l’image dépasse environ28 ms) coupe ces effets. Les tweens sont arrêtés ou remplacés lors d’une nouvelle interaction.
+
+Lisibilité : pendant une étape, seules les machines concernées gardent leur nom ; les autres n’affichent que leur pictogramme (le nom revient au survol et en vue d’ensemble). L’étiquette du paquet se limite au tag courant (Sans tag, VLAN20, VLAN30, Écriture locale, Refusé) ; le détail de la trame reste dans la bande de récit et dans le paquet éclaté. Les étiquettes gardent leur position tant qu’elle reste lisible et glissent au lieu de sauter quand elles doivent s’écarter.
 
 ## État réel et sources
 
@@ -46,7 +52,7 @@ Le concept raster généré a servi à la composition, pas aux faits. Ses chiffr
 
 ## Sources éditables et reconstruction
 
-docs/network-assets/topology.json contient les faits ; diagram/scenarios.mjs contient les étapes ; diagram/scene.mjs, diagram/app.mjs, diagram/icons.mjs et diagram/map.mjs contiennent scène, interface, pictogrammes et plan2D.
+docs/network-assets/topology.json contient les faits ; diagram/scenarios.mjs contient les étapes ; diagram/scene.mjs, diagram/app.mjs, diagram/icons.mjs et diagram/map.mjs contiennent scène, interface, pictogrammes et plan2D. diagram/fx.mjs (rendu et qualité), camera.mjs (caméra), packet.mjs (paquet, porte pare-feu, ligne de flux), whatif.mjs (pannes simulées) et quiz.mjs (questions) complètent la scène ; la politique simulée est dans topology.json (policy).
 
 Dans diagram/ : `pnpm install --frozen-lockfile --ignore-scripts`, puis `node build.mjs`. Les dépendances sont verrouillées ; node_modules est exclu de Git. Le build regroupe les bibliothèques, copie polices/notices et régénère docs/network-lab-2d.svg. L’entrée actuelle est docs/network-lab-3d.html ; docs/network-lab.html conserve la version antérieure de B.
 

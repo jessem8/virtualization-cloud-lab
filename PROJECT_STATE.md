@@ -12,7 +12,7 @@ The learning/presenter task copied an older A stopping point. This is superseded
 
 Start learning with docs/UNDERSTAND_AND_PRESENT.md (simple explanation, deploy meanings, demo script, stress/failure cues and team teach-back). Use docs/MISSION_AND_FAST_LAB.md for the shortest dependency-aware physical lab sequence and copyable A/B/optional Ubuntu-agent missions. Physical preparation is prioritized separately from final submission artifacts.
 
-The existing 3D presenter now has a local 18-step guided story, speaker cues and a technical-detail toggle; see evidence/PRESENTER_SIMPLIFICATION.md for the actual validation scope. These edits are local and not claimed pushed. The new mission report preserves all course requirements and moves joint T03 immediately after the minimum network/endpoints are ready. T03 needs Ubuntu and TrueNAS endpoints as well as FW-LAB/SW-B. B memory allocation still needs Sanad's reconciliation.
+The existing 3D presenter now has a local 18-step guided story, speaker cues and a technical-detail toggle; see evidence/PRESENTER_SIMPLIFICATION.md for the actual validation scope. These edits were pushed in 706cc8c. The new mission report preserves all course requirements and moves joint T03 immediately after the minimum network/endpoints are ready. T03 needs Ubuntu and TrueNAS endpoints as well as FW-LAB/SW-B. B memory allocation still needs Sanad's reconciliation.
 
 Task-helper registration for understand-demo-20261028 returned invalid_contract. No registry receipt or native binding is claimed; ordinary source/build/browser evidence is recorded in project files.
 
@@ -75,6 +75,8 @@ Entry: docs/network-lab-3d.html. Launch `powershell -NoProfile -File diagram/sta
 Sources: diagram/app.mjs, scene.mjs, scenarios.mjs, map.mjs, icons.mjs; facts in docs/network-assets/topology.json. Rebuild from diagram/ with `node build.mjs`; dependencies are locked, node_modules ignored. Fonts/assets are local. docs/network-lab.html preserves B's earlier diagram.
 
 The final pass adds named ports, directional packet travel, VLAN tag changes, firewall decision markers, selectable links, functional device expansions, Ubuntu/Docker containment and local-volume distinction. Breadcrumbs and return preserve the scenario/step. Full screen, manual/automatic play, reduced motion,2D fallback and SVG export remain available. Desktop presentation only; phone checks are explicitly excluded.
+
+28 October enhancement: cinematic rendering with an economy fallback, story camera, VLAN-tag packet with exploded view, firewall gate, "Et si… ?" simulated faults, optional student quiz, decluttered labels and a scene-only full screen. Simulations only; see evidence/PRESENTER_ENHANCEMENT.md for checks and the unverified real-hardware frame rate.
 
 Astra supplied a read-only critique; a separate final source review identified internal-link visibility, encoded asset traversal and2D direction issues. All three were corrected. See evidence/DIAGRAM_VERIFICATION.md for actual checks and review scope.
 
