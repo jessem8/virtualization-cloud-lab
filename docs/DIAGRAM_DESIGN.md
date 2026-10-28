@@ -8,6 +8,10 @@ Depuis la racine : `powershell -NoProfile -File diagram/start.ps1`, puis http://
 
 Pour arrêter : terminer seulement le processus Node exécutant diagram/serve.mjs, pas les autres processus Node. Pour un autre port, définir LAB_DIAGRAM_PORT et lancer Node avec diagram/serve.mjs.
 
+## Version publique
+
+Seul le laboratoire3D est publié, dans le dépôt public jessem8/virtualization-lab-3d : https://jessem8.github.io/virtualization-lab-3d/. Ce dépôt-ci reste privé. Pour mettre à jour : `node build.mjs`, puis `node publish.mjs <clone de virtualization-lab-3d>` depuis diagram/, puis commit et push dans ce clone. Le script copie index.html et network-assets seulement, ajoute une politique de contenu équivalente à celle du serveur local et retire le lien vers cette documentation.
+
 ## Présenter
 
 - Cliquer une machine ou un équipement : ouverture de sa coupe fonctionnelle et de son explication. Ubuntu révèle ses services Docker. Les formes3D illustrent des rôles virtuels, pas l’intérieur physique réel des logiciels.

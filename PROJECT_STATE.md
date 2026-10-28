@@ -76,7 +76,7 @@ Sources: diagram/app.mjs, scene.mjs, scenarios.mjs, map.mjs, icons.mjs; facts in
 
 The final pass adds named ports, directional packet travel, VLAN tag changes, firewall decision markers, selectable links, functional device expansions, Ubuntu/Docker containment and local-volume distinction. Breadcrumbs and return preserve the scenario/step. Full screen, manual/automatic play, reduced motion,2D fallback and SVG export remain available. Desktop presentation only; phone checks are explicitly excluded.
 
-28 October enhancement: cinematic rendering with an economy fallback, story camera, VLAN-tag packet with exploded view, firewall gate, "Et si… ?" simulated faults, optional student quiz, decluttered labels and a scene-only full screen. Simulations only; see evidence/PRESENTER_ENHANCEMENT.md for checks and the unverified real-hardware frame rate.
+28 October enhancement: cinematic rendering with an economy fallback, story camera, VLAN-tag packet with exploded view, firewall gate, "Et si… ?" simulated faults, optional student quiz, decluttered labels and a scene-only full screen. Simulations only; see evidence/PRESENTER_ENHANCEMENT.md for checks and the unverified real-hardware frame rate. Public copy of the lab only (this repository stays private): https://jessem8.github.io/virtualization-lab-3d/ from the public repo jessem8/virtualization-lab-3d, refreshed with diagram/publish.mjs.
 
 Astra supplied a read-only critique; a separate final source review identified internal-link visibility, encoded asset traversal and2D direction issues. All three were corrected. See evidence/DIAGRAM_VERIFICATION.md for actual checks and review scope.
 
