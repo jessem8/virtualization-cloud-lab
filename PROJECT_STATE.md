@@ -4,6 +4,8 @@ Updated 28 October 2026, Africa/Tunis.
 
 ## PC B — actualisation du 28 octobre
 
+Dernière observation : après le redémarrage rapporté de NAS-LAB, les datasets chiffrés `projet` et `app-backups` sont affichés Unlocked. La configuration TrueNAS et les clés ont été exportées selon Sanad. NAS-LAB est la seule VM active ; l'Ethernet physique de B apparaît déconnecté. Les invités utilisent encore le NAT temporaire : B n'est pas prêt pour le premier test trunk. Voir [l'état observé de B](evidence/PC_B_STATUS.md) et la coordination [issue #2](https://github.com/jessem8/virtualization-cloud-lab/issues/2).
+
 Sanad a installé et configuré SW-B ; les VLAN locaux et l'absence d'adresses sur ses ports ont été observés après redémarrage. Ubuntu Desktop 26.04.1 est installé, a redémarré après mise à jour et a répondu à un ping via son NAT temporaire ; il a ensuite été éteint. TrueNAS 25.10.7 a démarré sur son disque système ; le pool `tank` en miroir, les datasets chiffrés `projet` et `app-backups`, leurs partages et les tests SMB locaux sont documentés dans [l'état observé de B](evidence/PC_B_STATUS.md). Un fichier a été restauré depuis un clone de snapshot et son contenu vérifié. NAS-LAB utilise encore le NAT temporaire ; le réseau final et les accès depuis A ou Ubuntu restent à tester. Sanad maintient Ubuntu à 4 Gio et TrueNAS à 6 Gio pour l'essai ; la charge simultanée n'est pas validée. Le port Ubuntu de SW-B utilise VMnet10 sur B, au lieu de VMnet14 dans les guides. Les tests de trafic local et de trunk entre les PC restent à faire. Les anciennes mentions ci-dessous décrivant B au 26 octobre sont historiques.
 
 ## 28 October learning and demonstration refinement
