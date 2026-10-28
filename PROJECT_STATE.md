@@ -82,6 +82,8 @@ Astra supplied a read-only critique; a separate final source review identified i
 
 ## Current handoff status
 
+OpenVPN server and restricted rules were configured on 28 October with dedicated VPN certificates. The elevated physical-host client completed initialization using TLS 1.3/AES-GCM; host queries confirm 10.78.0.2 and both lab routes through 10.78.0.1. OPNsense reports the PC-A-VPN session ok. Client remains connected; application/deny enforcement and the MGMT-bypass-removed demonstration remain untested. Client profile remains private outside Git. See evidence/PC_A_STATUS.md; VPN application/deny demonstrations still require B.
+
 On 28 October, WIN-LAB Windows Server 2025 Desktop Experience installation, VMware Tools, rename/restart, Defender updates/quick scan, Sysmon events 1/3, logon events 4624/4625 and local windows_exporter metrics were recorded in the user-supplied guest evidence. Post-restart output shows WIN-LAB active and no pending restart. Windows Firewall is enabled with bounded dropped-packet logging; exporter TCP 9182 is restricted in configuration to Ubuntu 10.77.20.10. After correcting a VMnet0/VMnet10 adapter mismatch, the user verified DNS via 10.77.10.1 and HTTPS HTTP 200 from Windows on the intended CLIENTS network (10.77.10.10/24, gateway/DNS 10.77.10.1). These are guest-output checks, not joint network or remote scraping proof. Remaining update offers after restart are unknown. Next A task: restricted OpenVPN; cross-PC VLAN, application/NAS access, monitoring, recovery and load checks remain pending. See evidence/PC_A_STATUS.md for scope and evidence distinctions.
 
 

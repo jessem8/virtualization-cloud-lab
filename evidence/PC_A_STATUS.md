@@ -2,6 +2,17 @@
 
 Updated 28 October 2026, Africa/Tunis.
 
+## OpenVPN configuration and first handshake — 28 October
+
+Chrome configuration created dedicated LAB-VPN-CA (RSA-3072/SHA256), LAB-VPN-Server (serverAuth) and LAB-VPN-PC-A (clientAuth), and enabled LAB-OpenVPN-InvoiceShelf on WAN 192.168.53.136 UDP4 1194 with tunnel 10.78.0.0/24, required client certificates and AES-128/256-GCM. OPNsense status reports server ok. No password database authentication was configured; access uses the dedicated client certificate.
+
+Saved/applied and read-back rules: WAN pass only 192.168.53.1 to WAN address UDP 1194; OpenVPN group permits 10.78.0.0/24 to 10.77.20.10 TCP 8443, followed by logged SSH 22, NAS SMB 445, Grafana 3001 denies and logged IPv4/IPv6 catch-all deny. Rule ordering was corrected before apply. Same-subnet WAN rule reply-to is disabled. WAN Block private networks was disabled because the simulated WAN uses RFC1918; bogon blocking remains enabled and explicit/default firewall filtering remains in place.
+
+OpenVPN Community 2.7.7 was installed on the physical host via winget (official swupdate.openvpn.org MSI, package hash verified). Private client profile is outside Git in Downloads; it validates the server identity and requires TLS >=1.2. Explicit client routes for 10.77.20.0/24 and 10.77.30.0/24 were added locally: the observed server PUSH_REPLY did not include these routes. Server-side route-push configuration still needs reconciliation for future exports.
+
+First client log verifies the CA/server name, TLS 1.3 and AES-128-GCM negotiation, and a 10.78.0.2 allocation. That unelevated client failed Windows tunnel address configuration. After clearing the failed session by restarting only the new VPN instance, an elevated client completed initialization. Host queries confirm OpenVPN Data Channel Offload address 10.78.0.2 and routes 10.77.20.0/24 and 10.77.30.0/24 through 10.78.0.1. The client profile was corrected to place both route directives on separate lines; the missing first route was added to the active session. OPNsense read-back reports PC-A-VPN from 192.168.53.1 connected, virtual address 10.78.0.2, status ok. Client remains connected. Screenshot: C:/Users/jesse/AppData/Local/Temp/lab-vpn-connected.png. No B application access, deny enforcement or MGMT-bypass-removed demo is claimed. Keep profile/private keys and raw logs outside Git.
+
+
 ## WIN-LAB installed and CLIENTS connectivity verified — 28 October
 
 Windows Server 2025 Standard Evaluation with Desktop Experience is installed. The user installed VMware Tools 13.1.0, restarted Windows and ran Codex CLI inside the guest. The user supplied LabSetup.zip for read-only review on the host; its scripts were inspected, not executed on the host. The ZIP contains pre-restart reports; later user-supplied console output confirms the post-restart state.
