@@ -109,7 +109,7 @@ Conserver au moins 20 Gio physiques libres au démarrage et arrêter les écritu
 
 ## 9. Coordination
 
-Le dépôt privé et une PR suffisent pour partager le plan, les progrès et les preuves. La PR sert à coordonner ; elle n’est pas un prérequis à la configuration du PC A, directement autorisée par l’utilisateur le 27 octobre. Finir le PC B avec Sanad, après autorisation de la personne responsable de ce PC. Lancer les tests entre machines quand les deux côtés indiquent qu’ils sont prêts. Revoir ensemble les changements importants de topologie ou de sécurité avant de les appliquer. Ne pas publier de secrets. Voir [docs/COORDINATION.md](docs/COORDINATION.md).
+Travailler directement sur main, selon la préférence explicite du 28 octobre. La PR #1 est fusionnée et reste historique. Partager le plan, les progrès et les preuves dans PROJECT_STATE.md et les fichiers evidence/PC_A_STATUS.md et evidence/PC_B_STATUS.md ; utiliser les issues GitHub pour les demandes entre machines. Récupérer main et réconcilier les changements concurrents avant de pousser des commits ciblés, sans force-push. La configuration du PC A est directement autorisée depuis le 27 octobre. Finir le PC B avec Sanad, après autorisation de la personne responsable de ce PC. Lancer les tests entre machines quand les deux côtés indiquent qu’ils sont prêts. Revoir ensemble les changements importants de topologie ou de sécurité avant de les appliquer. Ne pas publier de secrets. Voir [docs/COORDINATION.md](docs/COORDINATION.md).
 
 ## 10. Présentation et sauvegardes
 

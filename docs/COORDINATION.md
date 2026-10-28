@@ -1,6 +1,6 @@
 # Coordination
 
-Use the private repository and its single planning PR to share the plan, brief progress updates and actual evidence. The PR coordinates work; it is not an approval gate for work the user has already authorized.
+Work directly on main, as requested by the user on 28 October 2026. PR #1 was merged on 27 October and is historical. Keep the plan, brief progress updates and actual evidence in repository files; use GitHub issues for requests between machines. No new branch or PR is required for routine project work.
 
 ## Work order
 
@@ -12,4 +12,4 @@ Use the private repository and its single planning PR to share the plan, brief p
 
 ## Updates
 
-Each owner stays within their machine scope and preserves the other owner's work. Use the current PR revision when sharing progress; distinguish observed evidence from planned or unrun checks. Re-review substantial topology or security changes before applying them. Keep credentials, private keys, VPN profiles and sensitive exports out of Git. No automated approval or polling is needed.
+Each owner stays within their machine scope and preserves the other owner's work. Fetch/pull the latest main before work and reconcile concurrent changes before pushing scoped commits; never force-push shared history. Update PROJECT_STATE.md and the relevant evidence/PC_A_STATUS.md or evidence/PC_B_STATUS.md. Distinguish observed evidence from planned or unrun checks. Re-review substantial topology or security changes before applying them. Keep credentials, private keys, VPN profiles and sensitive exports out of Git. No automated approval or polling is needed.

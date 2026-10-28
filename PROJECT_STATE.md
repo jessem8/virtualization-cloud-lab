@@ -1,10 +1,20 @@
 # Project checkpoint
 
-Updated 27 October 2026, Africa/Tunis.
+Updated 28 October 2026, Africa/Tunis.
+
+## 28 October learning and demonstration refinement
+
+The learning/presenter task copied an older A stopping point. This is superseded by the installation and management-access screenshots in the Machine A chat and the 28 October applied browser configuration below. B remains at its recorded prepared-guest state; no provisioning occurred in the learning/presenter task.
+
+Start learning with docs/UNDERSTAND_AND_PRESENT.md (simple explanation, deploy meanings, demo script, stress/failure cues and team teach-back). Use docs/MISSION_AND_FAST_LAB.md for the shortest dependency-aware physical lab sequence and copyable A/B/optional Ubuntu-agent missions. Physical preparation is prioritized separately from final submission artifacts.
+
+The existing 3D presenter now has a local 18-step guided story, speaker cues and a technical-detail toggle; see evidence/PRESENTER_SIMPLIFICATION.md for the actual validation scope. These edits are local and not claimed pushed. The new mission report preserves all course requirements and moves joint T03 immediately after the minimum network/endpoints are ready. T03 needs Ubuntu and TrueNAS endpoints as well as FW-LAB/SW-B. B memory allocation still needs Sanad's reconciliation.
+
+Task-helper registration for understand-demo-20261028 returned invalid_contract. No registry receipt or native binding is claimed; ordinary source/build/browser evidence is recorded in project files.
 
 ## Start here
 
-The desktop presenter is finished, reviewed and pushed in delivery commit f546293 on branch `docs/two-pc-plan`, in the existing [PR #1](https://github.com/jessem8/virtualization-cloud-lab/pull/1). The repository guides are aligned. The next task is **full Machine A configuration in a new chat**. Do not repeat the diagram design phase.
+The desktop presenter delivery f546293 was included in [PR #1](https://github.com/jessem8/virtualization-cloud-lab/pull/1), merged on 27 October as b466d875a56440b958ad6e1b8d755d1e16f64359. The user explicitly prefers direct work on main as of 28 October; no routine branch/PR workflow is required. The repository guides are aligned. **Machine A configuration is in progress in the current chat**, with English guidance requested by the user. Do not repeat the diagram design phase.
 
 The user explicitly authorized Machine A configuration. No peer or PR start approval is pending. The agreed sequence is:
 1. Finish/review/push this presenter and save this checkpoint.
@@ -66,9 +76,13 @@ Astra supplied a read-only critique; a separate final source review identified i
 
 ## Current handoff status
 
-No VM or host network was changed in this presenter task. Machine A configuration is the next work item; Machine B completion and joint integration follow it. Keep the detailed implementation results in the existing machine evidence files as work proceeds, rather than repeatedly listing every pending check in conversation.
+On 28 October, 35 named LAB firewall rules were saved/applied in Chrome and read back after reload: 6 MGMT, 11 CLIENTS, 10 SERVEURS20 and 8 STOCKAGE30. The two broad default MGMT/LAN allow rules are disabled. Exact host/service permissions precede RFC1918 blocks, HTTP/HTTPS update permissions and logged IPv4/IPv6 final denies. Management access remains reachable. This is configuration evidence; guest traffic and cross-PC enforcement remain untested.
 
-Git base brought in B's four commits through921eebf. Presenter delivery f546293 is published on the shared branch/PR; this checkpoint records its completion. Use the branch's latest head. Do not merge or force-push unless the user asks. Keep secrets, VM images, VPN profiles and private recovery/configuration exports out of Git.
+Post-update Chrome verification on 28 October: OPNsense 26.7.7-amd64 booted with all planned interface addresses retained and management access working. Update/reboot verification is complete; this does not establish the remaining firewall/services or cross-PC behavior.
+
+OPNsense is installed and its wizard completed in Chrome on 28 October. Hostname FW-LAB.internal, timezone Africa/Tunis. MAC-verified interfaces: WAN em0 DHCP 192.168.53.136/24 (gateway 192.168.53.2); MGMT em1 10.77.99.1/24; CLIENTS em2 10.77.10.1/24; TRUNK em3 with no IP. VLAN device vlan01/tag20 and vlan02/tag30 use em3; assigned/enabled as SERVEURS20 10.77.20.1/24 and STOCKAGE30 10.77.30.1/24. The interface overview reports these addresses and routes. Host VMnet13 address 10.77.99.254/24 and absence of a default route on it were checked. The dedicated Ethernet bindings were rechecked after the user's changes: IPv4, IPv6, Microsoft client and file sharing are disabled; VMware Bridge Protocol remains enabled. User screenshot shows Internet Connection Sharing unchecked. DHCP/DNS listening scope, NTP, VPN and cross-PC VLAN behavior still require work or verification; firewall rules are now configured as recorded above, with traffic tests pending. No B changes were made. Resume here, not at the installer; see evidence/PC_A_STATUS.md.
+
+Git base brought in B's four commits through921eebf. PR #1 is merged. Continue on main: fetch/pull, reconcile concurrent changes, commit only scoped work and push without force. Keep current status in repository files and requests between machines in GitHub issues. A fresh Machine B status has been requested in [issue #2](https://github.com/jessem8/virtualization-cloud-lab/issues/2); its last report remains dated 26 October until B supplies actual new evidence. Keep secrets, VM images, VPN profiles and private recovery/configuration exports out of Git.
 
 ## Lessons to retain
 
