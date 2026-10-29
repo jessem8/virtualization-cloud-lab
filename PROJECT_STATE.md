@@ -1,5 +1,9 @@
 # Project checkpoint
 
+## 29 October — joint session and evidence branch
+
+Jesse reports that he and Sanad are together, both PCs are connected by Ethernet and both use the same Wi-Fi. This is user-reported physical setup, not verification of link state or VLAN traffic. The user requests shared branch `evidence/joint-lab-20261029` for joint evidence collection, overriding the earlier main-only direction for this work. Each machine updates its own evidence file, coordinates joint observations, fetches/reconciles before pushing and never force-pushes. Begin with the actual startup and trunk checks in BUILD_PLAN.md. No current VM state or test result is assumed.
+
 ## 29 October — meeting and finish
 
 Jesse will meet Sanad to finish the lab, then prepare the presentation and live demonstration. Start with [the meeting plan](BUILD_PLAN.md) and [judgment-day scenario](docs/UNDERSTAND_AND_PRESENT.md). The 28 October A/B evidence is historical: confirm current VM and network state together. Stopped VMs are started as needed, not a reason to postpone joint work. B's recorded Ubuntu access port is VMnet10 on B. TrueNAS boot, pool, SMB permissions and local snapshot file restore have since been verified; physical trunk and application integration remain unverified. Preserve the local A VPN shutdown note in evidence/PC_A_STATUS.md. Subsequent older paragraphs are historical where they conflict with this section or the dated evidence.
