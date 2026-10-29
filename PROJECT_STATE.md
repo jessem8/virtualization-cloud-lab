@@ -1,8 +1,10 @@
 # Project checkpoint
 
-## 29 October — PC B reboot and final access checks
+## 29 October — post-reboot access and cleanup verified
 
-After Ubuntu reboot, Sanad's captures show 10.77.20.10/24, MTU 1400, active lab-firewall, SSH socket, auditd and rsyslog, restored INPUT/DOCKER-USER policy and IPv6 SSH drop, the Windows-to-InvoiceShelf MSS 1360 workaround and audit rule. Six containers are running; InvoiceShelf is healthy, all Prometheus targets UP and the local HTTPS probe is 1. Jesse reports fresh post-reboot MGMT key-only SSH passed, and Windows screenshots show authenticated InvoiceShelf and Grafana dashboards. The underlying link/MTU issue remains undiagnosed; MSS is a scoped workaround. A reports its temporary MGMT route cleanup in progress. Browser trust of the lab certificate, Docker Bench and other unconfirmed security requirements are not claimed complete. See evidence/PC_B_2026-10-29.md.
+The closing functional checks passed: B's reboot evidence (8170184) records 10.77.20.10/24, MTU 1400, active lab-firewall, SSH socket, auditd and rsyslog, restored INPUT/DOCKER-USER policy, IPv6 SSH drop, scoped Windows-to-InvoiceShelf MSS 1360 and audit rule. Six containers are running; InvoiceShelf is healthy and local monitoring targets/probe are UP. A independently verified pinned-key management SSH after reboot; Jesse's fresh Windows screenshots at 18:00 show authenticated InvoiceShelf and Grafana dashboards with data and monitoring UP. A subsequently verified the temporary 10.77.20.10/32 management route absent, VMnet13 Up, OpenVPN address absent and VPN lab routes absent. This completes the requested final route cleanup and supersedes the older pending firewall/cleanup/reboot lists below.
+
+Jesse reports all five VMs running together for over five hours; no extra arbitrary ten-minute wait is required, and no formal sustained-load metric is inferred. MTU/MSS are retained operational settings; the underlying link/driver cause remains unknown. Browser trust of the lab certificate, Docker Bench and other unconfirmed matrix items are not claimed complete. Both A/B evidence are now in the shared branch. Next work is evidence/documentation alignment and the authorized 30-minute presentation/rehearsal, preserving the network diagram. Do not start new features, reinstall VMs or repeat completed checks without a new failure. See evidence/PC_A_2026-10-29.md and evidence/PC_B_2026-10-29.md.
 
 ## 29 October — current remaining work after VPN and SSH
 
