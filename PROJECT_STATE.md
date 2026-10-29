@@ -1,5 +1,11 @@
 # Project checkpoint
 
+## 29 October — InvoiceShelf and SMB update
+
+InvoiceShelf 2.4.7 setup, local login and draft invoice PDF preview were observed on Ubuntu B. After Compose containers were recreated, Sanad's refreshed invoice list still shows the draft; PDF rendering after recreation was not separately observed. Jesse reported authenticated WIN-LAB access and invoice preview before recreation; Sanad now reports the page is unavailable again from A. Earlier MTU 1400/1500 tests did not establish the root cause. The TLS certificate is self-signed.
+
+TrueNAS SMB encryption was set to REQUIRED and Ubuntu app-backup listed and uploaded a test file. Jesse reported a reconnected WIN-LAB SMB session with Encrypted=True. Role tests, application backup/restore, monitoring and VPN remain pending. Details in evidence/PC_B_2026-10-29.md; earlier checkpoints below remain historical.
+
 ## 29 October — both B guests reach their A gateways
 
 Sanad's latest TrueNAS console evidence confirms 10.77.30.10/24, default route via 10.77.30.1 and a gateway ping with 4/4 replies, 0% loss. A's evidence also records the Ubuntu VLAN20 gateway ping succeeding 4/4. Realtek monitor-mode adjustments and scoped ICMP gateway rules are documented in the A/B session evidence. These are successful guest-to-gateway checks, not completion of all T03 isolation/capture criteria or service tests. See evidence/PC_B_2026-10-29.md and evidence/PC_A_2026-10-29.md. Older pending-ping and stopped-guest notes below are historical.

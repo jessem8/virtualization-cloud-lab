@@ -1,5 +1,11 @@
 # PC B — état observé
 
+## Actualisation du 29 octobre — application et persistance
+
+InvoiceShelf 2.4.7 est installé sur Ubuntu avec SQLite local et proxy HTTPS 10.77.20.10:8443. Sanad a créé une facture brouillon et ouvert son aperçu PDF ; après recréation des deux conteneurs et actualisation, la facture figure toujours dans la liste. Le PDF après recréation n'a pas été montré séparément.
+
+Ubuntu a listé le partage app-backups et envoyé un fichier test avec le compte app-backup après configuration TrueNAS SMB encryption REQUIRED. Jesse a rapporté une session WIN-LAB Encrypted=True. Jesse a aussi rapporté une connexion authentifiée et un aperçu de facture depuis WIN-LAB ; l'accès est signalé indisponible à nouveau après recréation. La piste MTU n'est pas confirmée. Voir [preuves B du 29 octobre](PC_B_2026-10-29.md). Rôles, sauvegarde/restauration applicative, supervision et VPN restent à vérifier. Les observations plus anciennes sont conservées ci-dessous.
+
 ## Actualisation du 29 octobre — passerelles VLAN 20 et 30
 
 TrueNAS est démarré dans la capture fournie : enp0s17 10.77.30.10/24, route par défaut via 10.77.30.1. Son dernier ping vers 10.77.30.1 réussit (4 émis, 4 reçus, 0 % de perte). La preuve A enregistre également Ubuntu vers 10.77.20.1 à 4/4. Les exceptions ICMP sont limitées aux invités vers leurs passerelles ; elles ne valident pas les autres flux.
