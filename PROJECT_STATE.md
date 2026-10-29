@@ -1,5 +1,9 @@
 # Project checkpoint
 
+## 29 October — monitoring verified
+
+Sanad's screenshots show Grafana authenticated locally, Prometheus data source tested, all four targets up, real Ubuntu and Windows CPU graphs, and a successful InvoiceShelf HTTPS probe with certificate validation. Stopping Ubuntu node-exporter produced a down target; restarting it restored up. Separately, stopping InvoiceShelf webapp produced probe DOWN; after restart the recorded probe_success returned 1. Earlier monitoring preparation sections are historical. Remaining: Windows Grafana viewer and VPN access restrictions, rsyslog, auditd, ClamAV, Docker security and final persistence/stability checks. Grafana currently serves HTTP on 10.77.20.10:3001; TLS and network restrictions are not established by these tests. See evidence/PC_B_2026-10-29.md.
+
 ## 29 October — monitoring preparation
 
 Sanad's console screenshot confirms the isolated restore-test containers and their network were removed after the restored invoice and PDF were checked; private backup and extracted files were retained. Ubuntu screenshots show Prometheus v3.5.5, Grafana 13.2.4, node-exporter v1.12.1 and blackbox-exporter v0.28.0 images downloaded and LAB-VLAN20 reactivated. Host VMX readback confirms Ubuntu VMnet10 and NAS VMnet11. Latest host snapshot: SW-B, Ubuntu and NAS running; Ethernet Up 1 Gbps, Wi-Fi Up, 1.27 GiB RAM and 83.25 GiB disk available. Monitoring configuration, Grafana password preparation and service startup are not confirmed; verify before acting. See evidence/PC_B_2026-10-29.md. Older stopping-point notes below are historical.
