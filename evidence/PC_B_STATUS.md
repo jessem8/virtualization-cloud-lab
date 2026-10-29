@@ -1,5 +1,9 @@
 # PC B — état observé
 
+## Actualisation — Grafana HTTPS
+
+Grafana est configuré en HTTPS sur 10.77.20.10:3001. Après redémarrage du conteneur, test local avec certificat explicitement approuvé : HTTPS 200 et database ok. Test Viewer Windows et refus VPN à réaliser ; la confiance du navigateur dans le certificat n'est pas établie. Voir [preuves B](PC_B_2026-10-29.md). Les sections précédentes mentionnant HTTP sont historiques.
+
 ## Actualisation — journaux et sécurité
 
 Réception du refus OPNsense de Jesse confirmée dans le journal Ubuntu ; connexion TCP depuis 10.77.20.1 observée. Rotation réelle du journal réussie et nouveaux messages reçus. Auditd a enregistré le test sur compose.yaml ; ClamAV a analysé quatre fichiers de configuration sans infection détectée. Un compte Grafana Viewer voit le tableau en local et n'a pas de bouton Edit. HTTPS Grafana est demandé et en cours : le service est encore en HTTP au moment de ce point. Accès Windows, refus VPN et persistance des règles après redémarrage restent à vérifier. Voir [preuves B](PC_B_2026-10-29.md).
