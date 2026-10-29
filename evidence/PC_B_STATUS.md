@@ -1,5 +1,9 @@
 # PC B — état observé
 
+## Actualisation — supervision préparée
+
+La capture confirme la suppression des deux conteneurs et du réseau de restauration, sans suppression des fichiers extraits. Captures Ubuntu : quatre images de supervision téléchargées (Prometheus 3.5.5, Grafana 13.2.4, node-exporter 1.12.1, blackbox-exporter 0.28.0), profil LAB-VLAN20 réactivé. VMX contrôlés : Ubuntu VMnet10, NAS VMnet11. Dernier vmrun : les trois VM actives ; Ethernet Up 1 Gbit/s ; RAM Windows disponible 1,27 Gio, disque C: libre 83,25 Gio. Mesures ponctuelles. Mot de passe Grafana et services de supervision non confirmés ; ne pas les déclarer opérationnels. Voir [preuves B](PC_B_2026-10-29.md). Les observations précédentes sont conservées ci-dessous.
+
 ## Actualisation — restauration applicative
 
 Le 29 octobre, une archive InvoiceShelf a été créée après arrêt du service, copiée vers le partage NAS de sauvegarde puis retéléchargée. Les empreintes SHA-256 affichées correspondent. Une copie restaurée séparée sur 127.0.0.1:8444 affiche la société, la facture brouillon et son PDF. Les captures et le déroulé sont décrits dans [preuves B](PC_B_2026-10-29.md). L'instance restaurée doit encore être arrêtée ; les données et l'archive restent privées.

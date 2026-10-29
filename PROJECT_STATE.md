@@ -1,5 +1,9 @@
 # Project checkpoint
 
+## 29 October — monitoring preparation
+
+Sanad's console screenshot confirms the isolated restore-test containers and their network were removed after the restored invoice and PDF were checked; private backup and extracted files were retained. Ubuntu screenshots show Prometheus v3.5.5, Grafana 13.2.4, node-exporter v1.12.1 and blackbox-exporter v0.28.0 images downloaded and LAB-VLAN20 reactivated. Host VMX readback confirms Ubuntu VMnet10 and NAS VMnet11. Latest host snapshot: SW-B, Ubuntu and NAS running; Ethernet Up 1 Gbps, Wi-Fi Up, 1.27 GiB RAM and 83.25 GiB disk available. Monitoring configuration, Grafana password preparation and service startup are not confirmed; verify before acting. See evidence/PC_B_2026-10-29.md. Older stopping-point notes below are historical.
+
 ## 29 October — InvoiceShelf backup and isolated restore
 
 Sanad supplied evidence of a stopped-app archive copied to the restricted NAS share, downloaded again with matching SHA-256, and restored to a separate local instance bound to 127.0.0.1:8444. The restored company, draft invoice and PDF preview are visible. The live app was not replaced; stopping the restore-test containers remains pending. Keep backups and private keys outside Git. A reader role shows the invoice list in a separate session; Sanad reports restrictions pass but individual denied-action evidence is not supplied. Monitoring and VPN checks remain pending. See evidence/PC_B_2026-10-29.md.
