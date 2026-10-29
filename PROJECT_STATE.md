@@ -1,5 +1,9 @@
 # Project checkpoint
 
+## 29 October — InvoiceShelf backup and isolated restore
+
+Sanad supplied evidence of a stopped-app archive copied to the restricted NAS share, downloaded again with matching SHA-256, and restored to a separate local instance bound to 127.0.0.1:8444. The restored company, draft invoice and PDF preview are visible. The live app was not replaced; stopping the restore-test containers remains pending. Keep backups and private keys outside Git. A reader role shows the invoice list in a separate session; Sanad reports restrictions pass but individual denied-action evidence is not supplied. Monitoring and VPN checks remain pending. See evidence/PC_B_2026-10-29.md.
+
 ## 29 October — Ubuntu LAB-VLAN20 MTU
 
 A fresh WIN-LAB HTTPS timeout was followed by a successful login-page load after Ubuntu enp0s17 was set to MTU 1400. At Sanad's request, 1400 was saved on NetworkManager profile LAB-VLAN20; user-provided readback shows both profile and active interface at 1400. Reboot persistence and the root cause remain unverified. The page had also opened once after the earlier command to return to 1500. See evidence/PC_B_2026-10-29.md. Previous notes below are historical.

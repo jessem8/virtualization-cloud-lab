@@ -1,5 +1,11 @@
 # PC B — état observé
 
+## Actualisation — restauration applicative
+
+Le 29 octobre, une archive InvoiceShelf a été créée après arrêt du service, copiée vers le partage NAS de sauvegarde puis retéléchargée. Les empreintes SHA-256 affichées correspondent. Une copie restaurée séparée sur 127.0.0.1:8444 affiche la société, la facture brouillon et son PDF. Les captures et le déroulé sont décrits dans [preuves B](PC_B_2026-10-29.md). L'instance restaurée doit encore être arrêtée ; les données et l'archive restent privées.
+
+Un rôle de lecture a été créé et la liste des factures est visible en session distincte ; Sanad rapporte les restrictions réussies, sans preuve distincte des trois refus. Supervision et essais VPN restent à réaliser.
+
 ## Actualisation — MTU du réseau Ubuntu
 
 Après un nouvel échec HTTPS depuis WIN-LAB avec le retour à 1500, la page de connexion s'est affichée après réglage temporaire à 1400. Sanad a choisi de conserver 1400 : capture de contrôle du 29 octobre montrant la propriété MTU du profil LAB-VLAN20 à 1400 et l'interface enp0s17 active à 1400. Réapplication après redémarrage non testée ; cause racine de l'intermittence non établie. Voir [preuves B](PC_B_2026-10-29.md). Les mentions antérieures restent historiques.
