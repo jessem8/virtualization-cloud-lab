@@ -1,5 +1,9 @@
 # Project checkpoint
 
+## 29 October — Ubuntu LAB-VLAN20 MTU
+
+A fresh WIN-LAB HTTPS timeout was followed by a successful login-page load after Ubuntu enp0s17 was set to MTU 1400. At Sanad's request, 1400 was saved on NetworkManager profile LAB-VLAN20; user-provided readback shows both profile and active interface at 1400. Reboot persistence and the root cause remain unverified. The page had also opened once after the earlier command to return to 1500. See evidence/PC_B_2026-10-29.md. Previous notes below are historical.
+
 ## 29 October — InvoiceShelf and SMB update
 
 InvoiceShelf 2.4.7 setup, local login and draft invoice PDF preview were observed on Ubuntu B. After Compose containers were recreated, Sanad's refreshed invoice list still shows the draft; PDF rendering after recreation was not separately observed. Jesse reported authenticated WIN-LAB access and invoice preview before recreation; Sanad now reports the page is unavailable again from A. Earlier MTU 1400/1500 tests did not establish the root cause. The TLS certificate is self-signed.

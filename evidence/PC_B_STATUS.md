@@ -1,5 +1,9 @@
 # PC B — état observé
 
+## Actualisation — MTU du réseau Ubuntu
+
+Après un nouvel échec HTTPS depuis WIN-LAB avec le retour à 1500, la page de connexion s'est affichée après réglage temporaire à 1400. Sanad a choisi de conserver 1400 : capture de contrôle du 29 octobre montrant la propriété MTU du profil LAB-VLAN20 à 1400 et l'interface enp0s17 active à 1400. Réapplication après redémarrage non testée ; cause racine de l'intermittence non établie. Voir [preuves B](PC_B_2026-10-29.md). Les mentions antérieures restent historiques.
+
 ## Actualisation du 29 octobre — application et persistance
 
 InvoiceShelf 2.4.7 est installé sur Ubuntu avec SQLite local et proxy HTTPS 10.77.20.10:8443. Sanad a créé une facture brouillon et ouvert son aperçu PDF ; après recréation des deux conteneurs et actualisation, la facture figure toujours dans la liste. Le PDF après recréation n'a pas été montré séparément.
