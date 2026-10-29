@@ -1,5 +1,16 @@
 # PC B — état observé
 
+## Actualisation du 29 octobre — réseau final Ubuntu
+
+- Ethernet Realtek : état Up, liaison 1 Gbit/s, relevé sur Windows B.
+- SW-B et UBU-LAB actives au dernier contrôle `vmrun list` ; NAS-LAB absente de la liste.
+- Capture console SW-B fournie par Sanad : eth0 VLAN 30 PVID/Egress Untagged ; eth1 VLAN 20/30 ; eth2 VLAN 20 PVID/Egress Untagged. Interfaces eth0/eth1/eth2 et br-lab UP, sans adresse affichée ; loopback seule avec IP.
+- Cartes sauvegardées contrôlées sur B : Ubuntu Custom VMnet10 et NAS Custom VMnet11. L'adresse invitée de TrueNAS reste à configurer et vérifier.
+- Sorties Ubuntu fournies par Sanad : enp0s17 UP avec 10.77.20.10/24 ; route par défaut via 10.77.20.1. Profil NetworkManager LAB-VLAN20 créé selon les commandes guidées ; DNS prévu 10.77.20.1, mais valeur effective et résolution non vérifiées par ces sorties.
+- Pas de résultat de ping vers 10.77.20.1 reçu à ce stade. Pontage effectif VMnet12, transport physique VLAN 20/30 et communication bidirectionnelle restent à vérifier.
+- Transcriptions et sources : [preuves B du 29 octobre](PC_B_2026-10-29.md). Les observations du 28 octobre ci-dessous sont conservées comme historique.
+
+
 Mis à jour le 28 octobre 2026 avec Sanad. Les configurations décrites ne prouvent pas les communications entre VM ou entre PC.
 
 - **SW-B** : Alpine est installé sur disque, avec 512 Mio de RAM. Trois interfaces sont configurées : VMnet12/eth1 pour le trunk VLAN 20 et 30 ; VMnet10/eth2 pour l'accès Ubuntu VLAN 20 ; VMnet11/eth0 pour l'accès TrueNAS VLAN 30. Après redémarrage, `bridge vlan show` a affiché les VLAN attendus et `ip -br addr` les interfaces actives sans adresse IP, hors loopback. NAT temporaire retiré. SW-B est actuellement arrêté pour libérer de la RAM.

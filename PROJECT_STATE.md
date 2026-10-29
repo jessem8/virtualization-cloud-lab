@@ -1,5 +1,10 @@
 # Project checkpoint
 
+## 29 October — PC B network preparation evidence
+
+Windows B now reports the dedicated Ethernet link Up at 1 Gbit/s. SW-B and Ubuntu are running at the latest host check; NAS-LAB is not listed. Sanad's SW-B console capture shows the expected VLAN membership and interfaces UP without IP addresses. Ubuntu guest output confirms enp0s17 10.77.20.10/24 and the default route via 10.77.20.1; its saved adapter is Custom VMnet10. NAS's saved adapter is now Custom VMnet11, but its final guest address remains unverified. No gateway ping result or physical VLAN transport pass is claimed. See [B session evidence](evidence/PC_B_2026-10-29.md) and [B status](evidence/PC_B_STATUS.md). Earlier evidence below is retained as history.
+
+
 ## 29 October — joint session and evidence branch
 
 Jesse reports that he and Sanad are together, both PCs are connected by Ethernet and both use the same Wi-Fi. This is user-reported physical setup, not verification of link state or VLAN traffic. The user requests shared branch `evidence/joint-lab-20261029` for joint evidence collection, overriding the earlier main-only direction for this work. Each machine updates its own evidence file, coordinates joint observations, fetches/reconciles before pushing and never force-pushes. Begin with the actual startup and trunk checks in BUILD_PLAN.md. No current VM state or test result is assumed.
