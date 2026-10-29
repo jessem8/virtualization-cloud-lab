@@ -8,7 +8,7 @@ Les observations ci-dessous sont conservées pour leur chronologie. Les ancienne
 
 ## Actualisation — redémarrage et filtrage
 
-Après redémarrage Ubuntu : adresse 10.77.20.10/24, MTU 1400, services lab-firewall, ssh.socket, auditd et rsyslog actifs ; règles INPUT et DOCKER-USER, blocage SSH IPv6 et règle MSS 1360 restaurés. Six conteneurs démarrés, webapp healthy, quatre cibles Prometheus UP et sonde HTTPS InvoiceShelf = 1. Jesse rapporte un accès SSH MGMT par clé et des captures Windows des tableaux InvoiceShelf et Grafana après redémarrage. La cause réseau sous-jacente demeure inconnue ; MSS est un contournement limité à Windows vers InvoiceShelf. Nettoyage de la route temporaire MGMT effectué par A en cours ; confiance du certificat navigateur et Docker Bench ne sont pas confirmés. Voir [preuves B](../PC_B_2026-10-29.md).
+Après redémarrage Ubuntu : adresse 10.77.20.10/24, MTU 1400, services lab-firewall, ssh.socket, auditd et rsyslog actifs ; règles INPUT et DOCKER-USER, blocage SSH IPv6 et règle MSS 1360 restaurés. Six conteneurs démarrés, webapp healthy, quatre cibles Prometheus UP et sonde HTTPS InvoiceShelf = 1. Jessem rapporte un accès SSH MGMT par clé et des captures Windows des tableaux InvoiceShelf et Grafana après redémarrage. La cause réseau sous-jacente demeure inconnue ; MSS est un contournement limité à Windows vers InvoiceShelf. Nettoyage de la route temporaire MGMT effectué par A en cours ; confiance du certificat navigateur et Docker Bench ne sont pas confirmés. Voir [preuves B](../PC_B_2026-10-29.md).
 
 ## Actualisation — Grafana HTTPS
 
@@ -16,7 +16,7 @@ Grafana est configuré en HTTPS sur 10.77.20.10:3001. Après redémarrage du con
 
 ## Actualisation — journaux et sécurité
 
-Réception du refus OPNsense de Jesse confirmée dans le journal Ubuntu ; connexion TCP depuis 10.77.20.1 observée. Rotation réelle du journal réussie et nouveaux messages reçus. Auditd a enregistré le test sur compose.yaml ; ClamAV a analysé quatre fichiers de configuration sans infection détectée. Un compte Grafana Viewer voit le tableau en local et n'a pas de bouton Edit. HTTPS Grafana est demandé et en cours : le service est encore en HTTP au moment de ce point. Accès Windows, refus VPN et persistance des règles après redémarrage restent à vérifier. Voir [preuves B](../PC_B_2026-10-29.md).
+Réception du refus OPNsense de Jessem confirmée dans le journal Ubuntu ; connexion TCP depuis 10.77.20.1 observée. Rotation réelle du journal réussie et nouveaux messages reçus. Auditd a enregistré le test sur compose.yaml ; ClamAV a analysé quatre fichiers de configuration sans infection détectée. Un compte Grafana Viewer voit le tableau en local et n'a pas de bouton Edit. HTTPS Grafana est demandé et en cours : le service est encore en HTTP au moment de ce point. Accès Windows, refus VPN et persistance des règles après redémarrage restent à vérifier. Voir [preuves B](../PC_B_2026-10-29.md).
 
 ## Actualisation — supervision fonctionnelle
 
@@ -40,7 +40,7 @@ Après un nouvel échec HTTPS depuis WIN-LAB avec le retour à 1500, la page de 
 
 InvoiceShelf 2.4.7 est installé sur Ubuntu avec SQLite local et proxy HTTPS 10.77.20.10:8443. Sanad a créé une facture brouillon et ouvert son aperçu PDF ; après recréation des deux conteneurs et actualisation, la facture figure toujours dans la liste. Le PDF après recréation n'a pas été montré séparément.
 
-Ubuntu a listé le partage app-backups et envoyé un fichier test avec le compte app-backup après configuration TrueNAS SMB encryption REQUIRED. Jesse a rapporté une session WIN-LAB Encrypted=True. Jesse a aussi rapporté une connexion authentifiée et un aperçu de facture depuis WIN-LAB ; l'accès est signalé indisponible à nouveau après recréation. La piste MTU n'est pas confirmée. Voir [preuves B du 29 octobre](../PC_B_2026-10-29.md). Rôles, sauvegarde/restauration applicative, supervision et VPN restent à vérifier. Les observations plus anciennes sont conservées ci-dessous.
+Ubuntu a listé le partage app-backups et envoyé un fichier test avec le compte app-backup après configuration TrueNAS SMB encryption REQUIRED. Jessem a rapporté une session WIN-LAB Encrypted=True. Jessem a aussi rapporté une connexion authentifiée et un aperçu de facture depuis WIN-LAB ; l'accès est signalé indisponible à nouveau après recréation. La piste MTU n'est pas confirmée. Voir [preuves B du 29 octobre](../PC_B_2026-10-29.md). Rôles, sauvegarde/restauration applicative, supervision et VPN restent à vérifier. Les observations plus anciennes sont conservées ci-dessous.
 
 ## Actualisation du 29 octobre — passerelles VLAN 20 et 30
 

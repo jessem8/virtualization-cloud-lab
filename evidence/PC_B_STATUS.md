@@ -20,6 +20,6 @@ L'initialisation InvoiceShelf a rencontré un conflit d'adresse du proxy et un d
 
 Le certificat reste autosigné/non approuvé par les navigateurs. Les restrictions détaillées des actions InvoiceShelf, Docker Bench, certains refus de sources non autorisées et les critères d'isolation restent non confirmés. Le filtrage Ubuntu décrit est ciblé sur enp0s17 ; il ne prouve pas le filtrage de toute autre interface.
 
-Les 6 Gio TrueNAS observés restent inférieurs aux 8 Gio du plan de référence. Les mesures de RAM sont ponctuelles ; le fonctionnement simultané de plus de cinq heures est rapporté par Jesse, sans mesure de charge. Le miroir et les snapshots restent sur le stockage physique du PC B.
+Les 6 Gio TrueNAS observés restent inférieurs aux 8 Gio du plan de référence. Les mesures de RAM sont ponctuelles ; le fonctionnement simultané de plus de cinq heures est rapporté par Jessem, sans mesure de charge. Le miroir et les snapshots restent sur le stockage physique du PC B.
 
 [108 PNG B et index avec empreintes](../screenshots_b/index.csv) ; [index thématique](README.md) ; [matrice avec réserves](../docs/TEST_MATRIX.md). Aucun test ni changement sur B n'a été exécuté pour ce rangement.

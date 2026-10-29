@@ -1,6 +1,6 @@
 # PC B — référence de configuration
 
-Sanad / sanadzhioua héberge SW-B, Ubuntu et TrueNAS dans VMware Workstation. Lire d'abord l'[architecture commune](../README.md), puis l'[état B et ses sources](../evidence/PC_B_STATUS.md). Cette référence ne demande aucune réinstallation ni modification.
+Sanad / sanadzhioua héberge SW-B, Ubuntu et TrueNAS dans VMware Workstation. L'[architecture commune](../README.md) et l'[état B et ses sources](../evidence/PC_B_STATUS.md) complètent la configuration décrite ci-dessous.
 
 ## Trois VM et ports locaux
 

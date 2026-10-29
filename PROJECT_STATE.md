@@ -10,7 +10,7 @@ Aucune refonte du présentateur, préparation Q/A ou QCM, diaporama, attribution
 
 ## Architecture retenue
 
-Deux PC, VMware Workstation, cinq VM : A/Jesse = OPNsense et Windows Server ; B/Sanad = Alpine SW-B, Ubuntu et TrueNAS. SW-B commute à L2 sans IP/routage. CLIENTS et MGMT sont des VMnet non tagués, pas VLAN10/99 ; seul le trunk physique transporte les VLAN20/30. Ubuntu utilise VMnet10 sur B, NAS VMnet11, trunk VMnet12 ; les numéros sont locaux à chaque PC.
+Deux PC, VMware Workstation, cinq VM : A/Jessem = OPNsense et Windows Server ; B/Sanad = Alpine SW-B, Ubuntu et TrueNAS. SW-B commute à L2 sans IP/routage. CLIENTS et MGMT sont des VMnet non tagués, pas VLAN10/99 ; seul le trunk physique transporte les VLAN20/30. Ubuntu utilise VMnet10 sur B, NAS VMnet11, trunk VMnet12 ; les numéros sont locaux à chaque PC.
 
 Ubuntu héberge Nginx HTTPS8443, InvoiceShelf2.4.7/backend8080 interne, SQLite locale persistante et quatre composants de supervision. Ubuntu→NAS traverse B/tag20 → OPNsense A → B/tag30. NAS reçoit une archive cohérente après arrêt de l'application ; SQLite active n'est jamais hébergée sur SMB. Pas de cloud public, ESXi imbriqué, AD ou Kubernetes demandé.
 
@@ -30,9 +30,9 @@ Ces observations sont datées ; aucun état actuel de VM allumée n'est supposé
 
 ## Réserves à conserver
 
-Cause racine liaison/pilote inconnue malgré les contournements MTU/MSS. Certificats autosignés non approuvés par les navigateurs. Actions du rôle InvoiceShelf rapportées par Jesse/Sanad, sans capture indépendante de chaque refus. Les limites T03/T04, Docker Bench/atelier, certains refus réseau et toute mesure formelle de charge restent explicites dans la [matrice](docs/TEST_MATRIX.md). Poussée des routes pour de futurs profils VPN et dernières offres Windows Update non confirmées.
+Cause racine liaison/pilote inconnue malgré les contournements MTU/MSS. Certificats autosignés non approuvés par les navigateurs. Actions du rôle InvoiceShelf rapportées par Jessem/Sanad, sans capture indépendante de chaque refus. Les limites T03/T04, Docker Bench/atelier, certains refus réseau et toute mesure formelle de charge restent explicites dans la [matrice](docs/TEST_MATRIX.md). Poussée des routes pour de futurs profils VPN et dernières offres Windows Update non confirmées.
 
-Jesse rapporte plus de cinq heures avec les cinq VM ; cela n'est pas une mesure de performance et ne justifie pas un nouveau minuteur. B conserve l'allocation observée Ubuntu 4 Gio / TrueNAS 6 Gio, distincte des anciennes cibles 2,5/8 Gio. Ne pas transformer une cible en mesure.
+Jessem rapporte plus de cinq heures avec les cinq VM ; cela n'est pas une mesure de performance et ne justifie pas un nouveau minuteur. B conserve l'allocation observée Ubuntu 4 Gio / TrueNAS 6 Gio, distincte des anciennes cibles 2,5/8 Gio. Ne pas transformer une cible en mesure.
 
 Captures intactes : **13 PNG A + index**, **108 PNG B + index**. Les anciennes images A Sysmon/Defender sont partiellement non récupérées. La collecte A avait comparé les 13 originaux par SHA-256 ; B avait rapporté les comparaisons et conserve les empreintes dans son index. Ce rangement ne revalide pas chaque image ni chaque essai. Issue #2 clôturée après remise ; PR #1 historique.
 
@@ -49,6 +49,8 @@ Sources/artefacts 3D conservés sur les deux branches, lanceur `diagram/start.ps
 Contrôles documentaires effectués : 26 fichiers Markdown du dépôt, 167 liens locaux sans cible manquante ; 158 fichiers protégés comparés au commit `4efc321` et inchangés ; index A 13/B 108 concordants, 108 SHA-256 B correspondants ; observations des deux anciens états conservées dans history ; trois références locales de la page 3D présentes ; `git diff --check` sans erreur. Le contrôle initial avait trouvé un lien cassé dans .local-history ignoré, hors dépôt : il est resté intact, puis le contrôle a été limité aux fichiers du dépôt. Diffs relus, commit de rangement `c5ab49a` poussé. Contrôle final Git : seules les branches locales/distantes main et presenter subsistent, toutes deux alignées au rangement ; collecte supprimée après vérification de zéro commit unique à préserver et du bundle complet. L'arbre suivi était propre après push et suppression. Ce point de clôture est consigné dans le commit suivant. Aucun test du labo, nouveau build ni contrôle graphique n'est exécuté. L'enregistrement facultatif du suivi local a renvoyé `invalid_contract` : aucun reçu de registre ni binding natif n'est revendiqué. Les preuves réelles restent dans le dépôt.
 
 La prochaine action de l'équipe est de lire le README et l'index. Ne pas commencer automatiquement la tâche de présentation. Le barème d'origine reste intact : groupe 20 ; individuel 20 % suivi/80 % Q/A ; final 60/40 ou 90/10 si groupe−individuel>3. Le XLSX contient des ambiguïtés de cellules : ne pas inventer une correction ni des critères.
+
+Correction éditoriale du 30 octobre : nom personnel **Jessem** uniformisé dans les textes, avec conservation des identifiants GitHub, comptes techniques et chemins Windows. Le README et les renvois documentaires utilisent un libellé neutre ; la section de parcours pour rejoindre l'équipe est supprimée. Les corrections de nom dans les notes ne modifient aucun résultat observé. Des liens relatifs vers les captures disponibles et les sources du présentateur complètent les références ; les chemins locaux historiques restent inchangés. Vérification éditoriale : 217 liens locaux valides, aucune occurrence du précédent nom personnel dans les textes suivis, modifications limitées aux fichiers Markdown.
 
 ## Leçons retenues
 

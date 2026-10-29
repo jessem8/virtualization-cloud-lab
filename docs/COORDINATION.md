@@ -23,7 +23,7 @@ Si une ancienne copie utilise encore la branche de collecte, conserver d'abord t
 
 ## Preuves et autorisations
 
-Jesse est propriétaire du PC A ; Sanad du PC B. Les notes [A](../evidence/PC_A_STATUS.md) et [B](../evidence/PC_B_STATUS.md) résument les dernières preuves, avec leurs sources datées. Une configuration sauvegardée, une capture, un test observé et un témoignage sont distingués. Ne jamais transformer un contrôle non confirmé en réussite.
+Jessem est propriétaire du PC A ; Sanad du PC B. Les notes [A](../evidence/PC_A_STATUS.md) et [B](../evidence/PC_B_STATUS.md) résument les dernières preuves, avec leurs sources datées. Une configuration sauvegardée, une capture, un test observé et un témoignage sont distingués. Ne jamais transformer un contrôle non confirmé en réussite.
 
 La tâche actuelle est documentaire : pas de démarrage/arrêt de VM, modification réseau, installation ou nouvel essai. L'[issue #2](https://github.com/jessem8/virtualization-cloud-lab/issues/2) est clôturée après la remise des captures ; [PR #1](https://github.com/jessem8/virtualization-cloud-lab/pull/1) est historique. Utiliser les issues uniquement pour une nouvelle demande humaine autorisée ; aucun message ni suivi automatique n'est lancé.
 

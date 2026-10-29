@@ -1,10 +1,10 @@
 # Application du laboratoire : InvoiceShelf 2.4.7
 
-InvoiceShelf est l'application de facturation retenue pour la démonstration. La version stable 2.4.7 et l'image officielle `invoiceshelf/invoiceshelf:2.4.7` sont fixées. Elle remplace les propositions précédentes. Les données de démonstration sont fictives. Lire le [README](../README.md) pour l'architecture complète et les [preuves B du 29 octobre](../evidence/PC_B_2026-10-29.md) pour l'exécution. Cette page conserve les références techniques ; elle n'est pas une demande de redéploiement.
+InvoiceShelf est l'application de facturation retenue pour la démonstration. La version stable 2.4.7 et l'image officielle `invoiceshelf/invoiceshelf:2.4.7` sont fixées. Elle remplace les propositions précédentes. Les données de démonstration sont fictives. Le [README](../README.md) décrit l'architecture complète ; les [preuves B du 29 octobre](../evidence/PC_B_2026-10-29.md) documentent l'exécution. Cette page conserve les références techniques de la version utilisée.
 
 ## Réalisation observée et contrat technique
 
-Les preuves du 29 octobre montrent la société fictive, une facture brouillon et son PDF, la facture après recréation des conteneurs, les accès Windows/VPN et les résultats après reboot Ubuntu. Le rôle lecteur est visible ; les restrictions détaillées sont rapportées par Jesse/Sanad, sans preuve indépendante de chaque refus.
+Les preuves du 29 octobre montrent la société fictive, une facture brouillon et son PDF, la facture après recréation des conteneurs, les accès Windows/VPN et les résultats après reboot Ubuntu. Le rôle lecteur est visible ; les restrictions détaillées sont rapportées par Jessem/Sanad, sans preuve indépendante de chaque refus.
 
 L'allocation Ubuntu observée est **4 Gio**, contre une ancienne cible de 2,5 Gio. Le réseau réel est NetworkManager LAB-VLAN20 sur VMnet10 B, MTU 1400 ; la règle MSS 1360 reste limitée à Windows → InvoiceShelf. La cause racine du défaut HTTPS est inconnue.
 

@@ -6,11 +6,11 @@ Documentation de l'interface livrée le 28 octobre 2026 ; alignement documentair
 
 Depuis la racine : `powershell -NoProfile -File diagram/start.ps1`, puis http://127.0.0.1:3187/. Le lanceur cherche Node dans le runtime Codex puis dans PATH. Les assets sont livrés : aucune compilation ou connexion Internet nécessaire à la consultation. Le serveur écoute sur127.0.0.1 seulement, sans exposer le reste du dépôt.
 
-Pour arrêter : terminer seulement le processus Node exécutant diagram/serve.mjs, pas les autres processus Node. Pour un autre port, définir LAB_DIAGRAM_PORT et lancer Node avec diagram/serve.mjs.
+Pour arrêter : terminer seulement le processus Node exécutant [diagram/serve.mjs](../diagram/serve.mjs), pas les autres processus Node. Pour un autre port, définir LAB_DIAGRAM_PORT et lancer Node avec [diagram/serve.mjs](../diagram/serve.mjs).
 
 ## Version publique
 
-Seul le laboratoire3D est publié, dans le dépôt public jessem8/virtualization-lab-3d : https://jessem8.github.io/virtualization-lab-3d/. Ce dépôt-ci reste privé. Pour mettre à jour : `node build.mjs`, puis `node publish.mjs <clone de virtualization-lab-3d>` depuis diagram/, puis commit et push dans ce clone. Le script copie index.html et network-assets seulement, ajoute une politique de contenu équivalente à celle du serveur local et retire le lien vers cette documentation.
+Seul le laboratoire3D est publié, dans le dépôt public jessem8/virtualization-lab-3d : [site public](https://jessem8.github.io/virtualization-lab-3d/). Ce dépôt-ci reste privé. Pour mettre à jour : `node build.mjs`, puis `node publish.mjs <clone de virtualization-lab-3d>` depuis diagram/, puis commit et push dans ce clone. Le script copie index.html et network-assets seulement, ajoute une politique de contenu équivalente à celle du serveur local et retire le lien vers cette documentation.
 
 ## Présenter
 
@@ -32,7 +32,7 @@ Les anciennes saisies locales du premier prototype ne sont pas supprimées du na
 
 Audience : professeur et étudiants. Objectif : comprendre hôte/hyperviseur/VM/conteneur et le trajet d’une communication autorisée/refusée. Composition : deux PC en vue d’ensemble, cinq invités identifiables, un seul parcours guidé à la fois. Au clic, la coupe du composant est isolée ; les autres équipements et connexions s’effacent jusqu’au retour au réseau. Bureau et projection uniquement ; aucun travail de compatibilité téléphone demandé.
 
-Matériaux graphite et métal aux arêtes adoucies. Pictogrammes SVG dessinés dans diagram/icons.mjs, géométrie3D procédurale et signes reconnaissables des systèmes, sans badges de lettres. Aucun modèle ou service3D payant. Palette révisée : scène bleu nuit, surfaces ivoire, texte encre ; câble cuivre, VLAN20 bleu et VLAN30 ambre. Les autorisations/refus conservent texte et signes en plus du vert/rouge. Titres Space Grotesk, textes IBM Plex Sans auto-hébergés, textes secondaires assombris.
+Matériaux graphite et métal aux arêtes adoucies. Pictogrammes SVG dessinés dans [diagram/icons.mjs](../diagram/icons.mjs), géométrie3D procédurale et signes reconnaissables des systèmes, sans badges de lettres. Aucun modèle ou service3D payant. Palette révisée : scène bleu nuit, surfaces ivoire, texte encre ; câble cuivre, VLAN20 bleu et VLAN30 ambre. Les autorisations/refus conservent texte et signes en plus du vert/rouge. Titres Space Grotesk, textes IBM Plex Sans auto-hébergés, textes secondaires assombris.
 
 Transport : câble et canaux plus épais, cartouche explicite802.1Q ; un refus s’arrête au pare-feu. Coupes : plateaux séparés et légendes nommées pour les fonctions. La signature est Ubuntu→NAS : VLAN20 vers A, routage sur OPNsense, VLAN30 retour vers B.
 
@@ -48,7 +48,7 @@ Application choisie : InvoiceShelf2.4.7 avec SQLite local et Nginx HTTPS8443 ; b
 
 Le laboratoire a été intégré le29/10 : les preuves datées remplacent les anciens états préparatoires. Ubuntu4 Gio et TrueNAS6 Gio sont les allocations observées ; les anciennes cibles2,5/8 Gio restent des références distinctes. Les succès et les limites sont dans la matrice ; aucun test n'est relancé pour ce rangement.
 
-Sources : docs/LIAISON.md, docs/MACHINE_A.md, docs/MACHINE_B.md, evidence/PC_B_STATUS.md, révision921eebf et décisions humaines du27/10. Le choix InvoiceShelf supersède Homebox/Vikunja ; les guides opérationnels ont été alignés sur ce choix.
+Sources : [liaison et règles](LIAISON.md), [machine A](MACHINE_A.md), [machine B](MACHINE_B.md), [état B](../evidence/PC_B_STATUS.md), révision921eebf et décisions humaines du27/10. Le choix InvoiceShelf supersède Homebox/Vikunja ; les guides opérationnels ont été alignés sur ce choix.
 
 Conseils consultés : [Web3D Integration Patterns](https://www.skills.sh/freshtechbro/claudedesignskills/web3d-integration-patterns), séparation des couches, état synchronisé et rendu à la demande. [image-3d](https://www.skills.sh/starchild-ai-agent/official-skills/image-3d) produit des images2D au rendu3D, pas des modèles interactifs ; aucun script de facturation ni service Starchild n’est utilisé. Les consultations Astra en lecture seule ont guidé les trajets exacts, les vues fonctionnelles et la distinction simulation/preuve. La revue finale du code a conduit aux corrections des connexions internes, du serveur local et du sens en2D.
 
@@ -56,13 +56,13 @@ Le concept raster généré a servi à la composition, pas aux faits. Ses chiffr
 
 ## Sources éditables et reconstruction
 
-docs/network-assets/topology.json contient les faits affichés par la maquette, dont certains sont historiques (VMnet14, états préparatoires), à actualiser dans la tâche ultérieure ; diagram/scenarios.mjs contient les étapes ; diagram/scene.mjs, diagram/app.mjs, diagram/icons.mjs et diagram/map.mjs contiennent scène, interface, pictogrammes et plan2D. diagram/fx.mjs (rendu et qualité), camera.mjs (caméra), packet.mjs (paquet, porte pare-feu, ligne de flux), whatif.mjs (pannes simulées) et quiz.mjs (questions) complètent la scène ; la politique simulée est dans topology.json (policy).
+[topology.json](network-assets/topology.json) contient les faits affichés par la maquette, dont certains sont historiques (VMnet14, états préparatoires). Les sources éditables sont [scenarios.mjs](../diagram/scenarios.mjs) pour les étapes, [scene.mjs](../diagram/scene.mjs) pour la scène, [app.mjs](../diagram/app.mjs) pour l'interface, [icons.mjs](../diagram/icons.mjs) pour les pictogrammes et [map.mjs](../diagram/map.mjs) pour le plan 2D. Les modules [fx.mjs](../diagram/fx.mjs), [camera.mjs](../diagram/camera.mjs), [packet.mjs](../diagram/packet.mjs), [whatif.mjs](../diagram/whatif.mjs) et [quiz.mjs](../diagram/quiz.mjs) gèrent le rendu, la caméra, les paquets, les pannes et les questions simulées. La politique simulée est dans la propriété policy de topology.json.
 
-Dans diagram/ : `pnpm install --frozen-lockfile --ignore-scripts`, puis `node build.mjs`. Les dépendances sont verrouillées ; node_modules est exclu de Git. Le build regroupe les bibliothèques, copie polices/notices et régénère docs/network-lab-2d.svg. L’entrée actuelle est docs/network-lab-3d.html ; docs/network-lab.html conserve la version antérieure de B.
+Dans diagram/ : `pnpm install --frozen-lockfile --ignore-scripts`, puis `node build.mjs`. Les dépendances sont verrouillées ; node_modules est exclu de Git. Le build regroupe les bibliothèques, copie polices/notices et régénère le [schéma SVG](network-lab-2d.svg). L'entrée actuelle est la [page 3D](network-lab-3d.html) ; la [page précédente](network-lab.html) conserve la version antérieure de B.
 
 ## Vérification
 
-Voir evidence/DIAGRAM_VERIFICATION.md. Les captures sont des rendus du navigateur, pas des tests du réseau. La fluidité avec toutes les VM, le PC B et la projection physique restent non vérifiés.
+Les contrôles sont consignés dans [DIAGRAM_VERIFICATION](../evidence/DIAGRAM_VERIFICATION.md). Les captures de l'interface comprennent la [vue générale](../evidence/diagram-preview/overview.jpg), les [couches du pare-feu](../evidence/diagram-preview/firewall-layers.jpg), les [services Ubuntu](../evidence/diagram-preview/ubuntu-services.jpg) et le [refus VPN simulé](../evidence/diagram-preview/vpn-denied.jpg). Les captures sont des rendus du navigateur, pas des tests du réseau. La fluidité avec toutes les VM, le PC B et la projection physique restent non vérifiés.
 
 ## Dernière passe approuvée
 

@@ -1,6 +1,6 @@
 # PC A — référence de configuration
 
-Jesse / jessem8 héberge OPNsense et Windows dans VMware Workstation. Lire d'abord l'[architecture commune](../README.md), puis l'[état A et ses sources](../evidence/PC_A_STATUS.md). Cette référence décrit la configuration documentée ; elle n'est pas une procédure d'installation à relancer.
+Jessem / jessem8 héberge OPNsense et Windows dans VMware Workstation. L'[architecture commune](../README.md) et l'[état A et ses sources](../evidence/PC_A_STATUS.md) complètent la configuration décrite ci-dessous.
 
 ## VM et interfaces
 

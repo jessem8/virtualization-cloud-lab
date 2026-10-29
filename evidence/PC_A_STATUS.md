@@ -1,6 +1,6 @@
 # PC A — état consolidé du 29 octobre 2026
 
-Jesse / jessem8. Ce résumé recoupe les [notes A du 29](PC_A_2026-10-29.md), les [notes B du 29](PC_B_2026-10-29.md) et l'[historique A du 27/28](history/PC_A_STATUS.md). Les anciens états/erreurs sont conservés dans ces sources ; leurs suites en attente ne sont plus des actions actuelles.
+Jessem / jessem8. Ce résumé recoupe les [notes A du 29](PC_A_2026-10-29.md), les [notes B du 29](PC_B_2026-10-29.md) et l'[historique A du 27/28](history/PC_A_STATUS.md). Les anciens états/erreurs sont conservés dans ces sources ; leurs suites en attente ne sont plus des actions actuelles.
 
 ## Configuration et résultats enregistrés
 
@@ -15,9 +15,9 @@ Jesse / jessem8. Ce résumé recoupe les [notes A du 29](PC_A_2026-10-29.md), le
 
 ## Limites conservées
 
-MTU Ubuntu 1400 et MSS 1360 limitée à Windows → InvoiceShelf sont des contournements opérationnels persistants ; cause racine inconnue. Certificats autosignés non approuvés par les navigateurs. Les droits détaillés InvoiceShelf sont rapportés par Jesse/Sanad ; le seul affichage Grafana Viewer ne prouve pas toute l'autorisation. Docker Bench et les critères non confirmés restent dans la [matrice](../docs/TEST_MATRIX.md).
+MTU Ubuntu 1400 et MSS 1360 limitée à Windows → InvoiceShelf sont des contournements opérationnels persistants ; cause racine inconnue. Certificats autosignés non approuvés par les navigateurs. Les droits détaillés InvoiceShelf sont rapportés par Jessem/Sanad ; le seul affichage Grafana Viewer ne prouve pas toute l'autorisation. Docker Bench et les critères non confirmés restent dans la [matrice](../docs/TEST_MATRIX.md).
 
-Jesse rapporte plus de cinq heures avec les cinq VM : durée déclarée, sans mesure formelle de performance. La configuration de poussée des routes pour de futurs exports VPN et les mises à jour Windows encore proposées ne sont pas confirmées ; le profil effectivement testé contenait les routes explicites.
+Jessem rapporte plus de cinq heures avec les cinq VM : durée déclarée, sans mesure formelle de performance. La configuration de poussée des routes pour de futurs exports VPN et les mises à jour Windows encore proposées ne sont pas confirmées ; le profil effectivement testé contenait les routes explicites.
 
 ## Captures et remise
 

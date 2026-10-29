@@ -1,6 +1,6 @@
 # Réseau et règles — référence du 29 octobre 2026
 
-Lire d'abord l'[architecture complète](../README.md). Les [preuves A](../evidence/PC_A_2026-10-29.md) et [B](../evidence/PC_B_2026-10-29.md) décrivent les essais ; la [matrice](TEST_MATRIX.md) précise leurs limites. Cette page explique le réseau documenté, sans prescrire un nouveau test ni un changement de configuration.
+L'[architecture complète](../README.md) décrit les rôles des cinq VM. Les [preuves A](../evidence/PC_A_2026-10-29.md) et [B](../evidence/PC_B_2026-10-29.md) décrivent les essais ; la [matrice](TEST_MATRIX.md) précise leurs limites. Cette page décrit le réseau et les règles documentés.
 
 ## Raccordement des deux hôtes
 
