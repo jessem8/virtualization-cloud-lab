@@ -1,6 +1,6 @@
 # Point de reprise du projet
 
-Mis à jour le **29 octobre 2026**, Africa/Tunis. Lire le [README](README.md), le [périmètre actuel](BUILD_PLAN.md) et la [coordination](docs/COORDINATION.md). Les anciens points d'arrêt et propositions sont [archivés avec des références immuables](docs/archive/README.md) ; ils ne gouvernent plus les actions.
+Clôture documentaire le **30 octobre 2026**, Africa/Tunis ; preuves de laboratoire datées du 29. **Rangement documentaire terminé et poussé** ; aucune tâche de présentation supplémentaire n'a été commencée. Lire le [README](README.md), le [périmètre actuel](BUILD_PLAN.md) et la [coordination](docs/COORDINATION.md). Les anciens points d'arrêt et propositions sont [archivés avec des références immuables](docs/archive/README.md) ; ils ne gouvernent plus les actions.
 
 ## Objectif et limites
 
@@ -46,7 +46,7 @@ Sources/artefacts 3D conservés sur les deux branches, lanceur `diagram/start.ps
 
 ## Vérification du rangement et prochaine action
 
-Contrôles documentaires effectués : 26 fichiers Markdown du dépôt, 167 liens locaux sans cible manquante ; 158 fichiers protégés comparés au commit4efc321 et inchangés ; index A13/B108 concordants, 108 SHA-256 B correspondants ; observations des deux anciens états conservées dans history ; trois références locales de la page3D présentes ; git diff --check sans erreur. Le contrôle initial avait trouvé un lien cassé dans .local-history ignoré, hors dépôt : il est resté intact, puis le contrôle a été limité aux fichiers du dépôt. Les diffs sont relus avant commit, puis les branches et le push sont contrôlés. Aucun test du labo, nouveau build ni contrôle graphique n'est exécuté. L'enregistrement facultatif du suivi local a renvoyé `invalid_contract` : aucun reçu de registre ni binding natif n'est revendiqué. Les preuves réelles restent dans le dépôt.
+Contrôles documentaires effectués : 26 fichiers Markdown du dépôt, 167 liens locaux sans cible manquante ; 158 fichiers protégés comparés au commit `4efc321` et inchangés ; index A 13/B 108 concordants, 108 SHA-256 B correspondants ; observations des deux anciens états conservées dans history ; trois références locales de la page 3D présentes ; `git diff --check` sans erreur. Le contrôle initial avait trouvé un lien cassé dans .local-history ignoré, hors dépôt : il est resté intact, puis le contrôle a été limité aux fichiers du dépôt. Diffs relus, commit de rangement `c5ab49a` poussé. Contrôle final Git : seules les branches locales/distantes main et presenter subsistent, toutes deux alignées au rangement ; collecte supprimée après vérification de zéro commit unique à préserver et du bundle complet. L'arbre suivi était propre après push et suppression. Ce point de clôture est consigné dans le commit suivant. Aucun test du labo, nouveau build ni contrôle graphique n'est exécuté. L'enregistrement facultatif du suivi local a renvoyé `invalid_contract` : aucun reçu de registre ni binding natif n'est revendiqué. Les preuves réelles restent dans le dépôt.
 
 La prochaine action de l'équipe est de lire le README et l'index. Ne pas commencer automatiquement la tâche de présentation. Le barème d'origine reste intact : groupe 20 ; individuel 20 % suivi/80 % Q/A ; final 60/40 ou 90/10 si groupe−individuel>3. Le XLSX contient des ambiguïtés de cellules : ne pas inventer une correction ni des critères.
 
