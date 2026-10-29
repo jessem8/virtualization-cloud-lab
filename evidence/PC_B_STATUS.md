@@ -1,5 +1,9 @@
 # PC B — état observé
 
+## Actualisation — redémarrage et filtrage
+
+Après redémarrage Ubuntu : adresse 10.77.20.10/24, MTU 1400, services lab-firewall, ssh.socket, auditd et rsyslog actifs ; règles INPUT et DOCKER-USER, blocage SSH IPv6 et règle MSS 1360 restaurés. Six conteneurs démarrés, webapp healthy, quatre cibles Prometheus UP et sonde HTTPS InvoiceShelf = 1. Jesse rapporte un accès SSH MGMT par clé et des captures Windows des tableaux InvoiceShelf et Grafana après redémarrage. La cause réseau sous-jacente demeure inconnue ; MSS est un contournement limité à Windows vers InvoiceShelf. Nettoyage de la route temporaire MGMT effectué par A en cours ; confiance du certificat navigateur et Docker Bench ne sont pas confirmés. Voir [preuves B](PC_B_2026-10-29.md).
+
 ## Actualisation — Grafana HTTPS
 
 Grafana est configuré en HTTPS sur 10.77.20.10:3001. Après redémarrage du conteneur, test local avec certificat explicitement approuvé : HTTPS 200 et database ok. Test Viewer Windows et refus VPN à réaliser ; la confiance du navigateur dans le certificat n'est pas établie. Voir [preuves B](PC_B_2026-10-29.md). Les sections précédentes mentionnant HTTP sont historiques.

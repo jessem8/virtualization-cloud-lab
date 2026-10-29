@@ -1,5 +1,9 @@
 # Project checkpoint
 
+## 29 October — PC B reboot and final access checks
+
+After Ubuntu reboot, Sanad's captures show 10.77.20.10/24, MTU 1400, active lab-firewall, SSH socket, auditd and rsyslog, restored INPUT/DOCKER-USER policy and IPv6 SSH drop, the Windows-to-InvoiceShelf MSS 1360 workaround and audit rule. Six containers are running; InvoiceShelf is healthy, all Prometheus targets UP and the local HTTPS probe is 1. Jesse reports fresh post-reboot MGMT key-only SSH passed, and Windows screenshots show authenticated InvoiceShelf and Grafana dashboards. The underlying link/MTU issue remains undiagnosed; MSS is a scoped workaround. A reports its temporary MGMT route cleanup in progress. Browser trust of the lab certificate, Docker Bench and other unconfirmed security requirements are not claimed complete. See evidence/PC_B_2026-10-29.md.
+
 ## 29 October — current remaining work after VPN and SSH
 
 Completed A evidence now records Windows Grafana HTTPS viewing, VPN application access with MGMT disabled, logged SSH/SMB/Grafana restrictions (SSH retested with active listener), disconnected application failure and restored MGMT. B confirmed forwarded firewall logs, auditd, a scoped ClamAV scan and Grafana HTTPS in issue #2. Management SSH key-only login as sanad succeeded with pinned host fingerprint both before and after B authentication hardening; password-only negotiation was rejected. See evidence/PC_A_2026-10-29.md and issue #2. The older pending lists below are historical where superseded. Remaining lab work: finish/verify Ubuntu host and Docker filtering, remove A's temporary management host route after use, and perform final reboot/persistence and simultaneous stability checks. B's latest SSH details still need its evidence push. Presentation work follows lab closure; no new features requested.
