@@ -1,6 +1,6 @@
 # PC B — TrueNAS, Ubuntu et switch VLAN
 
-Mis à jour le 27 octobre 2026. Ce guide décrit la cible du PC B de sanadzhioua ; les changements sur B suivent l'autorisation de son propriétaire. Il ne prouve aucune exécution.
+Guide de référence ; état observé le 28 octobre dans [PC_B_STATUS](../evidence/PC_B_STATUS.md). Ce guide décrit la cible du PC B de sanadzhioua ; les changements sur B suivent l'autorisation de son propriétaire. Il ne prouve aucune exécution.
 
 Le PC B héberge TrueNAS, Ubuntu et le switch VLAN SW-B. Le PC A héberge OPNsense et Windows. Les deux hôtes sont reliés par Ethernet dédié.
 
@@ -25,19 +25,19 @@ La carte Ethernet dédiée de B se relie directement à celle de A. Le câble tr
 
 Le premier contrôle commun est le transport des tags sur ce câble, avant toute configuration approfondie ; voir LIAISON.md. En cas d'échec, arrêter et rapporter les captures et l'erreur plutôt que de passer la journée à deviner des réglages de pilote.
 
-SW-B est une VM Alpine neuve avec trois cartes : trunk VMnet12, accès Ubuntu VMnet14 et accès NAS VMnet11. Installer iproute2 et tcpdump après l'autorisation du propriétaire de B. Administrer par console, sans SSH. Utiliser un bridge Linux avec filtrage VLAN, PVID par défaut 0 et sans adresse IP, DHCP, IPv6 ni routage :
+SW-B est une VM Alpine installée avec trois cartes : trunk VMnet12, accès Ubuntu VMnet10 et accès NAS VMnet11. Vérifier les outils disponibles avec Sanad. Administrer par console, sans SSH. Utiliser un bridge Linux avec filtrage VLAN, PVID par défaut 0 et sans adresse IP, DHCP, IPv6 ni routage :
 
 | Carte de SW-B | VMnet | Mode |
 |---|---|---|
 | Trunk Ethernet | VMnet12 ponté vers la carte physique | Tags 20 et 30 autorisés, aucun PVID/VLAN natif |
-| Port Ubuntu | VMnet14 privé | Accès VLAN 20, PVID 20 non tagué |
+| Port Ubuntu | VMnet10 privé | Accès VLAN 20, PVID 20 non tagué |
 | Port TrueNAS | VMnet11 privé | Accès VLAN 30, PVID 30 non tagué |
 
 Confirmer les noms d'interfaces par MAC avant d'appliquer la configuration. Ne pas ajouter VLAN 1, adresse de gestion, route ou DHCP. Retirer toute carte NAT temporaire d'installation. Rendre la configuration persistante uniquement après le contrôle manuel des ports et des tags.
 
 ## 3. Ubuntu, InvoiceShelf et supervision
 
-UBU-LAB a une seule carte sur VMnet14, port d'accès VLAN 20 non tagué : 10.77.20.10/24, passerelle/DNS 10.77.20.1. Vérifier la MAC et la version réelle. Appliquer Netplan depuis la console avec retour arrière disponible ; retirer les cartes temporaires après mise à jour.
+UBU-LAB a une seule carte sur VMnet10, port d'accès VLAN 20 non tagué : 10.77.20.10/24, passerelle/DNS 10.77.20.1. Vérifier la MAC et la version réelle. Appliquer Netplan depuis la console avec retour arrière disponible ; retirer les cartes temporaires après mise à jour.
 
 Sécuriser SSH : établir une connexion par clé depuis MGMT avant de désactiver le mot de passe et root. Garder une console pendant les changements. Appliquer des règles iptables persistantes et tester ports autorisés/refusés avec des services actifs. Garder le backend iptables de Docker ; contrôler INPUT et DOCKER-USER/FORWARD, car INPUT seul ne filtre pas les ports publiés par Docker. Ne pas rendre Ubuntu routeur entre VLANs ni superposer un pare-feu hôte contradictoire.
 
@@ -71,4 +71,4 @@ Après un fichier de référence, créer un snapshot, modifier ou supprimer le f
 
 Depuis Ubuntu, réaliser l'archive InvoiceShelf uniquement avec le compte app-backup et après arrêt du conteneur. Restaurer dans de nouveaux dossiers, vérifier la société et la facture de test, puis ne pas remplacer les données actives. Vérifier après redémarrage que le dataset est déverrouillé et SMB actif.
 
-Poster versions, ressources mesurées, IP/MAC, preuves d'accès autorisé/refusé, chiffrement, snapshot/restauration et résultats Ubuntu. Indiquer « prêt pour les tests communs » seulement après les contrôles locaux réels.
+Poster versions, ressources mesurées, IP/MAC, preuves d'accès autorisé/refusé, chiffrement, snapshot/restauration et résultats Ubuntu. Démarrer les VM nécessaires et effectuer le premier test commun dès que les réseaux et endpoints sont configurés.

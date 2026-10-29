@@ -4,11 +4,9 @@ Work directly on main, as requested by the user on 28 October 2026. PR #1 was me
 
 ## Work order
 
-1. Finish the presenter and align the repository documents. This stage does not change guests or networks.
-2. Configure PC A (`jessem8`) in the next task, under the user's direct authorization from 27 October. No peer or PR approval is pending.
-3. Finish PC B (`sanadzhioua`) with Sanad, after the person responsible for B authorizes its changes. Confirm the prepared VM allocations against available host resources.
-4. Start joint tests after both sides report ready. Begin with the VLAN 20/30 trunk for 20–30 minutes; capture an error and stop to diagnose if it fails.
-5. Continue with the agreed network, application, NAS, VPN, monitoring and restore checks.
+1. Jesse and Sanad start the needed VMs, connect the cable and configure the final endpoints together.
+2. Begin with the VLAN 20/30 trunk; diagnose observed failures before dependent checks.
+3. Complete services and evidence, then rehearse the demonstration. See [the meeting plan](../BUILD_PLAN.md).
 
 ## Updates
 

@@ -1,6 +1,6 @@
 # PC A — pare-feu et Windows
 
-Mis à jour le 27 octobre 2026. L'utilisateur a autorisé la configuration de PC A, qui suivra dans une tâche distincte. Ce guide décrit la cible ; il ne prouve aucune exécution.
+Guide de référence. Les installations et contrôles locaux observés le 28 octobre sont dans [PC_A_STATUS](../evidence/PC_A_STATUS.md) ; suivre [le plan de réunion](../BUILD_PLAN.md) pour la suite.
 
 Le PC A de jessem8 héberge OPNsense et Windows. Le PC B de sanadzhioua héberge TrueNAS, Ubuntu et le switch VLAN SW-B. Ubuntu et le switch ne sont pas hébergés sur A.
 
@@ -16,7 +16,7 @@ Les ressources actuellement libres sur A restent à vérifier. Les mesures histo
 
 ## 2. Préparation
 
-Au début de la configuration de A, relever les ressources disponibles, les versions VMware, les VM et leurs états, les cartes Ethernet, MAC et VMnet. Réutiliser une VM Windows seulement après avoir vérifié son édition, son démarrage et son état. Windows Server 2025 Evaluation est une option déjà observée, pas une installation confirmée. Ne pas ajouter de domaine AD ni supprimer ou réinitialiser les autres VM.
+Au début de la configuration de A, relever les ressources disponibles, les versions VMware, les VM et leurs états, les cartes Ethernet, MAC et VMnet. Réutiliser une VM Windows seulement après avoir vérifié son édition, son démarrage et son état. Windows Server 2025 Evaluation est installé selon les observations du 28 octobre. Ne pas ajouter de domaine AD ni supprimer ou réinitialiser les autres VM.
 
 Le câble direct utilise la carte Ethernet dédiée de A. Dans VMware, associer le réseau ponté à cette carte précise, pas au choix automatique. Sur cette carte hôte uniquement, conserver VMware Bridge Protocol et retirer IPv4, IPv6, le client/partage Microsoft et ICS. Aucun adressage hôte, DHCP, réseau natif ou IPv6 link-local sur ce lien. Ne pas modifier le Wi-Fi.
 
@@ -37,7 +37,7 @@ FW-LAB conserve quatre cartes finales, affectées selon leur MAC : WAN, MGMT, CL
 
 Créer les interfaces VLAN 20 (10.77.20.1/24) et VLAN 30 (10.77.30.1/24) sur TRUNK. Le parent TRUNK n'a pas d'adresse IP, de réseau non tagué ni de VLAN natif. Les règles d'accès entre zones sont dans LIAISON.md ; ne pas remplacer les règles précises par un accès général.
 
-OPNsense 26.7.7 est la version de référence préparée, pas une version installée vérifiée. Relever la version réelle et appliquer les correctifs disponibles dans le cadre de cette configuration. Vérifier l'offload checksum/TSO/LRO selon les recommandations VMware, la résolution DNS/NTP et le NAT de sortie des zones prévues. Ne pas ouvrir l'administration depuis CLIENTS ou le WAN.
+OPNsense 26.7.7 a été observé installé le 28 octobre. Relever la version réelle et appliquer les correctifs disponibles dans le cadre de cette configuration. Vérifier l'offload checksum/TSO/LRO selon les recommandations VMware, la résolution DNS/NTP et le NAT de sortie des zones prévues. Ne pas ouvrir l'administration depuis CLIENTS ou le WAN.
 
 ## 5. Windows
 

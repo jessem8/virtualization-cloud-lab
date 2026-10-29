@@ -1,6 +1,6 @@
 # Matrice de vérification
 
-Révision du 27 octobre 2026 (InvoiceShelf 2.4.7). Tous les contrôles restent non exécutés. Pour chaque essai, noter la date, la révision, la source, la destination et le port, puis l’attendu, l’observé et une preuve expurgée. Vérifier le service depuis une source autorisée avant de démontrer un refus.
+Révision du 29 octobre 2026 (InvoiceShelf 2.4.7). Les états du tableau sont les états initiaux ; certaines parties ont des preuves locales datées dans les fichiers PC_A_STATUS et PC_B_STATUS. Aucun passage complet n'est déduit de ces preuves partielles. Pour chaque essai, noter la date, la révision, la source, la destination et le port, puis l’attendu, l’observé et une preuve expurgée. Vérifier le service depuis une source autorisée avant de démontrer un refus.
 
 | ID | Contrôle | Résultat attendu / preuve | Responsable | État initial |
 |---|---|---|---|---|

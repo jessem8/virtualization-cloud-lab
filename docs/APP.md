@@ -16,7 +16,7 @@ L'allocation cible d'Ubuntu est 2,5 Gio ; la VM préparée et la capacité réel
 
 - **Image** : `invoiceshelf/invoiceshelf:2.4.7`. Garder ce tag fixe et noter le digest réellement téléchargé.
 - **Conteneur** : l'image officielle contient Nginx et PHP-FPM ; elle lance aussi son planificateur de tâches. Un seul conteneur applicatif suffit, sans base de données externe ni worker/cron séparé.
-- **Accès HTTPS** : le proxy Nginx existant termine TLS sur `10.77.20.10:8443` et relaie vers le service Docker `webapp:8080` sur un réseau privé partagé. Seul le proxy publie le port hôte 8443. Ne pas publier le port 8080 de l'application ni l'exposer sur le WAN. Le certificat couvre l'IP 10.77.20.10 ; les règles OPNsense ouvrent d'abord l'accès depuis MGMT, puis depuis Windows et le VPN après le contrôle des comptes et des rôles.
+- **Accès HTTPS** : le proxy Nginx prévu termine TLS sur `10.77.20.10:8443` et relaie vers le service Docker `webapp:8080` sur un réseau privé partagé. Seul le proxy publie le port hôte 8443. Ne pas publier le port 8080 de l'application ni l'exposer sur le WAN. Le certificat couvre l'IP 10.77.20.10 ; les règles OPNsense ouvrent d'abord l'accès depuis MGMT, puis depuis Windows et le VPN après le contrôle des comptes et des rôles.
 - **En-têtes proxy** : transmettre Host, X-Forwarded-For et X-Forwarded-Proto. Limiter `TRUSTED_PROXIES` à l'adresse ou au sous-réseau privé du proxy, choisi lors de la création du réseau Docker.
 
 ### SQLite et dossiers persistants

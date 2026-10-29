@@ -1,5 +1,9 @@
 # Project checkpoint
 
+## 29 October — meeting and finish
+
+Jesse will meet Sanad to finish the lab, then prepare the presentation and live demonstration. Start with [the meeting plan](BUILD_PLAN.md) and [judgment-day scenario](docs/UNDERSTAND_AND_PRESENT.md). The 28 October A/B evidence is historical: confirm current VM and network state together. Stopped VMs are started as needed, not a reason to postpone joint work. B's recorded Ubuntu access port is VMnet10 on B. TrueNAS boot, pool, SMB permissions and local snapshot file restore have since been verified; physical trunk and application integration remain unverified. Preserve the local A VPN shutdown note in evidence/PC_A_STATUS.md. Subsequent older paragraphs are historical where they conflict with this section or the dated evidence.
+
 Updated 28 October 2026, Africa/Tunis.
 
 ## PC B — actualisation du 28 octobre
@@ -12,11 +16,25 @@ Sanad a installé et configuré SW-B ; les VLAN locaux et l'absence d'adresses s
 
 The learning/presenter task copied an older A stopping point. This is superseded by the installation and management-access screenshots in the Machine A chat and the 28 October applied browser configuration below. B remains at its recorded prepared-guest state; no provisioning occurred in the learning/presenter task.
 
-Start learning with docs/UNDERSTAND_AND_PRESENT.md (simple explanation, deploy meanings, demo script, stress/failure cues and team teach-back). Use docs/MISSION_AND_FAST_LAB.md for the shortest dependency-aware physical lab sequence and copyable A/B/optional Ubuntu-agent missions. Physical preparation is prioritized separately from final submission artifacts.
+The current meeting sequence is in BUILD_PLAN.md and the presentation scenario is in docs/UNDERSTAND_AND_PRESENT.md.
 
 The existing 3D presenter now has a local 18-step guided story, speaker cues and a technical-detail toggle; see evidence/PRESENTER_SIMPLIFICATION.md for the actual validation scope. These edits were pushed in 706cc8c. The new mission report preserves all course requirements and moves joint T03 immediately after the minimum network/endpoints are ready. T03 needs Ubuntu and TrueNAS endpoints as well as FW-LAB/SW-B. B memory allocation still needs Sanad's reconciliation.
 
 Task-helper registration for understand-demo-20261028 returned invalid_contract. No registry receipt or native binding is claimed; ordinary source/build/browser evidence is recorded in project files.
+
+## Resume in the next chat — local handoff, 28 October evening
+
+The user requested stopping for now and waiting for Machine B's readiness report, and will close VMware personally. Do not resume provisioning, monitoring or polling automatically. Resume only on the user's next request.
+
+Machine A has reached joint-test readiness: WIN-LAB installation/security/metrics and CLIENTS DNS/HTTPS were checked; OPNsense routing/rules are configured; the physical-host OpenVPN client completed TLS 1.3/AES-GCM initialization with address 10.78.0.2 and both lab routes via 10.78.0.1. These are local A checks, not final demonstration validation.
+
+At this stopping point the lab OpenVPN client was closed on the host and its two test routes were removed. Follow-up process/route queries returned no matching process or lab routes. Administration tab handles were no longer present when closure was attempted. Guest shutdown/VMware closure is being handled by the user and is not verified here; do not assume the VMs are still running.
+
+Next chat: read this checkpoint, BUILD_PLAN.md, docs/COORDINATION.md and evidence/PC_A_STATUS.md. Check the latest remote B status once when asked; last inspected B commit was 542556b (TrueNAS installed, disk boot/pool pending), and the coordination note is issue #2. Latest pushed A checkpoint is 9e9fe4a; this stopping-point addition is local only.
+
+Before declaring A fully finished: verify WIN-LAB NTP through OPNsense; reconcile server-side OpenVPN route pushing for future exports (current private profile has explicit routes); check any remaining Windows Update offers. Then, with B ready, jointly verify physical VLAN 20/30 transport, application/NAS access, remote metrics, VPN allow/denies with the MGMT bypass removed, backup/restore and simultaneous load. Do not repeat Windows installation or the completed local setup.
+
+Private artifacts outside Git: C:/Users/jesse/Downloads/LAB_OpenVPN_InvoiceShelf_PC_A_VPN.ovpn (contains client credentials; never print/upload/commit), C:/Users/jesse/Downloads/LabSetup.zip, and temporary VPN logs/screenshot in AppData/Local/Temp. Reconnect the client with administrator privileges only for an authorized test; closing its console disconnects it. VMnet8 is the VMware NAT network and independent of the Wi-Fi subnet; retain WIN-LAB on VMnet10.
 
 ## Start here
 
@@ -55,7 +73,7 @@ A's27 October pre-reboot read-only snapshot: i7-13700HX,15.71 Gio visible,2.59 G
 | MGMT | VMnet13 host-only, non-tagged10.77.99.0/24; OPNsense .1, host A .254 |
 | CLIENTS | VMnet10 private, non-tagged10.77.10.0/24; OPNsense .1, Windows .10 |
 | TRUNK | VMnet12 explicitly bridged to dedicated Ethernet on each PC; tags20/30 only; parent without IP/native VLAN |
-| SERVEURS20 | OPNsense10.77.20.1; SW-B access VMnet14; Ubuntu10.77.20.10 |
+| SERVEURS20 | OPNsense10.77.20.1; SW-B access VMnet10 on B; Ubuntu10.77.20.10 |
 | STOCKAGE30 | OPNsense10.77.30.1; SW-B access VMnet11; TrueNAS10.77.30.10 |
 | VPN | OpenVPN10.78.0.0/24, UDP1194; client app on host A through simulated WAN |
 

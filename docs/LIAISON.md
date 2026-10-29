@@ -1,6 +1,6 @@
 # Liaison des deux PC et règles
 
-Mis à jour le 27 octobre 2026. Les deux PC sont présents et reliés par Ethernet dédié ; le Wi-Fi fournit Internet. Cette liaison est la cible prévue. Aucun tag, partage, routage ou test n'est déclaré fonctionnel ici.
+Référence mise à jour le 29 octobre 2026. La connexion Ethernet et les réglages sont à vérifier lors de la réunion ; le Wi-Fi fournit Internet. Cette liaison est la cible prévue. Aucun tag, partage, routage ou test n'est déclaré fonctionnel ici.
 
 ## 1. Architecture
 
@@ -56,12 +56,12 @@ Les numéros VMnet sont locaux à chaque VMware Workstation ; les deux VMnet12 s
 | A | VMnet10 CLIENTS | Privé, sans carte hôte/DHCP : OPNsense et WIN-LAB |
 | A | VMnet12 TRUNK | Pont explicite vers l'Ethernet dédié : TRUNK OPNsense |
 | B | VMnet12 TRUNK | Pont explicite vers l'Ethernet dédié : trunk SW-B |
-| B | VMnet14 UBUNTU | Privé, sans carte hôte/DHCP : accès VLAN 20 de SW-B et UBU-LAB |
+| B | VMnet10 UBUNTU | Privé, sans carte hôte/DHCP : accès VLAN 20 de SW-B et UBU-LAB |
 | B | VMnet11 NAS | Privé, sans carte hôte/DHCP : accès VLAN 30 de SW-B et NAS-LAB |
 
 Sur les cartes Ethernet dédiées des deux PC, conserver VMware Bridge Protocol ; retirer IPv4, IPv6, le client/partage Microsoft et ICS. Pas de pont Windows, DHCP/APIPA, adresse hôte ou IPv6 link-local sur le câble. Pont VMware lié explicitement à cette carte, jamais à Automatic. Ne pas modifier les cartes Wi-Fi.
 
-SW-B a trois ports : trunk VMnet12 avec VLAN 20 et 30 tagués, sans PVID ; port VMnet14 en accès VLAN 20 non tagué/PVID 20 ; port VMnet11 en accès VLAN 30 non tagué/PVID 30. Activer le filtrage VLAN du bridge et fixer le PVID par défaut à 0. Aucun VLAN natif, VLAN 1, adresse de gestion ou routage dans SW-B.
+SW-B a trois ports : trunk VMnet12 avec VLAN 20 et 30 tagués, sans PVID ; port VMnet10 en accès VLAN 20 non tagué/PVID 20 ; port VMnet11 en accès VLAN 30 non tagué/PVID 30. Activer le filtrage VLAN du bridge et fixer le PVID par défaut à 0. Aucun VLAN natif, VLAN 1, adresse de gestion ou routage dans SW-B.
 
 ## 5. Règles entre zones
 

@@ -2,6 +2,10 @@
 
 Updated 28 October 2026, Africa/Tunis.
 
+## Stopping point — 28 October evening
+
+User chose to wait for Machine B and will close VMware personally. The physical-host lab OpenVPN client was closed; the two owned VPN routes to 10.77.20.0/24 and 10.77.30.0/24 via 10.78.0.1 were removed. Process/route readback returned no matching lab process/routes. The prior connected-session evidence remains valid as a completed test, not a claim that VPN is still connected. User-managed guest shutdown/VMware closure is not verified. Local checkpoint saved for the next chat; no polling/automation created.
+
 ## OpenVPN configuration and first handshake — 28 October
 
 Chrome configuration created dedicated LAB-VPN-CA (RSA-3072/SHA256), LAB-VPN-Server (serverAuth) and LAB-VPN-PC-A (clientAuth), and enabled LAB-OpenVPN-InvoiceShelf on WAN 192.168.53.136 UDP4 1194 with tunnel 10.78.0.0/24, required client certificates and AES-128/256-GCM. OPNsense status reports server ok. No password database authentication was configured; access uses the dedicated client certificate.
@@ -10,7 +14,7 @@ Saved/applied and read-back rules: WAN pass only 192.168.53.1 to WAN address UDP
 
 OpenVPN Community 2.7.7 was installed on the physical host via winget (official swupdate.openvpn.org MSI, package hash verified). Private client profile is outside Git in Downloads; it validates the server identity and requires TLS >=1.2. Explicit client routes for 10.77.20.0/24 and 10.77.30.0/24 were added locally: the observed server PUSH_REPLY did not include these routes. Server-side route-push configuration still needs reconciliation for future exports.
 
-First client log verifies the CA/server name, TLS 1.3 and AES-128-GCM negotiation, and a 10.78.0.2 allocation. That unelevated client failed Windows tunnel address configuration. After clearing the failed session by restarting only the new VPN instance, an elevated client completed initialization. Host queries confirm OpenVPN Data Channel Offload address 10.78.0.2 and routes 10.77.20.0/24 and 10.77.30.0/24 through 10.78.0.1. The client profile was corrected to place both route directives on separate lines; the missing first route was added to the active session. OPNsense read-back reports PC-A-VPN from 192.168.53.1 connected, virtual address 10.78.0.2, status ok. Client remains connected. Screenshot: C:/Users/jesse/AppData/Local/Temp/lab-vpn-connected.png. No B application access, deny enforcement or MGMT-bypass-removed demo is claimed. Keep profile/private keys and raw logs outside Git.
+First client log verifies the CA/server name, TLS 1.3 and AES-128-GCM negotiation, and a 10.78.0.2 allocation. That unelevated client failed Windows tunnel address configuration. After clearing the failed session by restarting only the new VPN instance, an elevated client completed initialization. Host queries confirm OpenVPN Data Channel Offload address 10.78.0.2 and routes 10.77.20.0/24 and 10.77.30.0/24 through 10.78.0.1. The client profile was corrected to place both route directives on separate lines; the missing first route was added to the active session. OPNsense read-back reports PC-A-VPN from 192.168.53.1 connected, virtual address 10.78.0.2, status ok. At the time of this handshake the client was connected; the later stopping point above records its closure. Screenshot: C:/Users/jesse/AppData/Local/Temp/lab-vpn-connected.png. No B application access, deny enforcement or MGMT-bypass-removed demo is claimed. Keep profile/private keys and raw logs outside Git.
 
 
 ## WIN-LAB installed and CLIENTS connectivity verified — 28 October
