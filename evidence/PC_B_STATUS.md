@@ -1,5 +1,9 @@
 # PC B — état observé
 
+## Actualisation — journaux et sécurité
+
+Réception du refus OPNsense de Jesse confirmée dans le journal Ubuntu ; connexion TCP depuis 10.77.20.1 observée. Rotation réelle du journal réussie et nouveaux messages reçus. Auditd a enregistré le test sur compose.yaml ; ClamAV a analysé quatre fichiers de configuration sans infection détectée. Un compte Grafana Viewer voit le tableau en local et n'a pas de bouton Edit. HTTPS Grafana est demandé et en cours : le service est encore en HTTP au moment de ce point. Accès Windows, refus VPN et persistance des règles après redémarrage restent à vérifier. Voir [preuves B](PC_B_2026-10-29.md).
+
 ## Actualisation — supervision fonctionnelle
 
 Captures et résultats fournis par Sanad : Grafana ouvert après authentification locale ; source Prometheus testée avec succès ; quatre cibles UP ; graphiques CPU Ubuntu et Windows alimentés ; sonde HTTPS InvoiceShelf valide. Arrêt puis reprise du node-exporter : DOWN puis UP. Arrêt du webapp : sonde InvoiceShelf DOWN ; après redémarrage, probe_success=1. Les sections précédentes ci-dessous sont historiques. Accès Grafana en lecture depuis Windows, refus VPN, rsyslog, sécurité et stabilité finale restent à vérifier. Grafana est en HTTP sur 10.77.20.10:3001. Voir [preuves B](PC_B_2026-10-29.md).
