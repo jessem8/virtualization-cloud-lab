@@ -1,25 +1,93 @@
-# Virtualization and Cloud laboratory
+# Virtualisation et cloud — comprendre notre laboratoire
 
-Secure student lab on two physical PCs. Current application target: **InvoiceShelf 2.4.7 with local SQLite** on Ubuntu B. The deployment and live network checks remain pending; the application guide and machine plans now match this choice.
+## Ce que demande le professeur
 
-## Interactive presentation
+Le projet consiste à concevoir et expliquer une infrastructure virtualisée : réseau segmenté, systèmes Windows/Linux sécurisés, stockage NAS, application en conteneurs, supervision et accès VPN. Les exigences d'origine sont conservées dans le [sujet PDF](requirements/originals/Document.pdf) et la [grille d'évaluation XLSX](<requirements/originals/Project Assessment Grid (1).xlsx>).
 
-Run `powershell -NoProfile -File diagram/start.ps1` and open http://127.0.0.1:3187/. The desktop presenter is in French: click a component to inspect its cutaway, use **Retour au réseau** to return, or follow an application, VPN, backup or monitoring path. **F** toggles full screen.
+La grille de groupe (onglet `G1`, cellules `E4:E16`) répartit les **20 points** ainsi :
 
-- [Presenter source](docs/network-lab-3d.html)
-- [Usage, design and configuration truth](docs/DIAGRAM_DESIGN.md)
-- [Actual diagram verification and limits](evidence/DIAGRAM_VERIFICATION.md)
-- [Standalone network SVG](docs/network-lab-2d.svg)
-- [Earlier diagram from B](docs/network-lab.html)
+| Critère d'origine | Maximum |
+|---|---:|
+| Architecture physique et logique | 1 |
+| Déploiement des VM et de l'application conteneurisée | 2 |
+| Pare-feu et politiques de sécurité | 4 |
+| VPN/VLAN et accès autorisés | 2 |
+| Services internes : Sysmon, syslog, antivirus, chiffrement/snapshots NAS, Prometheus/Grafana | 5 |
+| Démonstration en direct | 2 |
+| Qualité du rapport/documentation des configurations | 4 |
 
-The animations explain expected paths; they are not live traffic or evidence of successful security tests. Assets and fonts are local. The server listens only on 127.0.0.1.
+Le sujet utilise le nom FreeNAS ; notre VM utilise TrueNAS. Le libellé écrit « rapport » est conservé ici pour restituer le barème original. Deux précisions données ensuite par le professeur et transmises par Jesse gouvernent notre travail : **la présentation remplace le rapport écrit séparé** ; la mention « VM-to-VM escape workshop » désigne la **couche de sécurité**, pas un exercice d'évasion de VM. Nous ne revendiquons aucun test de résistance à une évasion d'hyperviseur.
 
-## Meeting and demonstration
+Soutenance prévue le **30 octobre 2026**, heure de Tunis : viser environ **15 minutes de présentation**, dans un total enregistré de **30 minutes maximum, questions comprises**. Les quatre membres doivent comprendre l'ensemble. La grille donne une note de groupe sur 20 ; la note individuelle comprend 20 % de suivi et 80 % de questions/réponses. La note finale combine normalement 60 % individuel et 40 % groupe ; si la note de groupe dépasse l'individuelle de plus de 3 points, la pondération devient 90 % / 10 %. Les formules sont celles de l'onglet `G1` (`D4`, `G4`, `F17`). Le modèle contient des cellules individuelles sans formule et une ambiguïté de saisie du sous-total des services : il est conservé intact, sans recalcul ni nouveau barème.
 
-- [Meeting plan: startup, first trunk test and remaining work](BUILD_PLAN.md)
-- [Judgment-day scenario and rehearsal](docs/UNDERSTAND_AND_PRESENT.md)
-- [Project checkpoint](PROJECT_STATE.md) and [coordination](docs/COORDINATION.md)
-- [Machine A](docs/MACHINE_A.md), [Machine B](docs/MACHINE_B.md), [network and firewall](docs/LIAISON.md), [InvoiceShelf](docs/APP.md)
-- [Test matrix](docs/TEST_MATRIX.md), [A evidence](evidence/PC_A_STATUS.md), [B evidence](evidence/PC_B_STATUS.md)
+## Notre projet concret
 
-The last observations are dated 28 October. Start the VMs needed for the joint VLAN test and confirm current network state together. Keep credentials, private keys, VPN profiles, sensitive exports and VM images out of Git.
+Une petite entreprise fictive utilise **InvoiceShelf 2.4.7** pour ses clients, factures et PDF. Nous montrons comment autoriser certains accès, refuser les autres, surveiller le service et récupérer ses données. Tout tourne sur **deux PC physiques avec VMware Workstation et cinq VM**, sans infrastructure cloud publique.
+
+L'essentiel de la réalisation a été effectué par **Jesse sur le PC A** et **Sanad sur le PC B**, avec l'assistance de Codex. Jesse a mis en place OPNsense et Windows, puis documenté les accès Windows, SMB et VPN. Sanad a mis en place SW-B, Ubuntu, TrueNAS, l'application, les sauvegardes et la supervision. Ils ont réalisé ensemble l'intégration et les diagnostics du 29 octobre. Les [preuves A](evidence/PC_A_STATUS.md) et [preuves B](evidence/PC_B_STATUS.md) précisent ce qui a été observé ou seulement rapporté ; aucune contribution individuelle supplémentaire n'est inventée.
+
+## Architecture complète : qui héberge quoi ?
+
+| PC physique | VM | Fonction |
+|---|---|---|
+| **A — Jesse / jessem8** | **FW-LAB : OPNsense** | Route et filtre entre les réseaux ; DNS/NTP ; terminaison OpenVPN ; journaux de pare-feu. |
+| A | **WIN-LAB : Windows Server 2025** | Client de démonstration : navigateur InvoiceShelf/Grafana et SMB ; Defender, Sysmon, audit ; windows_exporter. |
+| **B — Sanad / sanadzhioua** | **SW-B : Alpine Linux** | Switch virtuel de niveau 2 : ajoute/retire les tags VLAN aux ports d'accès. Sans IP de gestion ni routage. |
+| B | **UBU-LAB : Ubuntu** | Docker, proxy Nginx, InvoiceShelf, SQLite locale persistante, supervision et réception des journaux. |
+| B | **NAS-LAB : TrueNAS** | Partages SMB, comptes/ACL, datasets chiffrés, snapshots et archives de sauvegarde. |
+
+Une **VM** possède son système invité et son disque virtuel ; VMware Workstation l'exécute sur le PC. Un **conteneur Docker** partage le noyau de la VM Ubuntu : les conteneurs ne sont donc pas des VM supplémentaires. Les six conteneurs constatés en fin de séance sont le proxy, InvoiceShelf et les quatre composants de supervision.
+
+Dans Ubuntu, **Nginx HTTPS 8443 → InvoiceShelf 8080 interne**. SQLite et les dossiers persistants restent sur le disque d'Ubuntu, hors du cycle de vie du conteneur. **Le NAS reçoit des archives après arrêt de l'application ; il n'héberge pas la base SQLite active.** Prometheus collecte ; Grafana affiche ; node-exporter fournit les métriques Ubuntu ; blackbox-exporter sonde HTTPS ; windows_exporter tourne dans Windows.
+
+### Réseaux et adresses
+
+| Réseau | Connexions et adresses | Transport |
+|---|---|---|
+| **CLIENTS** | A : Windows `10.77.10.10` ↔ OPNsense `10.77.10.1` | VMnet10 local à A, non tagué. Ce n'est pas VLAN 10. |
+| **MGMT** | A : hôte `10.77.99.254` ↔ OPNsense `10.77.99.1` | VMnet13 local à A, non tagué. Ce n'est pas VLAN 99. |
+| **SERVEURS / VLAN 20** | B : Ubuntu `10.77.20.10` ; passerelle OPNsense A `10.77.20.1` | Accès non tagué VMnet10 sur B ; tag 20 sur le trunk. |
+| **STOCKAGE / VLAN 30** | B : TrueNAS `10.77.30.10` ; passerelle OPNsense A `10.77.30.1` | Accès non tagué VMnet11 sur B ; tag 30 sur le trunk. |
+| **TRUNK physique** | OPNsense A ↔ Ethernet dédié ↔ SW-B B | VMnet12 de chaque PC ponté vers sa carte dédiée ; tags 802.1Q **20 et 30**, sans VLAN natif ni IP sur le parent. |
+| **WAN simulé / VPN** | WAN OPNsense sur NAT VMware VMnet8 ; tunnel `10.78.0.0/24` | Client OpenVPN sur l'hôte A, UDP 1194 ; Internet des hôtes par Wi-Fi. |
+
+Les réseaux internes ci-dessus utilisent des masques /24. **Les numéros VMnet sont locaux à chaque PC** : VMnet10 sur A est CLIENTS ; VMnet10 sur B est l'accès Ubuntu au VLAN 20. L'ancien VMnet14 de B est dépassé. Ce sont les tags et le câble qui relient les PC, pas l'égalité des numéros VMnet.
+
+### Les chemins à comprendre
+
+- **Windows → facture** : Windows A → CLIENTS → OPNsense (autorisation TCP 8443 et routage) → trunk tag 20 → SW-B B (retrait du tag) → Ubuntu → Nginx → InvoiceShelf → SQLite locale. La réponse suit le chemin inverse.
+- **Ubuntu → sauvegarde NAS** : Ubuntu B → SW-B (ajout tag 20) → câble vers **OPNsense A** → routage/filtrage → câble retour tag 30 → SW-B B (retrait du tag) → TrueNAS B, TCP 445. Même sur le même PC, les deux VM sont dans des sous-réseaux différents : **B/VLAN 20 → A → B/VLAN 30**.
+- **Supervision** : Prometheus sur Ubuntu B → VLAN 20 → OPNsense A → Windows `9182` ; Grafana présente les métriques sur HTTPS `3001`. Les cibles locales Ubuntu et la sonde applicative complètent la collecte.
+- **Journaux** : OPNsense `10.77.20.1` → Ubuntu `10.77.20.10:514/TCP` ; rsyslog conserve et fait tourner le journal.
+- **VPN** : hôte A → WAN VMware simulé → OpenVPN/OPNsense → VLAN 20 → InvoiceShelf `8443`. SSH `22`, SMB `445` et Grafana `3001` sont refusés depuis le VPN ; le chemin MGMT a été désactivé pendant l'essai.
+
+OPNsense décide des passages entre zones ; SW-B commute les trames dans chaque VLAN ; les pare-feu des invités, les rôles InvoiceShelf et les ACL TrueNAS ajoutent leurs propres contrôles. Il n'y a pas de NAT entre zones du laboratoire. Le miroir de deux disques virtuels TrueNAS et les snapshots restent sur le stockage du PC B : ils ne protègent pas contre sa perte.
+
+## Résultats et difficultés rencontrées
+
+Les notes du **29 octobre** enregistrent l'accès InvoiceShelf et Grafana depuis Windows après redémarrage Ubuntu, la sauvegarde/restauration isolée d'une facture et de son PDF, les tests SMB et VPN, la collecte réelle et les deux cycles de panne/reprise. L'[index des preuves](evidence/README.md) relie chaque sujet aux notes et aux captures ; la [matrice T01–T23](docs/TEST_MATRIX.md) conserve les contrôles partiels ou non confirmés.
+
+Trois difficultés expliquent la configuration finale :
+
+- Une mauvaise association VMnet0/VMnet10 a empêché le réseau Windows ; la carte a été corrigée vers CLIENTS.
+- Le transport VLAN et les pings passerelles ont nécessité des diagnostics Realtek/802.1Q puis des règles ICMP limitées. Les observations montrent ensuite les deux passerelles joignables ; elles ne valident pas toute l'isolation des ports.
+- Les expirations/réinitialisations HTTPS ont été contournées par **MTU 1400 sur Ubuntu** et **MSS 1360 limitée à Windows → InvoiceShelf**. Leur persistance et l'accès final sont documentés ; **la cause racine de liaison/pilote reste inconnue**.
+
+Les certificats du labo sont autosignés et non approuvés par les navigateurs. Les restrictions détaillées du rôle InvoiceShelf ont été rapportées par Jesse/Sanad ; chaque action refusée n'a pas sa preuve indépendante. Docker Bench, certains refus réseau et les mesures formelles de performance restent non confirmés. Les cinq VM auraient fonctionné ensemble plus de cinq heures selon Jesse : ce témoignage ne remplace pas une mesure de charge.
+
+## Lecture courte pour rejoindre l'équipe
+
+1. Lire cette page pour le besoin, les cinq VM et les chemins.
+2. Ouvrir l'[index des preuves](evidence/README.md), puis les résumés [A](evidence/PC_A_STATUS.md) et [B](evidence/PC_B_STATUS.md). Consulter les notes datées seulement pour approfondir.
+3. Utiliser au besoin les références [réseau et règles](docs/LIAISON.md), [application et données](docs/APP.md), [machine A](docs/MACHINE_A.md) et [machine B](docs/MACHINE_B.md).
+4. Ouvrir le [présentateur 3D existant](https://jessem8.github.io/virtualization-lab-3d/) pour visualiser les chemins. Les animations sont des simulations.
+
+## Dépôt privé, branche du présentateur et site public
+
+Ce dépôt **`virtualization-cloud-lab` reste privé**. Deux branches sont maintenues : **`main`** pour la documentation et les preuves, **`presenter`** pour le présentateur. La collecte `evidence/joint-lab-20261029` a été intégrée à `main` ; son historique est conservé. Lire la [coordination Git](docs/COORDINATION.md) avant de pousser.
+
+Le site existant est hébergé **dans un autre dépôt public**, [`jessem8/virtualization-lab-3d`](https://github.com/jessem8/virtualization-lab-3d), par GitHub Pages depuis sa branche `main`, dossier racine. La branche `presenter` de ce dépôt privé ne déclenche pas ce déploiement. Le script [`diagram/publish.mjs`](diagram/publish.mjs) copie uniquement la page et ses assets vers un clone public ; la publication demande ensuite un commit/push distinct. Aucun réglage Pages ni contenu public n'a été modifié lors de ce rangement.
+
+Pour consulter la copie locale : `powershell -NoProfile -File diagram/start.ps1`, puis [http://127.0.0.1:3187/](http://127.0.0.1:3187/). Les sources/assets livrés sont conservés. **Attention : `topology.json` et certains scénarios contiennent encore VMnet14 et d'anciens états « préparé / non testé ».** Pour l'état réel, suivre cette documentation et les preuves du 29 octobre. La mise à jour du présentateur est une tâche ultérieure ; ses contrôles existants sont dans [DIAGRAM_VERIFICATION](evidence/DIAGRAM_VERIFICATION.md).
+
+Les [archives documentaires](docs/archive/README.md) conservent l'accès aux propositions et anciens points d'arrêt. [PROJECT_STATE](PROJECT_STATE.md) est le point de reprise ; [BUILD_PLAN](BUILD_PLAN.md) fixe le périmètre actuel. Ne jamais ajouter au dépôt de mots de passe, clés, profils VPN, sauvegardes privées ou images de VM.

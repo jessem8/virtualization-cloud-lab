@@ -1,100 +1,56 @@
-# Liaison des deux PC et règles
+# Réseau et règles — référence du 29 octobre 2026
 
-Référence mise à jour le 29 octobre 2026. La connexion Ethernet et les réglages sont à vérifier lors de la réunion ; le Wi-Fi fournit Internet. Cette liaison est la cible prévue. Aucun tag, partage, routage ou test n'est déclaré fonctionnel ici.
+Lire d'abord l'[architecture complète](../README.md). Les [preuves A](../evidence/PC_A_2026-10-29.md) et [B](../evidence/PC_B_2026-10-29.md) décrivent les essais ; la [matrice](TEST_MATRIX.md) précise leurs limites. Cette page explique le réseau documenté, sans prescrire un nouveau test ni un changement de configuration.
 
-## 1. Architecture
+## Raccordement des deux hôtes
 
-A héberge OPNsense et Windows ; B héberge TrueNAS, Ubuntu et SW-B. Le câble physique transporte les VLAN 20 et 30 tagués entre le trunk OPNsense et le trunk SW-B. Le VLAN natif est absent. Ubuntu et TrueNAS reçoivent des trames non taguées depuis leurs ports d'accès séparés.
+A héberge OPNsense/Windows ; B héberge SW-B/Ubuntu/TrueNAS. Sur chaque PC, VMnet12 est ponté explicitement vers la carte Ethernet dédiée, avec VMware Bridge Protocol. Ce câble transporte les tags 802.1Q **20 et 30**, sans VLAN natif. Les hôtes gardent leur Wi-Fi pour Internet. Les réglages dédiés documentés excluent les liaisons IP hôte, le partage Microsoft et ICS ; le câble n'est pas une interface IP de gestion.
 
-    PC A: WIN-LAB -- CLIENTS -- OPNsense -- WAN/NAT VMware
-                                  |
-                          TRUNK VLAN 20/30
-                                  |
-                    Ethernet physique tagué
-                                  |
-    PC B:                    SW-B
-                           /       \
-                    accès 20       accès 30
-                      Ubuntu       TrueNAS
-
-MGMT est un réseau local de l'hôte A à OPNsense, pas un VLAN. CLIENTS est également un réseau non tagué, séparé des VLANs réels. OPNsense route et filtre entre zones ; SW-B filtre l'appartenance aux VLANs ; TrueNAS applique les ACL des fichiers.
-
-## 2. Ressources prévues
-
-| PC | VM | RAM | vCPU | Disque virtuel |
-|---|---|---:|---:|---:|
-| A | FW-LAB / OPNsense | 3 Gio | 2 | 20 Gio |
-| A | WIN-LAB | 4 Gio | 2 | 60 Gio |
-| B | NAS-LAB / TrueNAS | 8 Gio | 2 | Boot 20 Gio + données 2 × 20 Gio |
-| B | UBU-LAB | 2,5 Gio | 2 | 40 Gio |
-| B | SW-B / Alpine | 0,5 Gio | 1 | 2 Gio |
-| Total A / B | 2 VM / 3 VM | 7 / 11 Gio | 4 / 5 | 182 Gio virtuels |
-
-L'hypothèse de 16 Gio physiques sur B n'est pas vérifiée. Mesurer RAM et espace réellement disponibles sur les deux hôtes, garder au moins 20 Gio libres sur chacun et surveiller l'usage pendant la séance. Une capacité virtuelle allouée ne prouve ni l'espace physique disponible ni la fluidité.
-
-## 3. Adressage
-
-| Zone | Réseau | Passerelle | Hôte |
-|---|---|---|---|
-| MGMT, LAN OPNsense | 10.77.99.0/24 | 10.77.99.1 | Hôte A 10.77.99.254, sans route par défaut |
-| CLIENTS, non tagué | 10.77.10.0/24 | 10.77.10.1 | Windows 10.77.10.10 |
-| SERVEURS, VLAN 20 | 10.77.20.0/24 | 10.77.20.1 | Ubuntu 10.77.20.10 |
-| STOCKAGE, VLAN 30 | 10.77.30.0/24 | 10.77.30.1 | TrueNAS 10.77.30.10 |
-| VPN | 10.78.0.0/24 | Tunnel OpenVPN | Adresse attribuée au client |
-| WAN simulé | VMnet8 NAT existant | NAT VMware | WAN OPNsense en DHCP |
-
-Vérifier les chevauchements de sous-réseaux avec les réseaux des deux hôtes avant l'installation. Windows, Ubuntu et TrueNAS gardent chacun une seule carte finale ; seul OPNsense a un WAN. SW-B a trois ports. Aucun NAT entre zones, pour préserver les adresses sources dans les journaux. IPv6 du laboratoire est désactivé ou filtré explicitement.
-
-## 4. VMnet et cartes hôte
-
-Les numéros VMnet sont locaux à chaque VMware Workstation ; les deux VMnet12 sont des ponts séparés vers le même câble, pas un VMnet partagé.
-
-| Hôte | VMnet | Type et connexions |
+| Hôte | VMnet local | Connexions et adressage |
 |---|---|---|
-| A | VMnet8 | NAT VMware existant : WAN OPNsense et client VPN de l'hôte A |
-| A | VMnet13 MGMT | Host-only : LAN OPNsense et hôte A 10.77.99.254 |
-| A | VMnet10 CLIENTS | Privé, sans carte hôte/DHCP : OPNsense et WIN-LAB |
-| A | VMnet12 TRUNK | Pont explicite vers l'Ethernet dédié : TRUNK OPNsense |
-| B | VMnet12 TRUNK | Pont explicite vers l'Ethernet dédié : trunk SW-B |
-| B | VMnet10 UBUNTU | Privé, sans carte hôte/DHCP : accès VLAN 20 de SW-B et UBU-LAB |
-| B | VMnet11 NAS | Privé, sans carte hôte/DHCP : accès VLAN 30 de SW-B et NAS-LAB |
+| A | VMnet8 NAT | WAN OPNsense en DHCP ; côté WAN simulé du client VPN hôte |
+| A | VMnet13 host-only | MGMT non tagué : hôte 10.77.99.254/24 ↔ OPNsense 10.77.99.1 |
+| A | VMnet10 privé | CLIENTS non tagué : Windows 10.77.10.10/24 ↔ OPNsense 10.77.10.1 |
+| A | VMnet12 ponté | OPNsense em3 sans IP ; VLAN20 10.77.20.1/24 et VLAN30 10.77.30.1/24 |
+| B | VMnet12 ponté | SW-B eth1, trunk tags 20/30 |
+| B | VMnet10 privé | SW-B eth2 accès/PVID20 non tagué ↔ Ubuntu 10.77.20.10/24 |
+| B | VMnet11 privé | SW-B eth0 accès/PVID30 non tagué ↔ TrueNAS 10.77.30.10/24 |
 
-Sur les cartes Ethernet dédiées des deux PC, conserver VMware Bridge Protocol ; retirer IPv4, IPv6, le client/partage Microsoft et ICS. Pas de pont Windows, DHCP/APIPA, adresse hôte ou IPv6 link-local sur le câble. Pont VMware lié explicitement à cette carte, jamais à Automatic. Ne pas modifier les cartes Wi-Fi.
+Les VM utilisent OPNsense `.1` de leur sous-réseau comme passerelle ; DNS `.1` est le contrat documenté (DNS Windows testé, valeur/résolution finale B pas entièrement observée). Les numéros VMnet n'ont de sens qu'à l'intérieur de leur hôte. **MGMT n'est pas VLAN99, CLIENTS n'est pas VLAN10, et B utilise VMnet10 au lieu de l'ancien VMnet14.**
 
-SW-B a trois ports : trunk VMnet12 avec VLAN 20 et 30 tagués, sans PVID ; port VMnet10 en accès VLAN 20 non tagué/PVID 20 ; port VMnet11 en accès VLAN 30 non tagué/PVID 30. Activer le filtrage VLAN du bridge et fixer le PVID par défaut à 0. Aucun VLAN natif, VLAN 1, adresse de gestion ou routage dans SW-B.
+SW-B commute au niveau 2 : bridge filtrant, sans IP/routage, PVID par défaut 0 ; il ajoute le tag au départ d'un port d'accès et le retire à l'arrivée. OPNsense route les sous-réseaux et filtre à l'entrée de chaque interface ; les réponses des connexions permises sont suivies par état. Pas de NAT entre zones internes.
 
-## 5. Règles entre zones
+## Politique documentée
 
-Les règles OPNsense s'appliquent à l'entrée de l'interface ; réponses stateful autorisées, nouvelles connexions non listées refusées et journalisées pour les essais. Éviter les règles any. Les règles locales Ubuntu et Windows s'appliquent aussi.
-
-| Source | Destination | Autorisation |
+| Source | Destination | Service permis |
 |---|---|---|
-| Hôte A 10.77.99.254 / MGMT | OPNsense et interface TrueNAS | HTTPS 443 |
-| MGMT | Ubuntu | SSH 22 par clé, InvoiceShelf 8443, Grafana 3001 |
-| Windows 10.77.10.10 | Ubuntu | InvoiceShelf HTTPS 8443 ; Grafana 3001 en lecture |
-| Windows 10.77.10.10 | TrueNAS | SMB TCP 445 pour les essais de comptes/ACL |
-| Ubuntu 10.77.20.10 | Windows | windows_exporter TCP 9182 seulement |
-| OPNsense 10.77.20.1 | Ubuntu | Rsyslog TCP 514 seulement |
-| Ubuntu 10.77.20.10 | NAS 10.77.30.10 | SMB TCP 445 uniquement pour l'archive InvoiceShelf arrêtée ; compte et dataset de sauvegarde dédiés |
-| Client VPN de l'hôte A via VMnet8 | WAN OPNsense | OpenVPN UDP 1194 seulement |
-| VPN | Ubuntu | InvoiceShelf HTTPS TCP 8443 seulement |
-| Chaque zone | Passerelle de sa zone | DNS 53 et NTP 123 selon besoin |
-| Invités autorisés | Internet, hors réseaux privés | HTTP/HTTPS nécessaires aux mises à jour |
+| MGMT hôte A 10.77.99.254 | OPNsense / administration TrueNAS | HTTPS 443 |
+| MGMT hôte A | Ubuntu | SSH 22 par clé, InvoiceShelf HTTPS 8443, Grafana HTTPS 3001 |
+| Windows 10.77.10.10 | Ubuntu | InvoiceShelf HTTPS 8443 ; Grafana HTTPS 3001, compte Viewer |
+| Windows | TrueNAS 10.77.30.10 | SMB TCP 445, puis contrôle des comptes/ACL |
+| Ubuntu 10.77.20.10 | Windows | windows_exporter TCP 9182 |
+| OPNsense 10.77.20.1 | Ubuntu | Rsyslog TCP 514 |
+| Ubuntu | TrueNAS | SMB TCP 445, compte app-backup/dataset réservé |
+| Client hôte A côté WAN VMnet8 | WAN OPNsense | OpenVPN UDP 1194 |
+| VPN 10.78.0.0/24 | Ubuntu | InvoiceShelf HTTPS TCP 8443 |
+| Invités prévus | Passerelle de leur zone | DNS 53 et NTP 123 |
+| Invités prévus | Internet hors réseaux privés | HTTP/HTTPS de mises à jour |
 
-L'accès VPN vers SSH 22, NAS SMB 445 et Grafana 3001 est refusé avec preuve OPNsense. Pousser la route NAS au client VPN pour que ce refus passe par le pare-feu. L'accès direct WAN vers les services internes est refusé. Le compte et le dataset NAS de sauvegarde sont restreints par ACL en plus de la règle réseau ; Windows n'y accède pas. InvoiceShelf garde ses propres comptes et rôles.
+Les exceptions précises précèdent les blocs RFC1918 puis les règles de sortie et refus finaux journalisés. Les 35 règles initiales relues le 28 sont décrites dans l'[historique A](../evidence/history/PC_A_STATUS.md) ; deux règles ICMP diagnostiques limitées aux invités vers leur passerelle ont été ajoutées le 29. Ce tableau est une politique, pas la preuve indépendante de chaque ligne.
 
-Le proxy Nginx publie HTTPS8443 et relaie vers le service InvoiceShelf au port 8080 sur le réseau Docker privé ; 8080 n'est pas publié sur l'hôte. Grafana 3001 reste distinct. Prometheus reste sur 127.0.0.1:9090 dans Ubuntu. Aucune exposition Internet ni règle générale n'est prévue. La configuration de l'application est dans APP.md.
+VPN → SSH22, NAS445 et Grafana3001 : refus observés avec journaux, SSH retesté en écoute. Les autres refus prévus (dont WAN direct, source non autorisée vers pare-feu Ubuntu et isolation des tags d'accès) gardent leur statut dans la matrice. Les pare-feu Windows/Ubuntu et ACL/permissions applicatives sont des contrôles supplémentaires.
 
-## 6. Premier contrôle et tests communs
+## Chemins et points de contrôle
 
-Après autorisation et préparation des deux trunks, consacrer les premières 20–30 minutes au seul transport des tags 20/30 entre FW-LAB et SW-B. Capturer côté trunk sur les deux hôtes ; vérifier une communication attendue sur chaque VLAN et l'absence de VLAN natif. Si le transport échoue, conserver captures/erreur, rapporter le blocage et arrêter avant toute configuration approfondie. Ne pas passer la journée à deviner des réglages de pilote.
+- Windows A → CLIENTS → OPNsense A → trunk tag20 → SW-B B → Ubuntu : Nginx 8443, puis webapp 8080 privé.
+- Ubuntu B → accès20 SW-B → tag20 vers A → OPNsense (routage/filtrage) → tag30 retour B → SW-B → accès30 → NAS. **Deux passages sur le câble pour atteindre un autre sous-réseau du même PC.**
+- Ubuntu B → OPNsense A → Windows 9182 pour les métriques ; OPNsense → Ubuntu 514 pour les logs.
+- VPN hôte A → WAN VMware → OPNsense → VLAN20 → application. MGMT désactivé pendant ce test ; restauré ensuite. Le WAN de l'essai n'est pas Internet public.
 
-Après ce passage, vérifier les accès autorisés et refusés avec des services actifs et les journaux correspondants ; vérifier que le port d'accès VLAN 20 rejette un tag VLAN 30 ajouté en essai, tout en gardant Ubuntu sur son accès normal. Vérifier les comptes SMB, l'archive/restauration InvoiceShelf après arrêt, les métriques réelles, le cycle VPN et la persistance après redémarrage. Un ping ou un port fermé seul ne prouve pas une règle efficace.
+## Diagnostic conservé
 
-Les contrôles entre PC commencent quand chaque côté indique être prêt et que les personnes coordonnent le moment. Aucune approbation supplémentaire n'est nécessaire pour ces essais. Tous les résultats restent « non exécutés » jusqu'à une observation réelle ; un script ne constitue pas un résultat.
+Les captures initiales ont montré des tags manquants côté A, puis des requêtes/réponses ARP taguées après réglage MonitorModeEnabled des cartes Realtek. Les pings restaient soumis aux règles de passerelle : deux exceptions ICMP précises ont conduit à des réponses 4/4 pour Ubuntu et TrueNAS. Ces succès ne couvrent pas toute la capture bidirectionnelle exigée par T03 ni T04.
 
-## 7. Accès hôte et retour arrière
+Les erreurs HTTPS ultérieures ont été contournées par MTU Ubuntu 1400 et MSS 1360 limitée à Windows → InvoiceShelf, persistantes au reboot. La cause racine n'est pas démontrée. Aucun changement de pilote ou de règle n'est demandé par ce document.
 
-Pour l'administration depuis A, ajouter uniquement les routes du projet vers CLIENTS, VLAN 20 et VLAN 30 via 10.77.99.1 sur MGMT, sans passerelle par défaut. Avant le test VPN, retirer ces routes de projet et désactiver temporairement l'adaptateur MGMT de l'hôte A ; garder les consoles VMware, vérifier le chemin du tunnel, puis rétablir MGMT.
-
-Avant toute modification autorisée, noter VMnet, MAC, ponts, liaisons et routes concernées. Revenir uniquement sur les réglages du laboratoire. Pas de Restore Defaults VMware, suppression de VM ou changement d'autres travaux. Démarrer OPNsense puis SW-B, ensuite Ubuntu/TrueNAS, puis Windows ; arrêter proprement les invités et ne jamais couper l'alimentation pendant une écriture NAS.
+La route de gestion temporaire 10.77.20.10/32 a été retirée en fin de séance ; les routes/adresse VPN sont absentes et VMnet13 Up dans la dernière lecture A. Les anciens guides d'ajout de routes ne sont pas l'état final à recréer.

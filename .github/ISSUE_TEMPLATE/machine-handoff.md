@@ -1,18 +1,15 @@
 ---
-name: Machine handoff
-about: Share a short progress update, blocker, or test readiness note
-title: "[Handoff] Machine A/B"
+name: Point machine A/B
+about: Partager une observation, un blocage ou une demande précise
+title: "[Point] Machine A/B"
 ---
 
-- Machine and human owner:
-- Status/update:
-- Current planning PR and exact revision/SHA:
-- Approval needed or received (who, requested action, revision, comment/review link):
-- Hardware measured (host/hypervisor, CPU, RAM, free disk, date); note assumptions:
-- Assigned scope:
-- Expected / observed results (write `not run` when untested):
-- Evidence paths:
-- Blocker/error and next action:
-- Ready for joint tests? If yes, evidence and suggested timing:
+- Machine et propriétaire :
+- Branche (main pour preuves/documentation, presenter pour le présentateur) et commit :
+- Périmètre autorisé / demande précise :
+- Date et source de l'observation :
+- Attendu / observé (indiquer non confirmé si nécessaire) :
+- Liens vers les preuves du dépôt :
+- Limite, erreur et prochaine action :
 
-Machine B's 16 GB RAM assumption is unverified until measured. Keep credentials, keys, VPN profiles, recovery keys, and secret-bearing configuration out of posts. A script alone is not evidence that a live test passed.
+Préserver le travail de l'autre PC et réconcilier avant de pousser, sans force-push. Une configuration sauvegardée n'est pas un essai réussi. Ne pas inclure identifiants secrets, clés, profils VPN, archives ni exports sensibles. L'ancienne issue #2 est clôturée ; ne pas la rouvrir pour les suites historiques.

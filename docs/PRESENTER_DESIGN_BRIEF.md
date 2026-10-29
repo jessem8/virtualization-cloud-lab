@@ -1,5 +1,7 @@
 # Design brief · démonstration du laboratoire
 
+Référence historique de la conception livrée, conservée sans refonte. Les couleurs et comportements décrits doivent être recoupés avec l'artefact existant avant une évolution ; ce document ne certifie pas l'état du laboratoire. Lire le [README actuel](../README.md).
+
 - **Audience :** étudiant qui découvre le projet et jury technique.
 - **Objectif :** comprendre, en suivant une histoire courte, comment un utilisateur atteint InvoiceShelf, comment les VLAN et le pare-feu contrôlent le trajet, puis comment la sauvegarde, le VPN et la reprise s’insèrent dans cette architecture.
 - **Composition :** la maquette 3D reste le centre visuel ; une barre de récit stable donne une seule action principale, une étape à la fois, une phrase de narration et des commandes précédent/suivant. Les détails d’un équipement restent accessibles au clic. Les autres trajets restent dans la liste secondaire.

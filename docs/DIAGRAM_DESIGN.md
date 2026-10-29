@@ -1,6 +1,6 @@
 # Diagramme interactif du laboratoire
 
-Version du 28 octobre 2026. Présentateur de bureau pour la démonstration devant le professeur. Une maquette explique le réseau prévu ; elle ne configure aucune VM et ne mesure aucun trafic.
+Documentation de l'interface livrée le 28 octobre 2026 ; alignement documentaire le 29. Pour l'état réel, lire le [README](../README.md) et l'[index des preuves](../evidence/README.md). Les simulations et les anciens faits affichés ne sont pas une source de statut actuel. Présentateur de bureau pour la démonstration devant le professeur. Une maquette explique le réseau prévu ; elle ne configure aucune VM et ne mesure aucun trafic.
 
 ## Lancer
 
@@ -46,17 +46,17 @@ A : OPNsense/Windows. B : SW-B/Ubuntu/TrueNAS. CLIENTS et MGMT non tagués ; tru
 
 Application choisie : InvoiceShelf2.4.7 avec SQLite local et Nginx HTTPS8443 ; backend8080 interne. Prometheus collecte, Grafana affiche. La sauvegarde exige arrêt/archivage/reprise et restauration isolée ; les ACL NAS s’ajoutent au pare-feu.
 
-La préparation déclarée par B le26/10 ne prouve ni installation ni réseau fonctionnel. TrueNAS6 Gio préparés contre8 Gio au plan, et UbuntuDesktop4 Gio contre2,5 Gio au plan, restent à réconcilier. Tous les tests réseau/VPN/restauration restent à effectuer.
+Le laboratoire a été intégré le29/10 : les preuves datées remplacent les anciens états préparatoires. Ubuntu4 Gio et TrueNAS6 Gio sont les allocations observées ; les anciennes cibles2,5/8 Gio restent des références distinctes. Les succès et les limites sont dans la matrice ; aucun test n'est relancé pour ce rangement.
 
 Sources : docs/LIAISON.md, docs/MACHINE_A.md, docs/MACHINE_B.md, evidence/PC_B_STATUS.md, révision921eebf et décisions humaines du27/10. Le choix InvoiceShelf supersède Homebox/Vikunja ; les guides opérationnels ont été alignés sur ce choix.
 
 Conseils consultés : [Web3D Integration Patterns](https://www.skills.sh/freshtechbro/claudedesignskills/web3d-integration-patterns), séparation des couches, état synchronisé et rendu à la demande. [image-3d](https://www.skills.sh/starchild-ai-agent/official-skills/image-3d) produit des images2D au rendu3D, pas des modèles interactifs ; aucun script de facturation ni service Starchild n’est utilisé. Les consultations Astra en lecture seule ont guidé les trajets exacts, les vues fonctionnelles et la distinction simulation/preuve. La revue finale du code a conduit aux corrections des connexions internes, du serveur local et du sens en2D.
 
-Le concept raster généré a servi à la composition, pas aux faits. Ses chiffres/adresses illustratifs ne sont pas réutilisés ; le modèle JSON gouverne l’interface.
+Le concept raster généré a servi à la composition, pas aux faits. Ses chiffres/adresses illustratifs ne sont pas réutilisés ; le modèle JSON gouverne l’interface simulée, pas le statut réel du laboratoire.
 
 ## Sources éditables et reconstruction
 
-docs/network-assets/topology.json contient les faits ; diagram/scenarios.mjs contient les étapes ; diagram/scene.mjs, diagram/app.mjs, diagram/icons.mjs et diagram/map.mjs contiennent scène, interface, pictogrammes et plan2D. diagram/fx.mjs (rendu et qualité), camera.mjs (caméra), packet.mjs (paquet, porte pare-feu, ligne de flux), whatif.mjs (pannes simulées) et quiz.mjs (questions) complètent la scène ; la politique simulée est dans topology.json (policy).
+docs/network-assets/topology.json contient les faits affichés par la maquette, dont certains sont historiques (VMnet14, états préparatoires), à actualiser dans la tâche ultérieure ; diagram/scenarios.mjs contient les étapes ; diagram/scene.mjs, diagram/app.mjs, diagram/icons.mjs et diagram/map.mjs contiennent scène, interface, pictogrammes et plan2D. diagram/fx.mjs (rendu et qualité), camera.mjs (caméra), packet.mjs (paquet, porte pare-feu, ligne de flux), whatif.mjs (pannes simulées) et quiz.mjs (questions) complètent la scène ; la politique simulée est dans topology.json (policy).
 
 Dans diagram/ : `pnpm install --frozen-lockfile --ignore-scripts`, puis `node build.mjs`. Les dépendances sont verrouillées ; node_modules est exclu de Git. Le build regroupe les bibliothèques, copie polices/notices et régénère docs/network-lab-2d.svg. L’entrée actuelle est docs/network-lab-3d.html ; docs/network-lab.html conserve la version antérieure de B.
 

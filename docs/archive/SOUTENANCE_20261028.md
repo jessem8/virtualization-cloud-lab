@@ -1,3 +1,9 @@
+# Archive — scénario du 28 octobre 2026
+
+Ancien support conservé. Lire le [README actuel](../../README.md) et les [preuves du 29](../../evidence/README.md). La cible 8–10 minutes et les étapes à rejouer ci-dessous sont historiques ; la cible actuelle est environ 15 minutes dans 30 minutes maximum, questions comprises. La copie restaurée a été retirée après son essai. Aucun rejeu, préparation de questions ou modification du présentateur n'est demandé par cette archive.
+
+---
+
 # Scénario de soutenance — deux PC
 
 Ce guide prépare la présentation et la démonstration. Répéter avec les résultats réellement vérifiés ; le diagramme montre une simulation, pas du trafic en direct. Présentation en français avec noms techniques habituels.
@@ -21,7 +27,7 @@ Ce guide prépare la présentation et la démonstration. Répéter avec les rés
 | 6. Sécurité/VPN | Le VPN ne donne accès qu'à HTTPS 8443. Le WAN utilisé est simulé par VMware NAT. | Sans chemin MGMT de contournement : application via VPN, refus d'un service actif et journal correspondant. Montrer les autres refus vérifiés si le temps le permet. Rétablir MGMT après le test. |
 | 7. Supervision | Une application peut tomber alors que la VM fonctionne. | Grafana et métriques réelles ; panne contrôlée d'InvoiceShelf, attente de l'intervalle de collecte, reprise. Montrer séparément la preuve de perte/reprise de collecteur. |
 
-Cible de répétition : environ 8–10 minutes, à adapter au temps réellement accordé. Garder les autres preuves de la [matrice T01–T23](TEST_MATRIX.md) disponibles pour les questions : VLAN et filtrage, Defender/Sysmon/audit, SSH et pare-feu Ubuntu, chiffrement/ACL NAS, exercice Docker, redémarrage et charge simultanée.
+Cible de répétition : environ 8–10 minutes, à adapter au temps réellement accordé. Garder les autres preuves de la [matrice T01–T23](../TEST_MATRIX.md) disponibles pour les questions : VLAN et filtrage, Defender/Sysmon/audit, SSH et pare-feu Ubuntu, chiffrement/ACL NAS, exercice Docker, redémarrage et charge simultanée.
 
 ## Si une étape échoue
 

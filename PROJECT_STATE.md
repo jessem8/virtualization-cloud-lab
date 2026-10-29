@@ -1,184 +1,60 @@
-# Project checkpoint
+# Point de reprise du projet
 
-## Resume here — end of joint session, 29 October 2026
+Mis à jour le **29 octobre 2026**, Africa/Tunis. Lire le [README](README.md), le [périmètre actuel](BUILD_PLAN.md) et la [coordination](docs/COORDINATION.md). Les anciens points d'arrêt et propositions sont [archivés avec des références immuables](docs/archive/README.md) ; ils ne gouvernent plus les actions.
 
-Jesse will start a new chat after Luna finishes screenshot collection; this chat is exhausted. Do not restart provisioning or repeat completed lab checks. Read this section first, then the A/B dated evidence. Active shared branch: evidence/joint-lab-20261029 (not main for current evidence collection).
+## Objectif et limites
 
-- Functional closing checks passed: Windows InvoiceShelf and Grafana after Ubuntu reboot; monitoring/application and collector recovery; NAS ACLs and encrypted SMB; coherent InvoiceShelf backup and isolated invoice/PDF restore; OPNsense log reception/rotation; auditd and scoped ClamAV; VPN allowed application and logged SSH/SMB/Grafana denials; pinned-key MGMT SSH after authentication hardening. Reader action restrictions were reported completed by Jesse/Sanad; preserve the distinction from independently captured evidence.
-- Retain final Ubuntu MTU 1400 and scoped Windows-to-InvoiceShelf MSS 1360 plus persisted host/Docker firewall. Reboot restoration and fresh Windows access passed. Underlying link/driver cause is unknown; do not describe it as diagnosed. Lab HTTPS certificates remain self-signed/untrusted by browsers. Unconfirmed matrix/Docker Bench items are not silently passed.
-- A cleanup verified: temporary 10.77.20.10/32 route removed, VMnet13 Up, VPN address/routes absent. Private SSH key and VPN profile remain outside Git. Jesse reports all five VMs running together over five hours; do not impose another arbitrary ten-minute timer. Normal shutdown of guests (especially TrueNAS), closing VMware and unplugging Ethernet are authorized; actual shutdown is user-managed and not verified.
-- A screenshot collection completed by Luna: screenshots_a contains 13 unique original PNGs plus index.csv (topics, source paths and observations), approximately 4.37 MB. Parent confirmed all 13 copies match their original SHA-256 hashes and reviewed the index. Covers VLAN/VMware, VPN connected/application/disconnected, encrypted SMB/NTP, reader/Bob denials, invoice preview and final post-reboot dashboards. These are current-chat attachments; earlier-chat A Sysmon/Defender images were not recovered, so previous-chat screenshot coverage remains incomplete. B completed screenshots_b with 108 original user-supplied PNGs plus index.csv (d7d2212), reporting original hashes verified; that folder is fetched locally on A too. A collection was pushed as ffa1f8f. Both folders and the current status are local and remote on the shared branch. Coordination issue #2 is now closed after the evidence handoff; no VM/test coordination remains in that issue. No further VM activity is required for collection.
-- Next work after screenshots: align concise documentation/evidence with actual results, prepare presentation and individual Q/A for a TOTAL MAXIMUM 30 minutes, including questions. No separate report per professor clarification. Include individual task/contribution table. Preserve existing network diagram; no diagram redesign or new lab features. Original specification PDF and assessment XLSX are in requirements/originals locally and remotely.
-- Assessment: group rubric totals 20; individual mark is 20% follow-up and 80% Q/A; final weighting normally 60% individual/40% group, or 90%/10% when group exceeds individual by over3 points. Use original XLSX formulas rather than invented criteria. Do not overload/stress the user; use short concrete steps and do only demanded work.
+Le travail courant est **uniquement le rangement du dépôt, l'alignement factuel et l'accueil des quatre coéquipiers** avant la soutenance du 30 octobre. Présentation remplaçant le rapport séparé selon la clarification du professeur ; environ 15 minutes de présentation dans un total enregistré maximal de 30 minutes, questions comprises. « VM-to-VM escape workshop » signifie couche de sécurité ; aucune évasion d'hyperviseur à inventer.
 
+Aucune refonte du présentateur, préparation Q/A ou QCM, diaporama, attribution de membres/contributions, installation pour Codex B, expansion du labo ou répétition d'essais n'est comprise ici. Ne pas démarrer/arrêter les VM ni modifier les hôtes/invités pour cette tâche. Une suite de présentation attend une tâche distincte.
 
-## 29 October — post-reboot access and cleanup verified
+## Architecture retenue
 
-The closing functional checks passed: B's reboot evidence (8170184) records 10.77.20.10/24, MTU 1400, active lab-firewall, SSH socket, auditd and rsyslog, restored INPUT/DOCKER-USER policy, IPv6 SSH drop, scoped Windows-to-InvoiceShelf MSS 1360 and audit rule. Six containers are running; InvoiceShelf is healthy and local monitoring targets/probe are UP. A independently verified pinned-key management SSH after reboot; Jesse's fresh Windows screenshots at 18:00 show authenticated InvoiceShelf and Grafana dashboards with data and monitoring UP. A subsequently verified the temporary 10.77.20.10/32 management route absent, VMnet13 Up, OpenVPN address absent and VPN lab routes absent. This completes the requested final route cleanup and supersedes the older pending firewall/cleanup/reboot lists below.
+Deux PC, VMware Workstation, cinq VM : A/Jesse = OPNsense et Windows Server ; B/Sanad = Alpine SW-B, Ubuntu et TrueNAS. SW-B commute à L2 sans IP/routage. CLIENTS et MGMT sont des VMnet non tagués, pas VLAN10/99 ; seul le trunk physique transporte les VLAN20/30. Ubuntu utilise VMnet10 sur B, NAS VMnet11, trunk VMnet12 ; les numéros sont locaux à chaque PC.
 
-Jesse reports all five VMs running together for over five hours; no extra arbitrary ten-minute wait is required, and no formal sustained-load metric is inferred. MTU/MSS are retained operational settings; the underlying link/driver cause remains unknown. Browser trust of the lab certificate, Docker Bench and other unconfirmed matrix items are not claimed complete. Both A/B evidence are now in the shared branch. Next work is evidence/documentation alignment and the authorized 30-minute presentation/rehearsal, preserving the network diagram. Do not start new features, reinstall VMs or repeat completed checks without a new failure. See evidence/PC_A_2026-10-29.md and evidence/PC_B_2026-10-29.md.
+Ubuntu héberge Nginx HTTPS8443, InvoiceShelf2.4.7/backend8080 interne, SQLite locale persistante et quatre composants de supervision. Ubuntu→NAS traverse B/tag20 → OPNsense A → B/tag30. NAS reçoit une archive cohérente après arrêt de l'application ; SQLite active n'est jamais hébergée sur SMB. Pas de cloud public, ESXi imbriqué, AD ou Kubernetes demandé.
 
-## 29 October — current remaining work after VPN and SSH
+## État établi par la séance du 29 octobre
 
-Completed A evidence now records Windows Grafana HTTPS viewing, VPN application access with MGMT disabled, logged SSH/SMB/Grafana restrictions (SSH retested with active listener), disconnected application failure and restored MGMT. B confirmed forwarded firewall logs, auditd, a scoped ClamAV scan and Grafana HTTPS in issue #2. Management SSH key-only login as sanad succeeded with pinned host fingerprint both before and after B authentication hardening; password-only negotiation was rejected. See evidence/PC_A_2026-10-29.md and issue #2. The older pending lists below are historical where superseded. Remaining lab work: finish/verify Ubuntu host and Docker filtering, remove A's temporary management host route after use, and perform final reboot/persistence and simultaneous stability checks. B's latest SSH details still need its evidence push. Presentation work follows lab closure; no new features requested.
+Sources : [résumé A](evidence/PC_A_STATUS.md), [résumé B](evidence/PC_B_STATUS.md), [notes A29](evidence/PC_A_2026-10-29.md), [notes B29](evidence/PC_B_2026-10-29.md) et [index des preuves](evidence/README.md).
 
-## 29 October — monitoring verified
+- Windows InvoiceShelf et Grafana accessibles après reboot Ubuntu, données et graphes visibles ; collecte réelle et panne/reprise de webapp et d'un collecteur testées séparément.
+- SMB : Alice RW, lecteur RO/écriture refusée, Bob connecté au partage mais lecture du fichier refusée ; session Windows Encrypted=True. Datasets chiffrés et restauration de fichier NAS documentés.
+- Archive InvoiceShelf arrêtée, transfert/retour NAS aux empreintes identiques, facture/PDF dans une copie isolée ; conteneurs de restauration retirés ensuite.
+- Logs OPNsense reçus et rotation effective, événement auditd/règle persistante ; ClamAV limité à quatre fichiers.
+- VPN application8443 permis, SSH22/SMB445/Grafana3001 refusés et journalisés sans MGMT ; SSH retesté avec socket actif. WAN simulé VMware NAT.
+- SSH MGMT par clé/empreinte épinglée avant/après durcissement et reboot ; négociation password-only rejetée. Root refusé en configuration, sans essai root séparé.
+- MTU1400, règles hôte/Docker et MSS1360 Windows→InvoiceShelf restaurées au reboot Ubuntu. A : route temporaire 10.77.20.10/32 retirée, VMnet13 Up, adresse/routes VPN absentes.
 
-Sanad's screenshots show Grafana authenticated locally, Prometheus data source tested, all four targets up, real Ubuntu and Windows CPU graphs, and a successful InvoiceShelf HTTPS probe with certificate validation. Stopping Ubuntu node-exporter produced a down target; restarting it restored up. Separately, stopping InvoiceShelf webapp produced probe DOWN; after restart the recorded probe_success returned 1. Earlier monitoring preparation sections are historical. Remaining: Windows Grafana viewer and VPN access restrictions, rsyslog, auditd, ClamAV, Docker security and final persistence/stability checks. Grafana currently serves HTTP on 10.77.20.10:3001; TLS and network restrictions are not established by these tests. See evidence/PC_B_2026-10-29.md.
+Ces observations sont datées ; aucun état actuel de VM allumée n'est supposé. Arrêt ultérieur des invités géré par l'utilisateur et non vérifié. Clés SSH/VPN, exports et sauvegardes restent hors Git.
 
-## 29 October — monitoring preparation
+## Réserves à conserver
 
-Sanad's console screenshot confirms the isolated restore-test containers and their network were removed after the restored invoice and PDF were checked; private backup and extracted files were retained. Ubuntu screenshots show Prometheus v3.5.5, Grafana 13.2.4, node-exporter v1.12.1 and blackbox-exporter v0.28.0 images downloaded and LAB-VLAN20 reactivated. Host VMX readback confirms Ubuntu VMnet10 and NAS VMnet11. Latest host snapshot: SW-B, Ubuntu and NAS running; Ethernet Up 1 Gbps, Wi-Fi Up, 1.27 GiB RAM and 83.25 GiB disk available. Monitoring configuration, Grafana password preparation and service startup are not confirmed; verify before acting. See evidence/PC_B_2026-10-29.md. Older stopping-point notes below are historical.
+Cause racine liaison/pilote inconnue malgré les contournements MTU/MSS. Certificats autosignés non approuvés par les navigateurs. Actions du rôle InvoiceShelf rapportées par Jesse/Sanad, sans capture indépendante de chaque refus. Les limites T03/T04, Docker Bench/atelier, certains refus réseau et toute mesure formelle de charge restent explicites dans la [matrice](docs/TEST_MATRIX.md). Poussée des routes pour de futurs profils VPN et dernières offres Windows Update non confirmées.
 
-## 29 October — InvoiceShelf backup and isolated restore
+Jesse rapporte plus de cinq heures avec les cinq VM ; cela n'est pas une mesure de performance et ne justifie pas un nouveau minuteur. B conserve l'allocation observée Ubuntu 4 Gio / TrueNAS 6 Gio, distincte des anciennes cibles 2,5/8 Gio. Ne pas transformer une cible en mesure.
 
-Sanad supplied evidence of a stopped-app archive copied to the restricted NAS share, downloaded again with matching SHA-256, and restored to a separate local instance bound to 127.0.0.1:8444. The restored company, draft invoice and PDF preview are visible. The live app was not replaced; stopping the restore-test containers remains pending. Keep backups and private keys outside Git. A reader role shows the invoice list in a separate session; Sanad reports restrictions pass but individual denied-action evidence is not supplied. Monitoring and VPN checks remain pending. See evidence/PC_B_2026-10-29.md.
+Captures intactes : **13 PNG A + index**, **108 PNG B + index**. Les anciennes images A Sysmon/Defender sont partiellement non récupérées. La collecte A avait comparé les 13 originaux par SHA-256 ; B avait rapporté les comparaisons et conserve les empreintes dans son index. Ce rangement ne revalide pas chaque image ni chaque essai. Issue #2 clôturée après remise ; PR #1 historique.
 
-## 29 October — Ubuntu LAB-VLAN20 MTU
+## Dépôt et présentateur
 
-A fresh WIN-LAB HTTPS timeout was followed by a successful login-page load after Ubuntu enp0s17 was set to MTU 1400. At Sanad's request, 1400 was saved on NetworkManager profile LAB-VLAN20; user-provided readback shows both profile and active interface at 1400. Reboot persistence and the root cause remain unverified. The page had also opened once after the earlier command to return to 1500. See evidence/PC_B_2026-10-29.md. Previous notes below are historical.
+Deux branches à maintenir : `main` (documentation/preuves) et `presenter` (présentateur existant). Les 28 commits de collecte jusqu'à `4efc321` sont intégrés sans réécriture ; l'ancienne branche `evidence/joint-lab-20261029` est retirée après vérification. Sauvegarde privée complète avant consolidation : `C:/Users/jesse/.codex/recovery/virtualization-cloud-lab-20261029-cleanup/before-cleanup.bundle`, vérifiée, avec les anciennes références et un manifeste, hors dépôt/OneDrive et accès limité au compte local. Récupérer/réconcilier avant les commits et pushes ; jamais de force-push.
 
-## 29 October — InvoiceShelf and SMB update
+Le projet `jessem8/virtualization-cloud-lab` reste privé et sans Pages. Le [site public](https://jessem8.github.io/virtualization-lab-3d/) utilise le dépôt distinct `jessem8/virtualization-lab-3d`, Pages `main` à la racine. Vérifications provider en lecture seule du 29 octobre : visibilité, source Pages, dernier build réussi `119b7c7` du 28/10 et HTTP 200 du site. Aucun réglage, source publique ou déploiement n'est changé.
 
-InvoiceShelf 2.4.7 setup, local login and draft invoice PDF preview were observed on Ubuntu B. After Compose containers were recreated, Sanad's refreshed invoice list still shows the draft; PDF rendering after recreation was not separately observed. Jesse reported authenticated WIN-LAB access and invoice preview before recreation; Sanad now reports the page is unavailable again from A. Earlier MTU 1400/1500 tests did not establish the root cause. The TLS certificate is self-signed.
+Sources/artefacts 3D conservés sur les deux branches, lanceur `diagram/start.ps1`, serveur loopback 3187. `topology.json` et certains scénarios contiennent encore VMnet14 et des états préparatoires dépassés ; leur alignement appartient à la tâche ultérieure. Les animations restent simulées. Aucun build ou nouveau contrôle graphique n'est revendiqué par ce rangement.
 
-TrueNAS SMB encryption was set to REQUIRED and Ubuntu app-backup listed and uploaded a test file. Jesse reported a reconnected WIN-LAB SMB session with Encrypted=True. Role tests, application backup/restore, monitoring and VPN remain pending. Details in evidence/PC_B_2026-10-29.md; earlier checkpoints below remain historical.
+## Vérification du rangement et prochaine action
 
-## 29 October — both B guests reach their A gateways
+Contrôles documentaires effectués : 26 fichiers Markdown du dépôt, 167 liens locaux sans cible manquante ; 158 fichiers protégés comparés au commit4efc321 et inchangés ; index A13/B108 concordants, 108 SHA-256 B correspondants ; observations des deux anciens états conservées dans history ; trois références locales de la page3D présentes ; git diff --check sans erreur. Le contrôle initial avait trouvé un lien cassé dans .local-history ignoré, hors dépôt : il est resté intact, puis le contrôle a été limité aux fichiers du dépôt. Les diffs sont relus avant commit, puis les branches et le push sont contrôlés. Aucun test du labo, nouveau build ni contrôle graphique n'est exécuté. L'enregistrement facultatif du suivi local a renvoyé `invalid_contract` : aucun reçu de registre ni binding natif n'est revendiqué. Les preuves réelles restent dans le dépôt.
 
-Sanad's latest TrueNAS console evidence confirms 10.77.30.10/24, default route via 10.77.30.1 and a gateway ping with 4/4 replies, 0% loss. A's evidence also records the Ubuntu VLAN20 gateway ping succeeding 4/4. Realtek monitor-mode adjustments and scoped ICMP gateway rules are documented in the A/B session evidence. These are successful guest-to-gateway checks, not completion of all T03 isolation/capture criteria or service tests. See evidence/PC_B_2026-10-29.md and evidence/PC_A_2026-10-29.md. Older pending-ping and stopped-guest notes below are historical.
+La prochaine action de l'équipe est de lire le README et l'index. Ne pas commencer automatiquement la tâche de présentation. Le barème d'origine reste intact : groupe 20 ; individuel 20 % suivi/80 % Q/A ; final 60/40 ou 90/10 si groupe−individuel>3. Le XLSX contient des ambiguïtés de cellules : ne pas inventer une correction ni des critères.
 
-## 29 October — PC B network preparation evidence
+## Leçons retenues
 
-Windows B now reports the dedicated Ethernet link Up at 1 Gbit/s. SW-B and Ubuntu are running at the latest host check; NAS-LAB is not listed. Sanad's SW-B console capture shows the expected VLAN membership and interfaces UP without IP addresses. Ubuntu guest output confirms enp0s17 10.77.20.10/24 and the default route via 10.77.20.1; its saved adapter is Custom VMnet10. NAS's saved adapter is now Custom VMnet11, but its final guest address remains unverified. No gateway ping result or physical VLAN transport pass is claimed. See [B session evidence](evidence/PC_B_2026-10-29.md) and [B status](evidence/PC_B_STATUS.md). Earlier evidence below is retained as history.
-
-
-## 29 October — joint session and evidence branch
-
-Jesse reports that he and Sanad are together, both PCs are connected by Ethernet and both use the same Wi-Fi. This is user-reported physical setup, not verification of link state or VLAN traffic. The user requests shared branch `evidence/joint-lab-20261029` for joint evidence collection, overriding the earlier main-only direction for this work. Each machine updates its own evidence file, coordinates joint observations, fetches/reconciles before pushing and never force-pushes. Begin with the actual startup and trunk checks in BUILD_PLAN.md. No current VM state or test result is assumed.
-
-## 29 October — meeting and finish
-
-Jesse will meet Sanad to finish the lab, then prepare the presentation and live demonstration. Start with [the meeting plan](BUILD_PLAN.md) and [judgment-day scenario](docs/UNDERSTAND_AND_PRESENT.md). The 28 October A/B evidence is historical: confirm current VM and network state together. Stopped VMs are started as needed, not a reason to postpone joint work. B's recorded Ubuntu access port is VMnet10 on B. TrueNAS boot, pool, SMB permissions and local snapshot file restore have since been verified; physical trunk and application integration remain unverified. Preserve the local A VPN shutdown note in evidence/PC_A_STATUS.md. Subsequent older paragraphs are historical where they conflict with this section or the dated evidence.
-
-Updated 28 October 2026, Africa/Tunis.
-
-## PC B — actualisation du 28 octobre
-
-Dernière observation : après le redémarrage rapporté de NAS-LAB, les datasets chiffrés `projet` et `app-backups` sont affichés Unlocked. La configuration TrueNAS et les clés ont été exportées selon Sanad. NAS-LAB est la seule VM active ; l'Ethernet physique de B apparaît déconnecté. Les invités utilisent encore le NAT temporaire : B n'est pas prêt pour le premier test trunk. Voir [l'état observé de B](evidence/PC_B_STATUS.md) et la coordination [issue #2](https://github.com/jessem8/virtualization-cloud-lab/issues/2).
-
-Sanad a installé et configuré SW-B ; les VLAN locaux et l'absence d'adresses sur ses ports ont été observés après redémarrage. Ubuntu Desktop 26.04.1 est installé, a redémarré après mise à jour et a répondu à un ping via son NAT temporaire ; il a ensuite été éteint. TrueNAS 25.10.7 a démarré sur son disque système ; le pool `tank` en miroir, les datasets chiffrés `projet` et `app-backups`, leurs partages et les tests SMB locaux sont documentés dans [l'état observé de B](evidence/PC_B_STATUS.md). Un fichier a été restauré depuis un clone de snapshot et son contenu vérifié. NAS-LAB utilise encore le NAT temporaire ; le réseau final et les accès depuis A ou Ubuntu restent à tester. Sanad maintient Ubuntu à 4 Gio et TrueNAS à 6 Gio pour l'essai ; la charge simultanée n'est pas validée. Le port Ubuntu de SW-B utilise VMnet10 sur B, au lieu de VMnet14 dans les guides. Les tests de trafic local et de trunk entre les PC restent à faire. Les anciennes mentions ci-dessous décrivant B au 26 octobre sont historiques.
-
-## 28 October learning and demonstration refinement
-
-The learning/presenter task copied an older A stopping point. This is superseded by the installation and management-access screenshots in the Machine A chat and the 28 October applied browser configuration below. B remains at its recorded prepared-guest state; no provisioning occurred in the learning/presenter task.
-
-The current meeting sequence is in BUILD_PLAN.md and the presentation scenario is in docs/UNDERSTAND_AND_PRESENT.md.
-
-The existing 3D presenter now has a local 18-step guided story, speaker cues and a technical-detail toggle; see evidence/PRESENTER_SIMPLIFICATION.md for the actual validation scope. These edits were pushed in 706cc8c. The new mission report preserves all course requirements and moves joint T03 immediately after the minimum network/endpoints are ready. T03 needs Ubuntu and TrueNAS endpoints as well as FW-LAB/SW-B. B memory allocation still needs Sanad's reconciliation.
-
-Task-helper registration for understand-demo-20261028 returned invalid_contract. No registry receipt or native binding is claimed; ordinary source/build/browser evidence is recorded in project files.
-
-## Resume in the next chat — local handoff, 28 October evening
-
-The user requested stopping for now and waiting for Machine B's readiness report, and will close VMware personally. Do not resume provisioning, monitoring or polling automatically. Resume only on the user's next request.
-
-Machine A has reached joint-test readiness: WIN-LAB installation/security/metrics and CLIENTS DNS/HTTPS were checked; OPNsense routing/rules are configured; the physical-host OpenVPN client completed TLS 1.3/AES-GCM initialization with address 10.78.0.2 and both lab routes via 10.78.0.1. These are local A checks, not final demonstration validation.
-
-At this stopping point the lab OpenVPN client was closed on the host and its two test routes were removed. Follow-up process/route queries returned no matching process or lab routes. Administration tab handles were no longer present when closure was attempted. Guest shutdown/VMware closure is being handled by the user and is not verified here; do not assume the VMs are still running.
-
-Next chat: read this checkpoint, BUILD_PLAN.md, docs/COORDINATION.md and evidence/PC_A_STATUS.md. Check the latest remote B status once when asked; last inspected B commit was 542556b (TrueNAS installed, disk boot/pool pending), and the coordination note is issue #2. Latest pushed A checkpoint is 9e9fe4a; this stopping-point addition is local only.
-
-Before declaring A fully finished: verify WIN-LAB NTP through OPNsense; reconcile server-side OpenVPN route pushing for future exports (current private profile has explicit routes); check any remaining Windows Update offers. Then, with B ready, jointly verify physical VLAN 20/30 transport, application/NAS access, remote metrics, VPN allow/denies with the MGMT bypass removed, backup/restore and simultaneous load. Do not repeat Windows installation or the completed local setup.
-
-Private artifacts outside Git: C:/Users/jesse/Downloads/LAB_OpenVPN_InvoiceShelf_PC_A_VPN.ovpn (contains client credentials; never print/upload/commit), C:/Users/jesse/Downloads/LabSetup.zip, and temporary VPN logs/screenshot in AppData/Local/Temp. Reconnect the client with administrator privileges only for an authorized test; closing its console disconnects it. VMnet8 is the VMware NAT network and independent of the Wi-Fi subnet; retain WIN-LAB on VMnet10.
-
-## Start here
-
-The desktop presenter delivery f546293 was included in [PR #1](https://github.com/jessem8/virtualization-cloud-lab/pull/1), merged on 27 October as b466d875a56440b958ad6e1b8d755d1e16f64359. The user explicitly prefers direct work on main as of 28 October; no routine branch/PR workflow is required. The repository guides are aligned. **Machine A configuration is in progress in the current chat**, with English guidance requested by the user. Do not repeat the diagram design phase.
-
-The user explicitly authorized Machine A configuration. No peer or PR start approval is pending. The agreed sequence is:
-1. Finish/review/push this presenter and save this checkpoint.
-2. In a new chat, guide the beginner through configuring Machine A (this PC).
-3. Meet Sanad and finish Machine B.
-4. Connect the two PCs, check the trunk, then complete the application/security/recovery demonstration together.
-
-Keep instructions short and concrete. Mention an uncertainty only when it affects the next action. Do not mistake the presenter's simulations for working VM/network results.
-
-## Fixed scope and application
-
-Two physical PCs, five VM. French explanations with standard technical names. Presentation plus live demo; no separate report according to the professor clarification provided by the user. No public cloud, nested ESXi, AD, Kubernetes or VM escape exercise. Preserve unrelated guests and data, including Kali/ESXi.
-
-The final app is **InvoiceShelf2.4.7**, on Ubuntu B. It demonstrates a fictitious company, invoices/PDF, expenses, login/roles, persistence and recovery. Older Homebox/Vikunja choices are superseded.
-
-Read the current operational guides: BUILD_PLAN.md, docs/MACHINE_A.md, docs/MACHINE_B.md, docs/LIAISON.md, docs/APP.md, docs/TEST_MATRIX.md and docs/COORDINATION.md. They are aligned to InvoiceShelf and the direct A authorization.
-
-## Machines and interfaces
-
-| PC | Owner | Guests and RAM target |
-|---|---|---|
-| A | jessem8 | OPNsense3 Gio + Windows4 Gio |
-| B | sanadzhioua | Alpine SW-B0.5 Gio + Ubuntu2.5 Gio + TrueNAS8 Gio |
-
-B's26 October snapshot reports Alpine live ISO login only, not installed; Ubuntu Desktop4 Gio and TrueNAS6 Gio prepared with empty disks and no adapters. Reconcile those prepared allocations with Sanad before changing B. See evidence/PC_B_STATUS.md.
-
-A's27 October pre-reboot read-only snapshot: i7-13700HX,15.71 Gio visible,2.59 Gio available and36.79 Gio free on C:. Refresh inventory in the new chat; the PC has since restarted. Keep active VM disks outside OneDrive. Previously observed installers are inventory references, not a requirement to replace a suitable existing guest.
-
-| Network | Mapping and address |
-|---|---|
-| WAN | OPNsense DHCP on existing VMnet8 NAT; Wi-Fi is host Internet |
-| MGMT | VMnet13 host-only, non-tagged10.77.99.0/24; OPNsense .1, host A .254 |
-| CLIENTS | VMnet10 private, non-tagged10.77.10.0/24; OPNsense .1, Windows .10 |
-| TRUNK | VMnet12 explicitly bridged to dedicated Ethernet on each PC; tags20/30 only; parent without IP/native VLAN |
-| SERVEURS20 | OPNsense10.77.20.1; SW-B access VMnet10 on B; Ubuntu10.77.20.10 |
-| STOCKAGE30 | OPNsense10.77.30.1; SW-B access VMnet11; TrueNAS10.77.30.10 |
-| VPN | OpenVPN10.78.0.0/24, UDP1194; client app on host A through simulated WAN |
-
-MGMT is not VLAN99. CLIENTS is not VLAN10. SW-B is L2 without IP/routing. Ubuntu→NAS must travel **B/tag20 → OPNsense A → B/tag30**. No NAT between lab zones. Restrict access ports and remove temporary service-guest NAT adapters before joint validation.
-
-## Service contract
-
-- Ubuntu B: Nginx HTTPS8443 → InvoiceShelf8080 on private Docker bridge. Only8443 is published.
-- Official InvoiceShelf2.4.7 image uses local SQLite at /var/www/html/storage/app/database.sqlite, persistent storage and Modules mounts. APP.md records tagged official configuration sources and private key handling.
-- SQLite stays local. Stop the app, archive its persistent/configuration data coherently, resume, then send the archive to the restricted NAS app-backup dataset. Restore a separate copy.
-- Prometheus on Ubuntu polls Windows exporter9182; Grafana3001 displays metrics. Prometheus9090 is internal. OPNsense sends logs to Ubuntu TCP514.
-- VPN allows application8443 only; deny SSH22, NAS445 and Grafana3001. Remove the host's MGMT bypass during that demonstration.
-- Required OS/security work remains: Defender/firewall/Sysmon/audit on Windows; SSH keys/iptables/audit/logging/protection on Ubuntu; SMB ACLs/encryption/snapshots on NAS; Docker course exercise/history and Docker Bench.
-
-## Presenter delivery
-
-Entry: docs/network-lab-3d.html. Launch `powershell -NoProfile -File diagram/start.ps1`, then http://127.0.0.1:3187/. The server is loopback-only and serves explicitly allowed presenter files/assets. Node uses the bundled runtime when present, otherwise PATH.
-
-Sources: diagram/app.mjs, scene.mjs, scenarios.mjs, map.mjs, icons.mjs; facts in docs/network-assets/topology.json. Rebuild from diagram/ with `node build.mjs`; dependencies are locked, node_modules ignored. Fonts/assets are local. docs/network-lab.html preserves B's earlier diagram.
-
-The final pass adds named ports, directional packet travel, VLAN tag changes, firewall decision markers, selectable links, functional device expansions, Ubuntu/Docker containment and local-volume distinction. Breadcrumbs and return preserve the scenario/step. Full screen, manual/automatic play, reduced motion,2D fallback and SVG export remain available. Desktop presentation only; phone checks are explicitly excluded.
-
-28 October enhancement: cinematic rendering with an economy fallback, story camera, VLAN-tag packet with exploded view, firewall gate, "Et si… ?" simulated faults, optional student quiz, decluttered labels and a scene-only full screen. Simulations only; see evidence/PRESENTER_ENHANCEMENT.md for checks and the unverified real-hardware frame rate. Public copy of the lab only (this repository stays private): https://jessem8.github.io/virtualization-lab-3d/ from the public repo jessem8/virtualization-lab-3d, refreshed with diagram/publish.mjs.
-
-Astra supplied a read-only critique; a separate final source review identified internal-link visibility, encoded asset traversal and2D direction issues. All three were corrected. See evidence/DIAGRAM_VERIFICATION.md for actual checks and review scope.
-
-## Current handoff status
-
-OpenVPN server and restricted rules were configured on 28 October with dedicated VPN certificates. The elevated physical-host client completed initialization using TLS 1.3/AES-GCM; host queries confirm 10.78.0.2 and both lab routes through 10.78.0.1. OPNsense reports the PC-A-VPN session ok. Client remains connected; application/deny enforcement and the MGMT-bypass-removed demonstration remain untested. Client profile remains private outside Git. See evidence/PC_A_STATUS.md; VPN application/deny demonstrations still require B.
-
-On 28 October, WIN-LAB Windows Server 2025 Desktop Experience installation, VMware Tools, rename/restart, Defender updates/quick scan, Sysmon events 1/3, logon events 4624/4625 and local windows_exporter metrics were recorded in the user-supplied guest evidence. Post-restart output shows WIN-LAB active and no pending restart. Windows Firewall is enabled with bounded dropped-packet logging; exporter TCP 9182 is restricted in configuration to Ubuntu 10.77.20.10. After correcting a VMnet0/VMnet10 adapter mismatch, the user verified DNS via 10.77.10.1 and HTTPS HTTP 200 from Windows on the intended CLIENTS network (10.77.10.10/24, gateway/DNS 10.77.10.1). These are guest-output checks, not joint network or remote scraping proof. Remaining update offers after restart are unknown. Next A task: restricted OpenVPN; cross-PC VLAN, application/NAS access, monitoring, recovery and load checks remain pending. See evidence/PC_A_STATUS.md for scope and evidence distinctions.
-
-
-On 28 October in the continuation chat, OPNsense Unbound was enabled on port 53 and set to all interfaces; its ACL page showed default Allow with no custom entries. NTP was also set to all interfaces, and its status showed an active synchronized peer. These are UI observations, not guest-side DNS/NTP or WAN exposure tests. No settings were changed during this inspection. A later host reading showed 6.24 GiB available of 15.71 GiB and 76.23 GiB free on C:. The earlier 2.61 GiB reading was a transient snapshot, not proof of a blocker. A Windows Server evaluation ISO exists in Downloads, but its contents/edition and integrity have not been verified here. Existing unrelated presenter edits remain local.
-
-On 28 October, 35 named LAB firewall rules were saved/applied in Chrome and read back after reload: 6 MGMT, 11 CLIENTS, 10 SERVEURS20 and 8 STOCKAGE30. The two broad default MGMT/LAN allow rules are disabled. Exact host/service permissions precede RFC1918 blocks, HTTP/HTTPS update permissions and logged IPv4/IPv6 final denies. Management access remains reachable. This is configuration evidence; guest traffic and cross-PC enforcement remain untested.
-
-Post-update Chrome verification on 28 October: OPNsense 26.7.7-amd64 booted with all planned interface addresses retained and management access working. Update/reboot verification is complete; this does not establish the remaining firewall/services or cross-PC behavior.
-
-OPNsense is installed and its wizard completed in Chrome on 28 October. Hostname FW-LAB.internal, timezone Africa/Tunis. MAC-verified interfaces: WAN em0 DHCP 192.168.53.136/24 (gateway 192.168.53.2); MGMT em1 10.77.99.1/24; CLIENTS em2 10.77.10.1/24; TRUNK em3 with no IP. VLAN device vlan01/tag20 and vlan02/tag30 use em3; assigned/enabled as SERVEURS20 10.77.20.1/24 and STOCKAGE30 10.77.30.1/24. The interface overview reports these addresses and routes. Host VMnet13 address 10.77.99.254/24 and absence of a default route on it were checked. The dedicated Ethernet bindings were rechecked after the user's changes: IPv4, IPv6, Microsoft client and file sharing are disabled; VMware Bridge Protocol remains enabled. User screenshot shows Internet Connection Sharing unchecked. DHCP/DNS listening scope, NTP, VPN and cross-PC VLAN behavior still require work or verification; firewall rules are now configured as recorded above, with traffic tests pending. No B changes were made. Resume here, not at the installer; see evidence/PC_A_STATUS.md.
-
-Git base brought in B's four commits through921eebf. PR #1 is merged. Continue on main: fetch/pull, reconcile concurrent changes, commit only scoped work and push without force. Keep current status in repository files and requests between machines in GitHub issues. A fresh Machine B status has been requested in [issue #2](https://github.com/jessem8/virtualization-cloud-lab/issues/2); its last report remains dated 26 October until B supplies actual new evidence. Keep secrets, VM images, VPN profiles and private recovery/configuration exports out of Git.
-
-## Lessons to retain
-
-- Make the packet path and enforcement points explain the architecture; decorative3D alone does not.
-- Separate a local storage relation from a VLAN link.
-- Keep request/response captions aligned to animation direction.
-- Inspection should preserve the walkthrough and ownership context.
-- Human instructions supersede the old start-approval gate.
-- Inventory and configure A next; do not restart planning or add another platform.
+- Expliquer d'abord les cinq VM et le trajet des paquets ; les détails de services viennent ensuite.
+- Distinguer commutation L2, routage/filtrage et ACL/permissions applicatives.
+- Séparer configuration relue, essais observés, déclarations et simulation.
+- Conserver les échecs et contournements sans inventer la cause racine.
+- Une copie persistante, un snapshot et une restauration d'archive sont des preuves distinctes.
+- Une documentation actuelle remplace les suites obsolètes ; l'historique reste accessible.

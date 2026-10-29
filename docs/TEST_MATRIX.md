@@ -1,51 +1,37 @@
-# Matrice de vérification
+# Matrice de vérification — état documentaire consolidé
 
-Révision du 29 octobre 2026 (InvoiceShelf 2.4.7). Les états du tableau sont les états initiaux ; certaines parties ont des preuves locales datées dans les fichiers PC_A_STATUS et PC_B_STATUS. Aucun passage complet n'est déduit de ces preuves partielles. Pour chaque essai, noter la date, la révision, la source, la destination et le port, puis l’attendu, l’observé et une preuve expurgée. Vérifier le service depuis une source autorisée avant de démontrer un refus.
+**29 octobre 2026, Africa/Tunis.** Cette revue recoupe les preuves existantes ; elle n'a exécuté aucun essai. Les identifiants d'origine sont conservés pour retrouver les contrôles. « Observé » décrit un résultat ponctuel dans la source ; « partiel » ou « non confirmé » ne vaut pas réussite complète.
 
-| ID | Contrôle | Résultat attendu / preuve | Responsable | État initial |
-|---|---|---|---|---|
-| T01 | Inventaire | RAM, espace, versions, MAC et VMnet réels ; capacité libre de B à confirmer (TrueNAS préparé à 6 Gio et Ubuntu Desktop à 4 Gio, cibles 8 et 2,5 Gio) | A+B | Non exécuté |
-| T02 | SW-B | Filtrage/PVID0 ; trunk20/30 ; accès20/30 ; aucun VLAN1/IP ; persistance | B | Non exécuté |
-| T03 | Trunk physique, premier contrôle (20–30 min) | Tags VLAN 20/30 aux deux extrémités ; accès non tagués ; ARP et unicast bidirectionnels | A+B | Non exécuté |
-| T04 | Restriction VLAN | Tag30 émis depuis accès Ubuntu refusé ; trafic20 normal conservé | B avec A | Non exécuté |
-| T05 | Zones | Windows vers InvoiceShelf et SMB autorisés ; SSH Ubuntu et administration TrueNAS refusés avec journaux | A+B | Non exécuté |
-| T06 | Sysmon | Événements1/3 réels | A | Non exécuté |
-| T07 | Audit/firewall Windows | Stratégie audit,4624/4625 ; service actif autorisé puis bloqué | A | Non exécuté |
-| T08 | SSH Ubuntu | Clé MGMT permise ; mot de passe/root refusés ; pas de lockout | B avec A | Non exécuté |
-| T09 | Pare-feu Ubuntu/Docker | INPUT+DOCKER-USER/FORWARD ; publications limitées ; persistance | B | Non exécuté |
-| T10 | Audit/logs Ubuntu | auditd réel ; blocage OPNsense reçu par rsyslog ; rotation | B avec A | Non exécuté |
-| T11 | Protection | Defender/signatures et scan ClamAV datés, sans gros scan pendant répétition | A+B | Non exécuté |
-| T12 | InvoiceShelf | Facture et PDF fictifs ; administrateur autorisé, rôle limité en lecture seule ; compte et données persistent après recréation | B avec A | Non exécuté |
-| T13 | Atelier Docker | Exemple du cours construit, historique conservé puis arrêté ; digest et couches de l’image InvoiceShelf ; Docker Bench et corrections | B | Non exécuté |
-| T14 | Monitoring | Ubuntu/Windows identifiés ; métriques réelles ; Prometheus/collecteurs non exposés | B avec A | Non exécuté |
-| T15 | Panne/reprise | Indisponibilité InvoiceShelf et perte d’un collecteur testées séparément, puis retour à l’état sain | B | Non exécuté |
-| T16 | ACL NAS | AliceRW ; lecteurRO et écriture refusée ; bob refusé sans confusion1219 | B avec A | Non exécuté |
-| T17 | Snapshot/chiffrement | Dataset chiffré, clé privée, fichier restauré et comparé | B avec A | Non exécuté |
-| T18 | Entrée/sortie | WAN direct->services refusé ; sortie interdite vers service contrôlé avec log | A avec B | Non exécuté |
-| T19 | VPN | Accès déconnecté, connecté puis déconnecté ; InvoiceShelf HTTPS 8443 autorisé ; NAS SMB 445, SSH 22 et Grafana 3001 refusés | A avec B | Non exécuté |
-| T20 | Redémarrage | Switch/règles/services/dataset et accès principaux persistants | A+B | Non exécuté |
-| T21 | Fluidité | Tous invités >=10min ; RAM/pagination/swap/temps réponse réels ; aucune surcharge soutenue | A+B | Non exécuté |
-| T22 | Présentation | Schéma/rôles/chronologie/limites et répétition | Groupe | Non exécuté |
-| T23 | Sauvegarde InvoiceShelf vers NAS | InvoiceShelf arrêté pendant l’archive de storage, Modules et configuration ; compte NAS dédié ; facture et PDF vérifiés après restauration isolée | B avec A | Non exécuté |
+Sources courtes : **[A29](../evidence/PC_A_2026-10-29.md)**, **[B29](../evidence/PC_B_2026-10-29.md)**, **[A28](../evidence/history/PC_A_STATUS.md)**, **[B28](../evidence/history/PC_B_STATUS.md)**. Les [captures et leur portée](../evidence/README.md) complètent les notes.
 
-## Précisions
+| ID | Contrôle d'origine | État et éléments réellement enregistrés | Limite / source |
+|---|---|---|---|
+| T01 | Inventaire | **Partiel** : versions, VMnet, ressources ponctuelles et allocations documentés. | Pas d'inventaire simultané complet ni mesure de capacité finale ; TrueNAS B 6 Gio contre 8 au plan. A28/B28/B29. |
+| T02 | SW-B | **Configuration et persistance observées** : ports VLAN20/30, accès/PVID, interfaces sans IP hors loopback, reboot du 28. | Pas de preuve de tous les rejets de tags. B28/B29. |
+| T03 | Trunk physique | **Partiel** : ARP tagué20 sur A ; pings Ubuntu→20.1 et NAS→30.1 à 4/4 ; services inter-PC ultérieurs. | Toutes les captures des deux tags, ports d'accès et unicast aux deux extrémités ne sont pas établies. A29/B29. |
+| T04 | Restriction VLAN | **Non confirmé** : aucun essai démontrant le rejet d'un tag30 injecté sur l'accès Ubuntu. | Ne pas déduire ce refus de la seule configuration SW-B. |
+| T05 | Zones | **Partiel** : Windows→application, Grafana et SMB observés. | Refus SSH/administration NAS depuis CLIENTS non confirmés ; essais VPN distincts en T19. A29. |
+| T06 | Sysmon | **Observé dans les sorties invitées** : événements 1/3. | Images de l'ancien chat A partiellement non récupérées. A28. |
+| T07 | Audit/firewall Windows | **Partiel** : audit 4624/4625, profils actifs et logs bornés ; exporter limité en configuration. | Essai complet autorisé/bloqué sur service Windows actif non confirmé. A28. |
+| T08 | SSH Ubuntu | **Observé** : clé MGMT avec empreinte épinglée avant/après durcissement et reboot ; password-only rejeté. | Root interdit en configuration, sans essai d'authentification root distinct. A29/B29. |
+| T09 | Pare-feu Ubuntu/Docker | **Configuration/persistance et accès permis observés** : INPUT, DOCKER-USER, IPv6 SSH ciblé, MSS et service après reboot. | Refus d'une source non autorisée directement sur ces règles non confirmé ; portée enp0s17. B29/A29. |
+| T10 | Audit/logs Ubuntu | **Observé** : marqueur A reçu, rotation effective et nouvelles lignes ; événement auditd, règle retrouvée au reboot. | Refus d'un émetteur syslog non autorisé non confirmé. B29. |
+| T11 | Protection | **Observé dans le périmètre décrit** : Defender/scan rapide du 28 ; ClamAV quatre fichiers, zéro infection/code0 du 29. | Pas d'attestation de système sans malware ni scan Linux complet. A28/B29. |
+| T12 | InvoiceShelf | **Observé + déclaré** : facture/PDF, facture après recréation, accès Windows après reboot ; lecteur visible et restrictions rapportées. | Chaque refus de création/modification/suppression n'a pas sa capture ; PDF après recréation non montré séparément. B29/A29. |
+| T13 | Atelier Docker | **Non confirmé** : atelier du cours, digest/couches et Docker Bench/corrections sans compte rendu final suffisant. | L'exécution d'InvoiceShelf n'établit pas cet atelier. |
+| T14 | Monitoring | **Observé** : quatre jobs UP, CPU Ubuntu/Windows, probe_success=1, Grafana HTTPS Viewer et accès Windows. | Non-exposition de tous les collecteurs non testée indépendamment ; Viewer visible sans test complet d'autorisation. B29/A29. |
+| T15 | Panne/reprise | **Observé** : node-exporter DOWN/UP ; webapp arrêté→sonde DOWN puis probe_success=1 après reprise. | Deux essais distincts, pas une disponibilité mesurée dans la durée. B29. |
+| T16 | ACL NAS | **Observé** : Alice RW ; lecteur lit/écriture refusée ; Bob connecté au partage mais lecture du fichier refusée ; compte backup limité lors des essais locaux. | Bob : refus au fichier dans l'essai A, pas refus de toute connexion SMB. A29/B28. |
+| T17 | Snapshot/chiffrement | **Observé + déclaré** : datasets chiffrés, fichier restauré via clone, déverrouillage affiché après reboot rapporté ; SMB REQUIRED et session Windows Encrypted=True. | Clés/configuration exportées déclarées privées ; snapshot/miroir sur même stockage physique. B28/B29 et capture A08. |
+| T18 | Entrée/sortie | **Non confirmé pour le critère complet** : règles WAN/sortie sauvegardées ; marqueurs MGMT/VPN documentés séparément. | Pas de démonstration complète WAN direct→service actif et sortie interdite vers service contrôlé. A28/A29. |
+| T19 | VPN | **Observé** : MGMT désactivé, routes tunnel, application8443 permise ; SSH22/SMB445/Grafana3001 refusés avec logs ; échec après déconnexion. | SSH retesté en écoute ; WAN simulé, pas Internet externe. A29/B29. |
+| T20 | Redémarrage | **Observé sur les composants décrits** : SW-B le28 ; datasets après reboot rapporté ; Ubuntu règles/services/MTU/MSS et accès frais Windows le29. | Pas de preuve d'un redémarrage conjoint complet des cinq VM. A28/B28/B29/A29. |
+| T21 | Fluidité | **Déclaré** : Jesse rapporte les cinq VM ensemble plus de cinq heures ; mesures de RAM ponctuelles disponibles. | Aucune mesure formelle de charge, pagination ou temps de réponse ; pas de nouveau minuteur requis. A29. |
+| T22 | Présentation | **Existante, à mettre à jour dans une tâche séparée** : présentateur 3D conservé ; documentation d'accueil rangée. | Répétition finale, refonte et préparation orale non réalisées par ce rangement ; certains faits du présentateur sont anciens. |
+| T23 | Sauvegarde InvoiceShelf | **Observé** : arrêt/archivage, NAS, empreintes comparées, restauration isolée, société/facture/PDF puis retrait des conteneurs d'essai. | Archives et secrets privés ; aucun écrasement du service actif. B29. |
 
-- T03 est le premier contrôle commun après la base réseau minimale des deux côtés. Ne pas attendre la fin des installations applicatives. Si les tags/unicast échouent au bout de20-30minutes, partager captures/erreur et arrêter les changements non ciblés.
-- Le câble est tagué. Une communication non taguée ou le seul état « connecté » ne valide pas T03. Tenir compte des offloads en recoupant les captures.
-- T04 reste temporaire ; ne pas modifier l'IP principale d'Ubuntu. Les ports d'accès du switch doivent rejeter les tags non autorisés.
-- T09 distingue un port uniquement lié à loopback/interne d'un service actif bloqué par une règle. Un port fermé ne prouve pas le filtrage.
-- T12 recrée le conteneur en gardant les volumes ; ne pas exécuter une commande qui les supprime. InvoiceShelf est le seul service applicatif permanent.
-- T18 utilise un service contrôlé côté WAN, vérifié depuis ce côté avant le refus depuis l'invité ; pas de sondage de systèmes tiers au hasard.
-- T19 retire temporairement le chemin MGMT de l'hôte et vérifie les routes du tunnel. Pousser la route NAS pour que le refus arrive à OPNsense. Cela reste un WAN simulé.
-- T21 : objectifs d'environ2Gio disponibles par hôte, pas de pagination/swap soutenue, actions courantes en quelques secondes. B=11Gio invités exige une mesure ; un tableau ne suffit pas.
-- T23 arrête InvoiceShelf avant d’archiver SQLite et ses fichiers locaux. L’archive contient des secrets et reste privée. Le conteneur InvoiceShelf n’a pas les identifiants de sauvegarde NAS.
-- Les preuves publiées excluent mots de passe, clés, profilsVPN et exports bruts.
+## Interprétation
 
-```text
-ID / date / révision :
-Source -> destination : port/protocole
-Attendu / observé :
-Preuve expurgée :
-Résultat : réussi / échoué / bloqué / non exécuté
-Correction ou limite :
-```
+Un port fermé ne prouve pas une règle de filtrage ; un service actif et un journal corrélé sont nécessaires pour attribuer le refus. Un job blackbox UP prouve la collecte de la sonde, tandis que `probe_success` décrit l'accès à l'application. La persistance locale, un snapshot et une restauration d'archive sont trois résultats distincts.
+
+Les étapes non confirmées sont des limites de preuve, pas une autorisation de relancer des essais. Les anciennes consignes de construction/rejeu sont dans les [archives](archive/README.md). Ne jamais enregistrer mots de passe, clés ou archives applicatives dans Git.
