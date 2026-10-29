@@ -1,10 +1,10 @@
 # Périmètre actuel — dépôt prêt à lire
 
-Mis à jour le 29 octobre 2026, Africa/Tunis. Le plan de réunion et de construction du 28/29 octobre est désormais [historique](docs/archive/README.md). Les services et essais terminés ne sont plus une liste d'installation à reprendre.
+Mis à jour le 30 octobre 2026, Africa/Tunis. Le plan de réunion et de construction du 28/29 octobre est désormais [historique](docs/archive/README.md). Les services et essais terminés ne sont plus une liste d'installation à reprendre.
 
 ## Travail demandé maintenant
 
-Ranger le dépôt, expliquer l'architecture à toute l'équipe, aligner les documents sur les preuves du 29 octobre et conserver deux branches : `main` et `presenter`. Le [README](README.md) est le départ ; l'[index des preuves](evidence/README.md) donne les sources ; la [matrice](docs/TEST_MATRIX.md) garde les limites.
+Le rangement est terminé. Le complément du 30 octobre vérifie la couverture du sujet et ajoute un [parcours en neuf modules](docs/MODULES_DU_PROJET.md), avec explications, ordre de présentation, preuves et limites. Le [README](README.md) présente les exigences puis l'index des modules ; l'[index des preuves](evidence/README.md) donne les sources ; la [matrice](docs/TEST_MATRIX.md) garde les réserves. Deux branches sont conservées : `main` pour ces documents et `presenter` pour le présentateur.
 
 Aucune VM, configuration hôte/invitée ou donnée du laboratoire n'est modifiée dans ce travail. Aucun essai de labo n'est répété. Les notes A/B décrivent des observations datées, pas l'état actuel de machines allumées.
 
@@ -20,6 +20,6 @@ Les réserves de preuve sont détaillées dans la matrice ; ces points n'équiva
 
 ## Suite séparée, hors du rangement
 
-Le présentateur 3D existant doit devenir le support principal, avec peu de texte et des explications orales : environ 15 minutes dans un total enregistré maximal de 30 minutes, questions comprises. Sa refonte, la préparation des questions/QCM, tout diaporama et toute répartition de contributions nécessitent leur tâche ultérieure. Ne pas les commencer ici, ne pas ajouter de fonctionnalités au laboratoire.
+Le présentateur 3D existant doit devenir le support principal, avec peu de texte et des explications orales : environ 15 minutes dans un total enregistré maximal de 30 minutes, questions comprises. Le parcours documentaire ordonne ses futurs chapitres ; il ne modifie pas l'interface. La refonte du site, la préparation des questions/QCM, tout diaporama et toute répartition de contributions nécessitent leur tâche ultérieure. Ne pas les commencer ici, ne pas ajouter de fonctionnalités au laboratoire.
 
 Les originaux du cours restent intacts dans [requirements/originals](requirements/originals/). La coordination suit [COORDINATION](docs/COORDINATION.md), sans réouverture automatique de l'issue #2 clôturée.

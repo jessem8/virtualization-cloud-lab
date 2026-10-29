@@ -2,6 +2,8 @@
 
 Preuves datées du **29 octobre 2026**, heure de Tunis. Le [README du projet](../README.md) décrit l'architecture ; les résumés [PC A](PC_A_STATUS.md) et [PC B](PC_B_STATUS.md) présentent les résultats. Les comptes rendus datés sont [A, 29 octobre](PC_A_2026-10-29.md) et [B, 29 octobre](PC_B_2026-10-29.md).
 
+Les [modules du projet](../docs/MODULES_DU_PROJET.md) replacent ces preuves dans l'ordre de présentation : contexte, architecture, réseau, application, sécurité, stockage, supervision et bilan.
+
 ## Comment lire une preuve
 
 - **Configuration sauvegardée / relue** : une interface, règle ou service est configuré ; cela ne prouve pas tous ses effets.

@@ -20,6 +20,24 @@ Le sujet utilise le nom FreeNAS ; la VM NAS déployée utilise TrueNAS. Le libel
 
 Soutenance prévue le **30 octobre 2026**, heure de Tunis : durée prévue d'environ **15 minutes de présentation**, dans un total enregistré de **30 minutes maximum, questions comprises**. La grille donne une note de groupe sur 20 ; la note individuelle comprend 20 % de suivi et 80 % de questions/réponses. La note finale combine normalement 60 % individuel et 40 % groupe ; si la note de groupe dépasse l'individuelle de plus de 3 points, la pondération devient 90 % / 10 %. Les formules sont celles de l'onglet `G1` (`D4`, `G4`, `F17`). Le modèle contient des cellules individuelles sans formule et une ambiguïté de saisie du sous-total des services : il est conservé intact, sans recalcul ni nouveau barème.
 
+## Modules du projet
+
+Le [parcours par modules](docs/MODULES_DU_PROJET.md) explique le fonctionnement de l'ensemble dans l'ordre prévu pour la présentation. Chaque module relie une explication simple, la réalisation documentée et les preuves à montrer.
+
+| Ordre | Module |
+|---|---|
+| 1 | [Contexte et exigences](docs/MODULES_DU_PROJET.md#module-1) |
+| 2 | [Virtualisation et architecture](docs/MODULES_DU_PROJET.md#module-2) |
+| 3 | [Réseau et VLAN](docs/MODULES_DU_PROJET.md#module-3) |
+| 4 | [Application et Docker](docs/MODULES_DU_PROJET.md#module-4) |
+| 5 | [Sécurité et VPN](docs/MODULES_DU_PROJET.md#module-5) |
+| 6 | [Stockage et récupération](docs/MODULES_DU_PROJET.md#module-6) |
+| 7 | [Supervision et journaux](docs/MODULES_DU_PROJET.md#module-7) |
+| 8 | [Résultats, difficultés et limites](docs/MODULES_DU_PROJET.md#module-8) |
+| 9 | [Bilan et contributions](docs/MODULES_DU_PROJET.md#module-9) |
+
+Le guide propose une répartition de 15 minutes et une correspondance avec les demandes du sujet. Le tableau des responsabilités reste à compléter ; la préparation Q/A et l'évolution du site 3D restent séparées.
+
 ## Présentation du projet
 
 Une petite entreprise fictive utilise **InvoiceShelf 2.4.7** pour ses clients, factures et PDF. Le laboratoire illustre le contrôle des accès, la supervision du service et la récupération des données. L'infrastructure repose sur **deux PC physiques avec VMware Workstation et cinq VM**, sans infrastructure cloud publique.

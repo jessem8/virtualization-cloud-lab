@@ -2,6 +2,14 @@
 
 Clôture documentaire le **30 octobre 2026**, Africa/Tunis ; preuves de laboratoire datées du 29. **Rangement documentaire terminé et poussé** ; aucune tâche de présentation supplémentaire n'a été commencée. Lire le [README](README.md), le [périmètre actuel](BUILD_PLAN.md) et la [coordination](docs/COORDINATION.md). Les anciens points d'arrêt et propositions sont [archivés avec des références immuables](docs/archive/README.md) ; ils ne gouvernent plus les actions.
 
+## Complément documentaire — 30 octobre
+
+À la demande de Jessem, la revue du rangement ajoute [MODULES_DU_PROJET](docs/MODULES_DU_PROJET.md) : neuf modules dans l'ordre de présentation, explications simples, liens vers les preuves, messages oraux brefs et correspondance avec les demandes du sujet. Le README expose cet ordre après les exigences. Le PDF original (trois pages) et les cellules du XLSX ont été relus sans modification ; les clarifications humaines sur le rapport et la couche de sécurité sont conservées.
+
+Le complément reste documentaire : aucune modification du présentateur, des VM ou des configurations ; aucun nouvel essai. Le tableau des tâches reste à compléter sans attribution inventée, la répétition et la préparation Q/A restent ultérieures. L'inspection initiale du site a été interrompue lorsque Jessem a précisé que la demande portait sur la documentation du rangement.
+
+Vérification du complément : 27 fichiers Markdown, 287 liens locaux et 18 fragments Markdown contrôlés sans cible ni ancre manquante ; neuf modules ordonnés et neuf messages oraux présents. Les originaux et les réserves de la matrice restent intacts ; aucun build du présentateur ni essai du labo n'est requis par cette rédaction. L'enregistrement facultatif de cette tâche a renvoyé `invalid_contract` : aucun reçu de registre ni binding natif n'est revendiqué.
+
 ## Objectif et limites
 
 Le travail courant est **uniquement le rangement du dépôt, l'alignement factuel et l'accueil des quatre coéquipiers** avant la soutenance du 30 octobre. Présentation remplaçant le rapport séparé selon la clarification du professeur ; environ 15 minutes de présentation dans un total enregistré maximal de 30 minutes, questions comprises. « VM-to-VM escape workshop » signifie couche de sécurité ; aucune évasion d'hyperviseur à inventer.
