@@ -1,5 +1,11 @@
 # PC B — état observé
 
+## Actualisation du 29 octobre — passerelles VLAN 20 et 30
+
+TrueNAS est démarré dans la capture fournie : enp0s17 10.77.30.10/24, route par défaut via 10.77.30.1. Son dernier ping vers 10.77.30.1 réussit (4 émis, 4 reçus, 0 % de perte). La preuve A enregistre également Ubuntu vers 10.77.20.1 à 4/4. Les exceptions ICMP sont limitées aux invités vers leurs passerelles ; elles ne valident pas les autres flux.
+
+Sur B, MonitorModeEnabled a été passé de 0 à 1 sur l'Ethernet dédié, puis relu à 1 ; PriorityVlanTag est resté à 3. Ubuntu a ensuite affiché la MAC passerelle REACHABLE. Voir [preuves B](PC_B_2026-10-29.md) et [preuves A](PC_A_2026-10-29.md). Prochaine étape : contrôles trunk restants et services autorisés (dont Ubuntu vers NAS TCP 445). Les preuves antérieures sont conservées ci-dessous ; leurs anciens états de VM et tests en attente sont historiques.
+
 ## Actualisation du 29 octobre — réseau final Ubuntu
 
 - Ethernet Realtek : état Up, liaison 1 Gbit/s, relevé sur Windows B.

@@ -1,5 +1,9 @@
 # Project checkpoint
 
+## 29 October — both B guests reach their A gateways
+
+Sanad's latest TrueNAS console evidence confirms 10.77.30.10/24, default route via 10.77.30.1 and a gateway ping with 4/4 replies, 0% loss. A's evidence also records the Ubuntu VLAN20 gateway ping succeeding 4/4. Realtek monitor-mode adjustments and scoped ICMP gateway rules are documented in the A/B session evidence. These are successful guest-to-gateway checks, not completion of all T03 isolation/capture criteria or service tests. See evidence/PC_B_2026-10-29.md and evidence/PC_A_2026-10-29.md. Older pending-ping and stopped-guest notes below are historical.
+
 ## 29 October — PC B network preparation evidence
 
 Windows B now reports the dedicated Ethernet link Up at 1 Gbit/s. SW-B and Ubuntu are running at the latest host check; NAS-LAB is not listed. Sanad's SW-B console capture shows the expected VLAN membership and interfaces UP without IP addresses. Ubuntu guest output confirms enp0s17 10.77.20.10/24 and the default route via 10.77.20.1; its saved adapter is Custom VMnet10. NAS's saved adapter is now Custom VMnet11, but its final guest address remains unverified. No gateway ping result or physical VLAN transport pass is claimed. See [B session evidence](evidence/PC_B_2026-10-29.md) and [B status](evidence/PC_B_STATUS.md). Earlier evidence below is retained as history.
