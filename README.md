@@ -48,11 +48,11 @@ L'essentiel de la réalisation a été effectué par **Jessem sur le PC A** et *
 
 | PC physique | VM | Fonction |
 |---|---|---|
-| **[A — Jessem / jessem8](docs/MACHINE_A.md)** | **FW-LAB : OPNsense** | Route et filtre entre les réseaux ; DNS/NTP ; terminaison OpenVPN ; journaux de pare-feu. |
-| A | **WIN-LAB : Windows Server 2025** | Client de démonstration : navigateur InvoiceShelf/Grafana et SMB ; Defender, Sysmon, audit ; windows_exporter. |
-| **[B — Sanad / sanadzhioua](docs/MACHINE_B.md)** | **SW-B : Alpine Linux** | Switch virtuel de niveau 2 : ajoute/retire les tags VLAN aux ports d'accès. Sans IP de gestion ni routage. |
-| B | **UBU-LAB : Ubuntu** | Docker, proxy Nginx, InvoiceShelf, SQLite locale persistante, supervision et réception des journaux. |
-| B | **NAS-LAB : TrueNAS** | Partages SMB, comptes/ACL, datasets chiffrés, snapshots et archives de sauvegarde. |
+| **[PC A](docs/MACHINE_A.md)** | **FW-LAB : OPNsense** | Route et filtre entre les réseaux ; DNS/NTP ; terminaison OpenVPN ; journaux de pare-feu. |
+| PC A | **WIN-LAB : Windows Server 2025** | Client de démonstration : navigateur InvoiceShelf/Grafana et SMB ; Defender, Sysmon, audit ; windows_exporter. |
+| **[PC B](docs/MACHINE_B.md)** | **SW-B : Alpine Linux** | Switch virtuel de niveau 2 : ajoute/retire les tags VLAN aux ports d'accès. Sans IP de gestion ni routage. |
+| PC B | **UBU-LAB : Ubuntu** | Docker, proxy Nginx, InvoiceShelf, SQLite locale persistante, supervision et réception des journaux. |
+| PC B | **NAS-LAB : TrueNAS** | Partages SMB, comptes/ACL, datasets chiffrés, snapshots et archives de sauvegarde. |
 
 Une **VM** possède son système invité et son disque virtuel ; VMware Workstation l'exécute sur le PC. Un **conteneur Docker** partage le noyau de la VM Ubuntu : les conteneurs ne sont donc pas des VM supplémentaires. Les six conteneurs constatés en fin de séance sont le proxy, InvoiceShelf et les quatre composants de supervision.
 

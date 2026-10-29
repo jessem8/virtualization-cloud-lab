@@ -40,11 +40,11 @@ Un PC fournit les ressources physiques. VMware Workstation, hyperviseur de type 
 
 | PC | VM | Explication simple |
 |---|---|---|
-| A — Jessem | OPNsense / FW-LAB | Le point de passage entre réseaux : il route et filtre. |
-| A — Jessem | Windows / WIN-LAB | Le poste qui utilise les services et fournit des événements et métriques Windows. |
-| B — Sanad | Alpine / SW-B | Le switch qui transporte les VLAN vers les bons ports. |
-| B — Sanad | Ubuntu / UBU-LAB | Le serveur qui exécute l'application et la supervision. |
-| B — Sanad | TrueNAS / NAS-LAB | Le stockage partagé, les permissions et les sauvegardes. |
+| PC A | OPNsense / FW-LAB | Le point de passage entre réseaux : il route et filtre. |
+| PC A | Windows / WIN-LAB | Le poste qui utilise les services et fournit des événements et métriques Windows. |
+| PC B | Alpine / SW-B | Le switch qui transporte les VLAN vers les bons ports. |
+| PC B | Ubuntu / UBU-LAB | Le serveur qui exécute l'application et la supervision. |
+| PC B | TrueNAS / NAS-LAB | Le stockage partagé, les permissions et les sauvegardes. |
 
 À l'intérieur d'Ubuntu, Docker exécute les conteneurs. Ceux-ci partagent le noyau Linux de cette VM ; ils ne sont pas cinq ou six nouvelles VM. Les six conteneurs enregistrés en fin de séance correspondent au proxy Nginx, à InvoiceShelf et aux quatre composants de supervision.
 

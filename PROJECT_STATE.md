@@ -2,6 +2,8 @@
 
 Clôture documentaire le **30 octobre 2026**, Africa/Tunis ; preuves de laboratoire datées du 29. **Rangement documentaire terminé et poussé** ; aucune tâche de présentation supplémentaire n'a été commencée. Lire le [README](README.md), le [périmètre actuel](BUILD_PLAN.md) et la [coordination](docs/COORDINATION.md). Les anciens points d'arrêt et propositions sont [archivés avec des références immuables](docs/archive/README.md) ; ils ne gouvernent plus les actions.
 
+Convention de libellé demandée le 30 octobre : nommer les machines **PC A** et **PC B**, sans nom de personne dans leur libellé. Les mentions factuelles des réalisations individuelles restent distinctes.
+
 ## Complément documentaire — 30 octobre
 
 À la demande de Jessem, la revue du rangement ajoute [MODULES_DU_PROJET](docs/MODULES_DU_PROJET.md) : neuf modules dans l'ordre de présentation, explications simples, liens vers les preuves, messages oraux brefs et correspondance avec les demandes du sujet. Le README expose cet ordre après les exigences. Le PDF original (trois pages) et les cellules du XLSX ont été relus sans modification ; les clarifications humaines sur le rapport et la couche de sécurité sont conservées.
