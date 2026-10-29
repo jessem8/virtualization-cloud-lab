@@ -1,5 +1,9 @@
 # Project checkpoint
 
+## 29 October — current remaining work after VPN and SSH
+
+Completed A evidence now records Windows Grafana HTTPS viewing, VPN application access with MGMT disabled, logged SSH/SMB/Grafana restrictions (SSH retested with active listener), disconnected application failure and restored MGMT. B confirmed forwarded firewall logs, auditd, a scoped ClamAV scan and Grafana HTTPS in issue #2. Management SSH key-only login as sanad succeeded with pinned host fingerprint both before and after B authentication hardening; password-only negotiation was rejected. See evidence/PC_A_2026-10-29.md and issue #2. The older pending lists below are historical where superseded. Remaining lab work: finish/verify Ubuntu host and Docker filtering, remove A's temporary management host route after use, and perform final reboot/persistence and simultaneous stability checks. B's latest SSH details still need its evidence push. Presentation work follows lab closure; no new features requested.
+
 ## 29 October — monitoring verified
 
 Sanad's screenshots show Grafana authenticated locally, Prometheus data source tested, all four targets up, real Ubuntu and Windows CPU graphs, and a successful InvoiceShelf HTTPS probe with certificate validation. Stopping Ubuntu node-exporter produced a down target; restarting it restored up. Separately, stopping InvoiceShelf webapp produced probe DOWN; after restart the recorded probe_success returned 1. Earlier monitoring preparation sections are historical. Remaining: Windows Grafana viewer and VPN access restrictions, rsyslog, auditd, ClamAV, Docker security and final persistence/stability checks. Grafana currently serves HTTP on 10.77.20.10:3001; TLS and network restrictions are not established by these tests. See evidence/PC_B_2026-10-29.md.
