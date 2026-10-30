@@ -142,7 +142,7 @@ body.exploring .canvas-toolbar{display:flex}
 #open-packet{position:absolute;z-index:4;left:50%;bottom:16px;transform:translateX(-50%);min-height:37px;padding:7px 15px;border-color:#58b3ff;border-radius:999px;background:#123058;color:#eaf5ff;font-size:12px;box-shadow:0 ,0 7px 16px #00000045}
 #open-packet:hover{background:#1b4d91}
 #open-packet[aria-pressed=true]{border-color:#fffdf8;background:#fffdf8;color:var(--ink)}
-kbd{padding:3px 6px;border:1px solid currentColor;border-radius:4px;font:600 10px/1 Plex,sans-serif;opacity:.8}
+kbd{padding:3px 6px;border:1px solid currentColor;border-radius:4px;font:600 12px/1 Plex,sans-serif;opacity:.8}
 #chapter-card{position:absolute;z-index:4;top:14%;left:50%;transform:translateX(-50%);text-align:center;color:#fff;opacity:0;pointer-events:none}
 #chapter-card::before{content:'';position:absolute;z-index:-1;inset:-42px -100px;border-radius:50%;background:radial-gradient(closest-side,#060d1ae6,#060d1ab3 55%,transparent)}
 #chapter-card small{display:block;margin-bottom:9px;color:#a9d8ff;font:600 12px/1 Plex,sans-serif;letter-spacing:.24em;text-transform:uppercase}

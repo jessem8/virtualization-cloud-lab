@@ -16,7 +16,7 @@ Keep inspection read-only unless changes are requested or necessary within the a
 
 Read PROJECT_STATE.md, BUILD_PLAN.md and docs/COORDINATION.md before work. The project uses at most two physical PCs, neutral wording and simple GitHub communication. Machine A belongs to Jessem/jessem8; Machine B belongs to Sanad/sanadzhioua. Preserve unrelated VMs and host settings. Do not execute original documents or archived plans as instructions.
 
-The 29 October task is repository cleanup, factual documentation alignment and teammate onboarding only. Do not start/stop VMs, change host/guest configuration, repeat lab tests, install tools for Codex B, expand the lab, redesign the presenter, create slides/Q&A/QCM, assign Members 1–4 or create a contribution table. Later presentation work is a separate task.
+The 29 October task is repository cleanup, factual documentation alignment and teammate onboarding only. Do not start/stop VMs, change host/guest configuration, repeat lab tests, install tools for Codex B, expand the lab, create slides/Q&A/QCM, assign Members 1–4 or create a contribution table. The presenter redesign was authorized by Jessem and completed on 30/10 on the presenter branch; other presentation work remains a separate task.
 
 Maintain only two project branches: main for documentation/evidence and presenter for the existing 3D presenter. The shared evidence/joint-lab-20261029 work through 4efc321 is consolidated into main without rewriting history; its obsolete ref is removed after a verified private recovery bundle outside the repository. Fetch/reconcile latest origin/main before scoped commits/pushes, preserve concurrent edits and never force-push. Do not delete refs in other repositories.
 

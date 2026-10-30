@@ -52,7 +52,7 @@ Deux branches à maintenir : `main` (documentation/preuves) et `presenter` (pré
 
 Le projet `jessem8/virtualization-cloud-lab` reste privé et sans Pages. Le [site public](https://jessem8.github.io/virtualization-lab-3d/) utilise le dépôt distinct `jessem8/virtualization-lab-3d`, Pages `main` à la racine. Vérifications provider en lecture seule du 29 octobre : visibilité, source Pages, dernier build réussi `119b7c7` du 28/10 et HTTP 200 du site. Aucun réglage, source publique ou déploiement n'est changé.
 
-Sources/artefacts 3D conservés sur les deux branches, lanceur `diagram/start.ps1`, serveur loopback 3187. `topology.json` et certains scénarios contiennent encore VMnet14 et des états préparatoires dépassés ; leur alignement appartient à la tâche ultérieure. Les animations restent simulées. Aucun build ou nouveau contrôle graphique n'est revendiqué par ce rangement.
+Sources/artefacts 3D conservés sur les deux branches, lanceur `diagram/start.ps1`, serveur loopback 3187. `topology.json` et les scénarios sont alignés depuis le 30 octobre : VMnet10 désigne un réseau VMware local à chaque PC, sans VMnet14 ni états préparatoires dépassés. Les animations restent simulées. Aucun build ou nouveau contrôle graphique n'est revendiqué par ce rangement.
 
 ## Vérification du rangement et prochaine action
 
