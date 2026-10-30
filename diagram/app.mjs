@@ -122,6 +122,7 @@ function syncBar() {
   $('replay').hidden = !sc.path || !scene || map2d;
   $('replay').disabled = playing;
   $('pause').hidden = !sc.path || !scene || map2d || reduced();
+  $('pause').disabled = !playing && !paused;
   syncPause();
   document.querySelectorAll('#scenarios-btn').forEach(b => {if (s === SCEN) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current');});
 }
