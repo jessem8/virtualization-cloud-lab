@@ -1,30 +1,30 @@
 {
   "revision": "diagramme-2026-10-28",
-  "sourceRevision": "921eebf",
+  "sourceRevision": "af4f279",
   "title": "Le laboratoire, en perspective.",
-  "subtitle": "Deux machines physiques. Des frontières visibles.",
-  "updated": "27 octobre 2026",
+  "subtitle": "État documenté le 29/10 ; non revérifié le 30/10.",
+  "updated": "30 octobre 2026",
   "hosts": [
     {
       "id": "a",
       "name": "PC A",
-      "owner": "jessem8",
+      "owner": "à compléter",
       "cpu": "Intel i7-13700HX",
       "ram": "15,71 Gio utilisables",
       "free": "2,59 Gio disponibles · mesure du 27/10",
       "disk": "36,79 Gio libres · mesure du 27/10",
-      "planned": "7 Gio invités prévus",
+      "planned": "FW-LAB 3 Gio ; WIN-LAB cible 4 Gio · documentation du 29/10",
       "x": -9
     },
     {
       "id": "b",
       "name": "PC B",
-      "owner": "sanadzhioua",
+      "owner": "à compléter",
       "cpu": "AMD Ryzen 7 7840HS",
       "ram": "15,29 Gio utilisables",
       "free": "4,41 Gio disponibles · déclaration du 26/10",
       "disk": "122,8 Gio libres · déclaration du 26/10",
-      "planned": "Allocation à réconcilier",
+      "planned": "SW-B 512 Mio ; Ubuntu 4 Gio ; TrueNAS 6 Gio · observations du 29/10",
       "x": 9
     }
   ],
@@ -41,10 +41,32 @@
         0
       ],
       "color": "#dfaa65",
-      "status": "Prévu · non testé",
+      "status": "Essais documentés · 29/10",
       "ip": "10.77.10.1 / .20.1 / .30.1 / .99.1",
-      "purpose": "Route les communications entre zones et applique les règles d’accès. Seule VM avec un accès WAN.",
-      "resources": "3 Gio · 2 vCPU · disque 20 Gio prévus",
+      "facts": [
+        [
+          "Version",
+          "OPNsense 26.7.7 (29/10)"
+        ],
+        [
+          "WAN",
+          "VMnet8 · NAT VMware simulé"
+        ],
+        [
+          "Trunk",
+          "em3 sans IP · VLAN20/30 tagués"
+        ],
+        [
+          "VPN",
+          "8443 permis ; 22/445/3001 refusés (29/10)"
+        ],
+        [
+          "Journaux",
+          "Refus reçus sur Ubuntu · TCP514"
+        ]
+      ],
+      "purpose": "Route et filtre les échanges entre réseaux.",
+      "resources": "3 Gio · 2 vCPU · disque 20 Gio (documentation A, 29/10)",
       "interfaces": [
         [
           "WAN",
@@ -78,14 +100,13 @@
         ]
       ],
       "controls": [
-        "Règles entrantes par interface ; réponses stateful.",
-        "Aucun NAT entre les zones du laboratoire.",
-        "OpenVPN UDP1194 ; application TCP8443 seulement depuis le VPN.",
-        "Journaux refusés envoyés à Ubuntu en TCP514."
+        "Règles OPNsense par interface, réponses stateful ; pas de NAT entre zones.",
+        "VPN : TCP8443 permis ; SSH22, SMB445 et Grafana3001 refusés avec journaux (29/10).",
+        "Journaux de refus reçus par Ubuntu en TCP514 (29/10)."
       ],
-      "next": "Créer ou vérifier la VM et associer chaque interface à sa MAC. Capturer ensuite le trunk avec B.",
-      "evidence": "Aucun démarrage ou filtrage du laboratoire vérifié.",
-      "source": "docs/MACHINE_A.md · docs/LIAISON.md"
+      "next": "La cause du défaut HTTPS reste inconnue ; T03 est partiel et T04 non confirmé.",
+      "evidence": "Notes A/B du 29/10 : VPN et journaux observés ; pings des passerelles VLAN20/30 documentés. T03/T04 restent incomplets. Pas de nouvelle vérification le 30/10.",
+      "source": "docs/MACHINE_A.md · evidence/PC_A_2026-10-29.md · evidence/PC_B_2026-10-29.md"
     },
     {
       "id": "windows",
@@ -99,10 +120,32 @@
         1.5
       ],
       "color": "#86b49c",
-      "status": "Prévu · non testé",
+      "status": "Essais documentés · 28–29/10",
       "ip": "10.77.10.10/24",
-      "purpose": "Poste de démonstration : utilise InvoiceShelf et le partage NAS autorisé. Les protections locales restent actives.",
-      "resources": "4 Gio · 2 vCPU · disque 60 Gio prévus",
+      "facts": [
+        [
+          "Système",
+          "Windows Server 2025 Standard Evaluation"
+        ],
+        [
+          "Réseau",
+          "VMnet10 A · 10.77.10.10/24"
+        ],
+        [
+          "Services",
+          "InvoiceShelf 8443 · Grafana HTTPS3001 · SMB445"
+        ],
+        [
+          "Protection",
+          "Defender, pare-feu, Sysmon et audit documentés"
+        ],
+        [
+          "Métriques",
+          "windows_exporter TCP9182 · accès Ubuntu configuré"
+        ]
+      ],
+      "purpose": "Poste Windows client des services du laboratoire.",
+      "resources": "Cible documentée : 4 Gio · 2 vCPU · disque 60 Gio",
       "interfaces": [
         [
           "CLIENTS",
@@ -121,9 +164,9 @@
         "windows_exporter TCP9182 accessible depuis Ubuntu seulement.",
         "HTTPS8443 et SMB445 autorisés selon les règles."
       ],
-      "next": "Vérifier l’édition et le démarrage ; configurer protections et exporter.",
-      "evidence": "Installation et contrôles non vérifiés.",
-      "source": "docs/MACHINE_A.md"
+      "next": "Les anciennes captures Sysmon/Defender sont incomplètes ; conserver la portée datée.",
+      "evidence": "Accès InvoiceShelf et Grafana après reboot observé le 29/10 ; Defender, pare-feu, Sysmon et audit documentés le 28/10. Pas de vérification actuelle.",
+      "source": "docs/MACHINE_A.md · evidence/PC_A_STATUS.md · evidence/PC_A_2026-10-29.md"
     },
     {
       "id": "mgmt",
@@ -137,9 +180,31 @@
         4.4
       ],
       "color": "#92a6c5",
-      "status": "Prévu · non testé",
+      "status": "Accès SSH observé · 29/10",
       "ip": "10.77.99.254/24",
-      "purpose": "Accès de gestion depuis l’hôte A. MGMT est un réseau non tagué, pas un VLAN99.",
+      "facts": [
+        [
+          "Réseau",
+          "VMnet13 host-only · non tagué"
+        ],
+        [
+          "Hôte A",
+          "10.77.99.254/24"
+        ],
+        [
+          "Passerelle",
+          "OPNsense · 10.77.99.1"
+        ],
+        [
+          "SSH",
+          "Clé et empreinte épinglée après reboot"
+        ],
+        [
+          "VPN",
+          "VMnet13 désactivé pendant l’essai"
+        ]
+      ],
+      "purpose": "Accès d’administration depuis l’hôte A.",
       "resources": "Interface hôte · aucune VM supplémentaire",
       "interfaces": [
         [
@@ -154,12 +219,12 @@
         ]
       ],
       "controls": [
-        "Administration OPNsense/TrueNAS en HTTPS et Ubuntu en SSH par clé.",
-        "Retirer les routes de gestion pendant la démonstration VPN pour éviter un contournement."
+        "SSH Ubuntu par clé depuis 10.77.99.254 ; empreinte épinglée et reconnue après reboot.",
+        "VMnet13 a été désactivé pendant l’essai VPN ; la route temporaire vers Ubuntu a été retirée."
       ],
-      "next": "Vérifier les routes et les chevauchements avant configuration.",
-      "evidence": "Aucune interface ou route modifiée pour ce diagramme.",
-      "source": "docs/LIAISON.md"
+      "next": "Aucune route VPN résiduelle n’a été observée lors de la relecture A du 29/10.",
+      "evidence": "Essai SSH par clé après durcissement et reboot ; nettoyage de la route /32 et retour de VMnet13 à Up documentés le 29/10. Pas de vérification actuelle.",
+      "source": "docs/MACHINE_A.md · evidence/PC_A_2026-10-29.md · evidence/PC_A_STATUS.md"
     },
     {
       "id": "wan",
@@ -173,10 +238,32 @@
         -3.5
       ],
       "color": "#90a9b5",
-      "status": "Prévu · non testé",
+      "status": "WAN simulé · essai VPN documenté 29/10",
       "ip": "VMnet8 · DHCP",
-      "purpose": "Le WAN d’OPNsense utilise le NAT VMware et le Wi-Fi de l’hôte. Ce montage ne prouve pas un accès depuis Internet public.",
-      "resources": "Réseau virtuel existant à préserver",
+      "facts": [
+        [
+          "Transport",
+          "VMnet8 · NAT VMware"
+        ],
+        [
+          "Interface",
+          "OPNsense em0 · DHCP"
+        ],
+        [
+          "Portée",
+          "WAN simulé ; Internet public non démontré"
+        ],
+        [
+          "VPN",
+          "UDP1194 testé depuis l’hôte A"
+        ],
+        [
+          "Résultat",
+          "Connexion/déconnexion observées le 29/10"
+        ]
+      ],
+      "purpose": "Réseau WAN simulé par le NAT VMware.",
+      "resources": "VMnet8 NAT VMware · plage WAN non consignée",
       "interfaces": [
         [
           "WAN OPNsense",
@@ -190,12 +277,12 @@
         ]
       ],
       "controls": [
-        "Aucun service interne directement publié sur le WAN.",
-        "Seul UDP1194 prévu pour le client VPN de test."
+        "WAN de laboratoire via NAT VMware ; aucun accès Internet public démontré.",
+        "UDP1194 utilisé pour l’essai OpenVPN depuis l’hôte A (29/10)."
       ],
-      "next": "Relever la plage et l’adresse WAN réelles.",
-      "evidence": "Plage WAN et accès Internet du pare-feu non vérifiés.",
-      "source": "docs/MACHINE_A.md"
+      "next": "Aucun déploiement Internet public ni accès externe n’est documenté.",
+      "evidence": "Connexion OpenVPN et contrôles de service réalisés via VMnet8 NAT le 29/10 ; cela ne démontre pas une publication Internet. Pas de vérification actuelle.",
+      "source": "docs/MACHINE_A.md · evidence/PC_A_2026-10-29.md"
     },
     {
       "id": "vpn",
@@ -209,9 +296,31 @@
         -3.9
       ],
       "color": "#a0a5ca",
-      "status": "Prévu · non testé",
+      "status": "Essai documenté · 29/10",
       "ip": "Tunnel 10.78.0.0/24",
-      "purpose": "Client OpenVPN sur A, connecté au WAN simulé via VMnet8. Il ne représente pas un troisième PC physique.",
+      "facts": [
+        [
+          "Emplacement",
+          "Client sur l’hôte A · pas une VM"
+        ],
+        [
+          "Tunnel",
+          "10.78.0.2 · passerelle 10.78.0.1"
+        ],
+        [
+          "Autorisé",
+          "InvoiceShelf HTTPS8443"
+        ],
+        [
+          "Refusés",
+          "SSH22 · SMB445 · Grafana3001"
+        ],
+        [
+          "Après essai",
+          "Routes et adresse VPN absentes après déconnexion"
+        ]
+      ],
+      "purpose": "Client OpenVPN de test exécuté sur l’hôte A.",
       "resources": "Application hôte · aucune VM supplémentaire",
       "interfaces": [
         [
@@ -226,13 +335,13 @@
         ]
       ],
       "controls": [
-        "Autoriser InvoiceShelf HTTPS8443.",
-        "Refuser SSH22, NAS SMB445 et Grafana3001.",
-        "Comparer déconnecté / connecté / déconnecté sans chemin MGMT."
+        "InvoiceShelf HTTPS8443 autorisé depuis le tunnel ; TCP22, SMB445 et Grafana3001 refusés avec journaux.",
+        "VMnet13 désactivé pendant l’essai ; après déconnexion, adresse et routes du tunnel absentes.",
+        "SSH retesté avec un socket actif avant de retenir le refus VPN."
       ],
-      "next": "Créer les certificats et règles, puis réaliser les tests de connexion.",
-      "evidence": "Aucun tunnel ou accès VPN du laboratoire vérifié.",
-      "source": "docs/MACHINE_A.md"
+      "next": "Le profil testé contenait des routes explicites ; la poussée de routes pour de futurs profils n’est pas confirmée.",
+      "evidence": "10.78.0.2 connecté, HTTPS8443 permis, TCP22/445/3001 refusés avec marqueurs et perte d’accès après déconnexion observés/documentés le 29/10. WAN VMware simulé.",
+      "source": "docs/MACHINE_A.md · evidence/PC_A_2026-10-29.md · evidence/PC_B_2026-10-29.md"
     },
     {
       "id": "switch",
@@ -246,10 +355,32 @@
         0
       ],
       "color": "#dfaa65",
-      "status": "Déclaré par B · live ISO",
+      "status": "État observé · 28–29/10",
       "ip": "Sans adresse IP",
-      "purpose": "Sépare les ports d’accès Ubuntu et TrueNAS. Ajoute ou retire les tags sur le trunk ; ne route pas entre VLANs.",
-      "resources": "0,5 Gio · 1 vCPU · disque 2 Gio préparés",
+      "facts": [
+        [
+          "Système",
+          "Alpine installé · switch de couche 2"
+        ],
+        [
+          "Trunk",
+          "eth1 · VMnet12 · tags VLAN20/30"
+        ],
+        [
+          "Accès Ubuntu",
+          "eth2 · VMnet10 · VLAN20 non tagué"
+        ],
+        [
+          "Accès NAS",
+          "eth0 · VMnet11 · VLAN30 non tagué"
+        ],
+        [
+          "Routage",
+          "Aucun IP/routage ; isolation complète non prouvée"
+        ]
+      ],
+      "purpose": "Commute les VLAN20/30 entre le trunk et les ports d’accès.",
+      "resources": "512 Mio observés ; référence 1 vCPU et disque 2 Gio",
       "interfaces": [
         [
           "TRUNK",
@@ -258,7 +389,7 @@
         ],
         [
           "UBUNTU",
-          "VMnet14",
+          "VMnet10",
           "Accès VLAN20 · PVID20"
         ],
         [
@@ -268,13 +399,13 @@
         ]
       ],
       "controls": [
-        "Bridge VLAN filtering ; PVID par défaut 0.",
-        "Aucun VLAN natif, VLAN1, IP de gestion ou routage.",
-        "Refuser un tag30 provenant du port d’accès Ubuntu."
+        "Bridge Linux filtrant ; PVID par défaut 0.",
+        "Aucun VLAN natif, VLAN1, IP de gestion ou routage observé.",
+        "Rejet d’un tag30 depuis le port Ubuntu : non confirmé (T04)."
       ],
-      "next": "Installer Alpine et ajouter les trois cartes. Associer leurs MAC puis configurer le bridge.",
-      "evidence": "B déclare le login live Alpine atteint. Pas installé ; aucune carte réseau configurée.",
-      "source": "evidence/PC_B_STATUS.md · 26/10/2026"
+      "next": "T03 reste partiel ; T04, rejet d’un tag30 depuis l’accès Ubuntu, reste non confirmé.",
+      "evidence": "Configuration Alpine installée et active, ports eth1/eth2/eth0, bridge et persistance après reboot observés dans les preuves B du 28–29/10. Transport complet et isolation non établis.",
+      "source": "docs/MACHINE_B.md · evidence/PC_B_STATUS.md · evidence/PC_B_2026-10-29.md"
     },
     {
       "id": "ubuntu",
@@ -288,14 +419,36 @@
         -3.3
       ],
       "color": "#80b9b4",
-      "status": "Déclaré par B · préparé",
+      "status": "État observé · preuves du 29/10",
       "ip": "10.77.20.10/24",
-      "purpose": "Héberge Docker, InvoiceShelf, la supervision et les journaux. Les conteneurs sont des services de cette VM, pas des VM supplémentaires.",
-      "resources": "Plan : 2,5 Gio ; B : Desktop 4 Gio préparés. Allocation à décider.",
+      "facts": [
+        [
+          "Système",
+          "Ubuntu Desktop 26.04.1 · 4 Gio"
+        ],
+        [
+          "Réseau",
+          "VMnet10 · enp0s17 · 10.77.20.10/24"
+        ],
+        [
+          "MTU/MSS",
+          "1400 ; MSS1360 limitée Windows→HTTPS8443"
+        ],
+        [
+          "Services",
+          "6 conteneurs : proxy, facture et 4 de supervision"
+        ],
+        [
+          "Accès",
+          "HTTPS8443 ; SQLite locale ; Grafana HTTPS3001"
+        ]
+      ],
+      "purpose": "Héberge l’application, la supervision et les journaux.",
+      "resources": "4 Gio RAM · disque 40 Gio observés le 29/10",
       "interfaces": [
         [
           "SERVEURS",
-          "VMnet14",
+          "VMnet10",
           "Accès VLAN20 non tagué"
         ],
         [
@@ -310,14 +463,15 @@
         ]
       ],
       "controls": [
-        "SSH par clé depuis MGMT ; root et mot de passe refusés.",
-        "iptables + DOCKER-USER/FORWARD ; auditd, rsyslog TCP514, ClamAV.",
-        "Prometheus interne9090 ; Grafana3001 ; collecte Windows9182.",
-        "SQLite local ; sauvegarde cohérente vers NAS après arrêt de l’application."
+        "SSH par clé depuis MGMT ; password/kbdinteractive/root interdits en configuration, sans essai root distinct.",
+        "iptables INPUT et DOCKER-USER ; lab-firewall réappliqué après Docker, ciblage enp0s17.",
+        "Prometheus interne9090 ; Grafana HTTPS3001 ; windows_exporter9182.",
+        "Auditd et rsyslog TCP514 ; scan ClamAV limité à quatre fichiers.",
+        "SQLite locale ; archive cohérente envoyée au NAS après arrêt de l’application."
       ],
-      "next": "Installer et vérifier Ubuntu ; réconcilier la mémoire ; déployer InvoiceShelf2.4.7 avec son proxy HTTPS.",
-      "evidence": "B déclare une configuration VM et des disques vides ; non démarrée, sans carte réseau.",
-      "source": "evidence/PC_B_STATUS.md · décision InvoiceShelf du 27/10"
+      "next": "MTU1400 et MSS1360 ciblée stabilisent les accès observés ; la cause liaison/pilote reste inconnue.",
+      "evidence": "Adresse, MTU, règles/services et six conteneurs retrouvés après reboot ; accès Windows à InvoiceShelf/Grafana observé dans les preuves A/B du 29/10. Pas de vérification actuelle.",
+      "source": "docs/MACHINE_B.md · evidence/PC_B_STATUS.md · evidence/PC_B_2026-10-29.md"
     },
     {
       "id": "nas",
@@ -331,10 +485,32 @@
         3.1
       ],
       "color": "#b0a0c6",
-      "status": "Déclaré par B · préparé",
+      "status": "Résultats documentés · 28–29/10",
       "ip": "10.77.30.10/24",
-      "purpose": "Stockage SMB, permissions par compte, dataset chiffré et snapshots. Le dataset de sauvegarde de l’application est distinct du partage de démonstration.",
-      "resources": "Plan : 8 Gio minimum ; B : 6 Gio préparés. Écart à résoudre.",
+      "facts": [
+        [
+          "Système",
+          "TrueNAS 25.10.7"
+        ],
+        [
+          "Ressources",
+          "6 Gio · 2 vCPU observés ; référence 8 Gio"
+        ],
+        [
+          "Réseau",
+          "VMnet11 · 10.77.30.10/24"
+        ],
+        [
+          "Stockage",
+          "Pool miroir tank · datasets chiffrés"
+        ],
+        [
+          "SMB",
+          "Alice RW ; lecteur écriture refusée ; Bob refus au fichier"
+        ]
+      ],
+      "purpose": "Fournit les partages SMB et stocke les sauvegardes cohérentes.",
+      "resources": "6 Gio RAM observés · référence 8 Gio · 2 vCPU",
       "interfaces": [
         [
           "STOCKAGE",
@@ -353,14 +529,14 @@
         ]
       ],
       "controls": [
-        "alice : lecture/écriture ; lecteur : lecture seule ; bob : refus.",
-        "Dataset chiffré ; clé privée hors dépôt ; restauration de fichier.",
-        "app-backup limité au dataset de sauvegarde.",
-        "Les disques virtuels sur le même SSD ne sont pas une sauvegarde physique indépendante."
+        "Alice : lecture/écriture ; lecteur : lecture avec écriture refusée ; Bob connecté au partage, lecture du fichier refusée.",
+        "Datasets chiffrés ; restauration de fichier depuis clone de snapshot documentée ; app-backup séparé.",
+        "SMB chiffré requis ; session Windows Encrypted=True observée.",
+        "Miroir et snapshots sur le même stockage physique du PC B."
       ],
-      "next": "Résoudre l’allocation de 6/8 Gio avant validation ; installer puis vérifier ACL, chiffrement et restauration.",
-      "evidence": "B déclare une configuration VM et des disques vides ; non démarrée, sans carte réseau.",
-      "source": "evidence/PC_B_STATUS.md · 26/10/2026"
+      "next": "L’allocation observée de 6 Gio reste sous la référence de 8 Gio.",
+      "evidence": "TrueNAS 25.10.7, adresse 10.77.30.10 et tests SMB/sauvegarde/restauration documentés dans les preuves du 28–29/10. Pas de vérification actuelle.",
+      "source": "docs/MACHINE_B.md · evidence/PC_B_STATUS.md · evidence/PC_B_2026-10-29.md · evidence/history/PC_B_STATUS.md"
     },
     {
       "id": "proxy",
@@ -375,10 +551,32 @@
         -3.6
       ],
       "color": "#80b9b4",
-      "status": "Prévu · non déployé",
+      "status": "HTTPS observé · preuves du 29/10",
       "ip": "10.77.20.10:8443",
-      "purpose": "Termine HTTPS pour InvoiceShelf. Le backend applicatif reste sur le réseau Docker interne.",
-      "resources": "Dans Ubuntu · conteneur léger",
+      "facts": [
+        [
+          "Service",
+          "Nginx · conteneur Ubuntu"
+        ],
+        [
+          "Entrée",
+          "HTTPS TCP8443"
+        ],
+        [
+          "Backend",
+          "InvoiceShelf TCP8080 · réseau Docker privé"
+        ],
+        [
+          "Certificat",
+          "Autosigné · navigateur non fiable"
+        ],
+        [
+          "Publication",
+          "Port proxy observé ; aucun service WAN public démontré"
+        ]
+      ],
+      "purpose": "Reçoit HTTPS et relaie vers le backend InvoiceShelf.",
+      "resources": "Conteneur dans Ubuntu · ressource distincte non documentée",
       "interfaces": [
         [
           "Entrée",
@@ -392,12 +590,12 @@
         ]
       ],
       "controls": [
-        "Certificat approuvé sur le client de démonstration.",
-        "Aucune publication WAN ni accès direct au backend."
+        "Certificat autosigné signalé non fiable par le navigateur.",
+        "Seul le proxy publie TCP8443 ; le backend TCP8080 reste interne au réseau Docker."
       ],
-      "next": "Configurer le certificat, l’adresse applicative et les paramètres de session.",
-      "evidence": "Configuration prévue ; aucun conteneur lancé.",
-      "source": "Décision applicative · 27/10/2026"
+      "next": "Le certificat TLS reste autosigné et non approuvé par les navigateurs.",
+      "evidence": "Accès HTTPS8443 à l’application depuis Windows/VPN et après reboot documentés le 29/10 ; certificat autosigné signalé non fiable. Pas de vérification actuelle.",
+      "source": "docs/APP.md · evidence/PC_A_2026-10-29.md · evidence/PC_B_2026-10-29.md"
     },
     {
       "id": "app",
@@ -412,10 +610,36 @@
         -3.3
       ],
       "color": "#80b9b4",
-      "status": "Choisi · non déployé",
+      "status": "Facture/PDF observés · 29/10",
       "ip": "Port8080 interne",
-      "purpose": "Démonstration d’une petite entreprise : clients fictifs, factures, dépenses, PDF et permissions par rôle.",
-      "resources": "Version2.4.7 stable · une application avec SQLite",
+      "facts": [
+        [
+          "Version",
+          "InvoiceShelf 2.4.7"
+        ],
+        [
+          "Entrée",
+          "HTTPS8443 via Nginx"
+        ],
+        [
+          "Backend",
+          "TCP8080 · réseau Docker privé"
+        ],
+        [
+          "Résultat",
+          "Facture/PDF visibles ; facture après recréation"
+        ],
+        [
+          "Rôles",
+          "Lecteur visible ; refus d’actions partiellement prouvés"
+        ],
+        [
+          "Restauration",
+          "Copie isolée vérifiée puis retirée le 29/10"
+        ]
+      ],
+      "purpose": "Gère les clients, factures et PDF dans InvoiceShelf.",
+      "resources": "InvoiceShelf 2.4.7 · ressource incluse dans Ubuntu",
       "interfaces": [
         [
           "Accès utilisateur",
@@ -429,13 +653,13 @@
         ]
       ],
       "controls": [
-        "Rôle comptable et rôle consultation à configurer puis vérifier.",
-        "Accès non authentifié refusé sur les ressources privées.",
-        "Volumes persistants ; archive après arrêt puis restauration isolée."
+        "Facture et PDF observés ; la facture est restée après recréation des conteneurs.",
+        "Rôle lecteur visible ; les refus détaillés sont rapportés, sans preuve indépendante de chaque action.",
+        "Copie restaurée depuis une archive dans une instance isolée ; conteneurs de test ensuite retirés."
       ],
-      "next": "Vérifier login, rôles, facture/PDF, consommation et restauration sur la VM.",
-      "evidence": "Documentation, code2.4.7 et publication d’image vérifiés. Aucun comportement local vérifié.",
-      "source": "https://docs.invoiceshelf.com/install/docker.html"
+      "next": "Les refus d’actions par rôle restent partiellement prouvés ; atelier Docker/Docker Bench non confirmé.",
+      "evidence": "Société, facture, PDF, accès après reboot et persistance après recréation observés/documentés le 29/10 ; les restrictions détaillées sont rapportées. La matrice T12/T13 conserve ses limites.",
+      "source": "docs/APP.md · evidence/PC_B_2026-10-29.md · docs/TEST_MATRIX.md"
     },
     {
       "id": "data",
@@ -450,10 +674,32 @@
         -3.1
       ],
       "color": "#b0a0c6",
-      "status": "Prévu · non créé",
+      "status": "Persistance et restauration observées · 29/10",
       "ip": "Stockage local Ubuntu",
-      "purpose": "Conserve base, documents et configuration nécessaires à la récupération. La base active ne réside pas sur SMB.",
-      "resources": "Volume Docker local · capacité à mesurer",
+      "facts": [
+        [
+          "Base active",
+          "SQLite locale à Ubuntu"
+        ],
+        [
+          "Fichiers",
+          "Dossiers persistants locaux"
+        ],
+        [
+          "Copie NAS",
+          "Archive cohérente après arrêt de l’app"
+        ],
+        [
+          "Intégrité",
+          "Empreintes SHA-256 identiques après retour"
+        ],
+        [
+          "Restauration",
+          "Facture/PDF ouverts en copie isolée puis retirée"
+        ]
+      ],
+      "purpose": "Conserve SQLite et les fichiers persistants localement sur Ubuntu.",
+      "resources": "Volume local Ubuntu · capacité distincte non documentée",
       "interfaces": [
         [
           "Stockage actif",
@@ -467,13 +713,13 @@
         ]
       ],
       "controls": [
-        "Conserver aussi la clé applicative/configuration privée.",
-        "Restaurer une copie séparée et vérifier la facture/PDF.",
-        "Un snapshot NAS ne remplace pas la sauvegarde cohérente de l’application."
+        "SQLite active sur Ubuntu, pas sur SMB ; facture présente après recréation du conteneur.",
+        "Archive cohérente créée après arrêt de l’application, transférée au NAS et comparée par SHA-256.",
+        "Copie restaurée séparément ; société, facture et PDF ouverts, puis conteneurs de test retirés."
       ],
-      "next": "Documenter les chemins persistants exacts après installation.",
-      "evidence": "Aucune donnée ou sauvegarde créée.",
-      "source": "Architecture de sauvegarde proposée"
+      "next": "La copie isolée a été retirée après vérification ; l’archive reste distincte du service actif.",
+      "evidence": "Transfert aller-retour aux empreintes identiques et restauration applicative isolée documentés le 29/10. Pas de vérification actuelle.",
+      "source": "docs/APP.md · evidence/PC_B_2026-10-29.md"
     },
     {
       "id": "monitor",
@@ -488,10 +734,36 @@
         -6.2
       ],
       "color": "#90a9b5",
-      "status": "Prévu · non déployé",
-      "ip": "Grafana:3001 · Prometheus interne9090",
-      "purpose": "Prometheus collecte les cibles ; Grafana affiche les résultats. La disponibilité de l’application est sondée séparément des métriques système.",
-      "resources": "Rétention courte prévue · consommation à mesurer",
+      "status": "Collecte et reprises observées · 29/10",
+      "ip": "Grafana HTTPS3001 · Prometheus interne9090",
+      "facts": [
+        [
+          "Prometheus",
+          "3.5.5 · interne TCP9090"
+        ],
+        [
+          "Grafana",
+          "13.2.4 · HTTPS TCP3001"
+        ],
+        [
+          "Cibles",
+          "node-exporter · blackbox · windows_exporter9182"
+        ],
+        [
+          "Résultat",
+          "4 jobs UP · graphes CPU · sonde HTTPS observés"
+        ],
+        [
+          "Reprises",
+          "Exporter et webapp testés séparément le 29/10"
+        ],
+        [
+          "Logs",
+          "OPNsense vers Ubuntu · TCP514"
+        ]
+      ],
+      "purpose": "Collecte les métriques et sonde la disponibilité applicative.",
+      "resources": "Services dans Ubuntu · consommation par composant non mesurée",
       "interfaces": [
         [
           "Windows exporter",
@@ -510,13 +782,14 @@
         ]
       ],
       "controls": [
-        "Métriques réelles uniquement ; scénarios visuels clairement simulés.",
-        "Distinguer application arrêtée et exporter indisponible.",
-        "VPN → Grafana refusé."
+        "Prometheus collecte les cibles ; Grafana HTTPS3001 affiche les tableaux ; Prometheus9090 reste interne.",
+        "Pannes/reprises de node-exporter et webapp observées séparément ; probe_success distingue la sonde.",
+        "VPN vers Grafana3001 refusé avec journal ; l’exposition de chaque collecteur n’a pas été testée indépendamment.",
+        "Scénarios visuels du présentateur simulés ; ils ne sont pas des mesures live."
       ],
-      "next": "Configurer les collecteurs et une sonde applicative ; observer panne et reprise.",
-      "evidence": "Aucune métrique du laboratoire collectée.",
-      "source": "docs/MACHINE_B.md · docs/TEST_MATRIX.md"
+      "next": "La matrice garde des limites sur les refus réseau et l’exposition complète des collecteurs.",
+      "evidence": "Quatre jobs UP, graphes CPU, probe_success et reprises séparées sont documentés le 29/10 ; les journaux OPNsense ont été reçus/rotés sur TCP514. Pas de vérification actuelle.",
+      "source": "docs/MACHINE_B.md · evidence/PC_B_STATUS.md · evidence/PC_B_2026-10-29.md · docs/TEST_MATRIX.md"
     }
   ],
   "links": [
@@ -584,10 +857,10 @@
       "id": "access20",
       "from": "switch",
       "to": "ubuntu",
-      "label": "VMnet14 · accès20 non tagué",
+      "label": "VMnet10 · accès20 non tagué",
       "zone": "20",
       "kind": "network",
-      "fromPort": "Accès20 · VMnet14",
+      "fromPort": "Accès20 · VMnet10",
       "toPort": "eth0 · Ubuntu"
     },
     {
@@ -635,7 +908,7 @@
       "from": "ubuntu",
       "to": "monitor",
       "label": "Services locaux Ubuntu",
-      "zone": "wan",
+      "zone": "local",
       "kind": "service",
       "fromPort": "Ubuntu",
       "toPort": "Supervision locale"
@@ -649,42 +922,42 @@
     {"id": "prom-windows", "from": "SERVEURS20", "to": "10.77.10.10", "port": "TCP9182", "action": "allow", "label": "Prometheus → Windows exporter9182"},
     {"id": "default", "from": "*", "to": "*", "port": "*", "action": "deny", "label": "Refus final journalisé"}
   ],
-  "issues": [
+  "issues":   [
     {
       "node": "fw",
-      "title": "Transport Ethernet non vérifié",
-      "text": "Valider tags20/30, ARP et unicast bidirectionnel avec A et B avant les tests applicatifs communs.",
-      "owner": "A+B"
+      "title": "Cause du défaut HTTPS inconnue",
+      "text": "MTU Ubuntu 1400 et MSS 1360 limitée à Windows→InvoiceShelf ont stabilisé les accès observés ; la cause racine de liaison/pilote n’est pas établie.",
+      "owner": "à compléter"
     },
     {
-      "node": "nas",
-      "title": "TrueNAS : écart mémoire 6/8 Gio",
-      "text": "B a préparé 6 Gio ; le plan retient 8 Gio minimum. La fluidité simultanée n’est pas démontrée.",
-      "owner": "B"
-    },
-    {
-      "node": "ubuntu",
-      "title": "Ubuntu : édition et ressources",
-      "text": "B a préparé Desktop4 Gio ; le plan prévoit2,5 Gio. Choisir une allocation mesurée, sans inventer de capacité libre.",
-      "owner": "B"
+      "node": "proxy",
+      "title": "Certificat TLS autosigné",
+      "text": "Le navigateur signale le certificat du laboratoire comme non fiable ; son approbation côté client n’est pas établie.",
+      "owner": "à compléter"
     },
     {
       "node": "app",
-      "title": "InvoiceShelf à installer et vérifier",
-      "text": "Login, permissions, PDF, persistance et restauration restent à effectuer.",
-      "owner": "B"
+      "title": "Preuves partielles des rôles InvoiceShelf",
+      "text": "Le rôle lecteur est visible ; les refus d’actions détaillés sont rapportés sans capture indépendante de chaque refus.",
+      "owner": "à compléter"
     },
     {
-      "node": "fw",
-      "title": "Cartes et MAC à associer",
-      "text": "Les noms réels d’interfaces, VMnets et chevauchements doivent être relevés sur les deux machines.",
-      "owner": "A+B"
+      "node": "switch",
+      "title": "Isolation VLAN incomplète",
+      "text": "T03 reste partiel ; T04, rejet d’un tag30 injecté depuis l’accès Ubuntu, n’est pas confirmé.",
+      "owner": "à compléter"
     },
     {
-      "node": "vpn",
-      "title": "Chemin VPN sans contournement",
-      "text": "Le client de test sur A ne doit pas conserver un chemin MGMT donnant accès aux mêmes services.",
-      "owner": "A"
+      "node": "app",
+      "title": "Atelier Docker et Docker Bench non confirmés",
+      "text": "L’exécution d’InvoiceShelf ne démontre ni l’atelier du cours, ni l’inspection digest/couches, ni Docker Bench (T13).",
+      "owner": "à compléter"
+    },
+    {
+      "node": "nas",
+      "title": "TrueNAS : 6 Gio observés vs référence 8 Gio",
+      "text": "Les notes du 29/10 documentent 6 Gio ; le plan de référence reste à 8 Gio. Aucune nouvelle mesure de charge n’a été faite.",
+      "owner": "à compléter"
     }
   ]
 }

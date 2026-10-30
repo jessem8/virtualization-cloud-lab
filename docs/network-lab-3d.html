@@ -1,17 +1,220 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#edf1f4"><title>Le laboratoire, en perspective.</title><link rel="stylesheet" href="network-assets/diagram.css"></head>
-<body>
-<header><div class="identity"><svg viewBox="0 0 40 44" aria-hidden="true"><path d="M20 2 37 12v20L20 42 3 32V12Zm0 20L3 12m17 10 17-10M20 22v20"/></svg><div><h1>Le laboratoire, en perspective.</h1><p>Une entreprise. Deux PC. Des accès maîtrisés.</p></div></div><div class="header-actions"><button id="overview">Vue globale</button><button id="presentation" title="Plein écran ou sortie · touche F">Plein écran</button><details id="options"><summary>Options</summary><div class="options-menu"><button id="top-view">Vue du dessus</button><button id="toggle-2d">Afficher le plan 2D</button><button id="export-svg">Exporter le plan SVG</button><button id="readiness">Voir les points à préparer</button><button id="quality" aria-pressed="true">Qualité visuelle : haute</button><label><input type="checkbox" id="free-camera"> Caméra libre (ne suit pas le récit)</label><label><input type="checkbox" id="reduce-motion"> Réduire les mouvements</label><a href="DIAGRAM_DESIGN.md" target="_blank">Guide et sources</a></div></details></div></header>
-<main>
-<section class="lab-view" aria-label="Laboratoire interactif">
-<div class="canvas-toolbar"><div class="toolbar-left"><div class="view-switch" aria-label="Vue de la maquette"><button data-mode="physical" aria-pressed="true">Équipements</button><button data-mode="logical" aria-pressed="false">Connexions</button><button data-mode="security" aria-pressed="false">Sécurité</button></div><button id="whatif-toggle" class="whatif-toggle" aria-expanded="false" aria-controls="whatif-panel">Et si… ?</button></div><p id="scene-hint">Cliquez sur un équipement pour l’ouvrir.</p></div>
-<div id="stage" role="region" aria-label="Maquette3D. Cliquer un équipement pour ouvrir sa coupe et son explication."><button id="back-network" hidden>Retour au parcours</button><button id="exit-fullscreen" hidden>Quitter le plein écran <kbd>Échap</kbd></button><div id="scene-labels"></div><div id="map2d" hidden></div><div id="loading">Préparation du laboratoire…</div><div id="fallback" hidden><p>La3D est indisponible. Le plan2D conserve les parcours et les explications.</p></div><div id="chapter-card" hidden aria-hidden="true"><small></small><strong></strong></div><div id="whatif-banner" hidden role="status"></div><button id="open-packet" hidden aria-pressed="false">Ouvrir le paquet <kbd>P</kbd></button><section id="quiz" hidden aria-label="Question du mode quiz"></section><section id="whatif-panel" hidden aria-label="Simulation de pannes"><div class="whatif-head"><h2>Et si… ?</h2><button id="whatif-close" aria-label="Fermer la simulation de pannes"></button></div><p>Choisissez une ou plusieurs pannes, puis rejouez un trajet : la maquette montre où il casse et pourquoi.</p><label for="whatif-flow">Trajet testé</label><select id="whatif-flow"></select><div id="whatif-faults"></div><div class="whatif-actions"><button id="whatif-run" class="primary">Rejouer avec ces pannes</button><button id="whatif-reset">Tout rétablir</button></div><small>Simulation pédagogique · aucune VM n’est modifiée.</small></section></div>
-<div id="transport-strip" aria-label="Trajet et transport"><div><strong id="hop-from">PC A · OPNsense</strong><small id="hop-ingress">VMnet12 → Ethernet A</small></div><div class="trunk-lanes"><div class="lane-buttons"><button class="lane lane20" data-inspect-link="trunk20">VLAN20 · SERVEURS</button><button class="lane lane30" data-inspect-link="trunk30">VLAN30 · STOCKAGE</button></div><strong id="hop-direction">Un câble Ethernet · deux VLANs tagués</strong><button id="inspect-hop" hidden></button></div><div><strong id="hop-to">PC B · Alpine SW-B</strong><small id="hop-egress">Ethernet B → VMnet12</small></div></div>
-<aside id="security-panel" hidden aria-label="Protections du laboratoire"><h2>Qui décide ?</h2><div id="security-rule"><strong id="rule-outcome"></strong><p id="rule-match"></p><p id="rule-control"></p><small>Décision attendue · démonstration simulée</small></div><p class="security-intro">Suivez le paquet jusqu’au contrôle qui autorise ou refuse.</p><section><h3>Zones séparées</h3><p>CLIENTS, SERVEURS et STOCKAGE. Tout échange entre zones passe par OPNsense.</p></section><section><h3>Droits du VPN</h3><button id="security-allow" class="allow">Suivre HTTPS8443 autorisé</button><button id="security-deny" class="deny">Suivre SMB445 refusé</button><p>Le refus s’arrête au pare-feu, avant le trunk.</p></section><section><h3>Protections des services</h3><p>Windows : Defender et audit. Ubuntu : iptables et SSH par clé. NAS : ACL. InvoiceShelf : session et rôle.</p></section><small>Architecture prévue · preuves réelles à produire.</small></aside>
-<div class="scene-legend"><span><i class="line copper"></i>Câble Ethernet</span><span><i class="line mint"></i>VLAN20</span><span><i class="line violet"></i>VLAN30</span><span>Illustration du réseau prévu · tests réels à effectuer</span></div>
-<aside id="component-panel" aria-label="Composant ouvert" hidden><div class="panel-heading"><div id="component-icon"></div><button id="close-panel" aria-label="Fermer le composant"></button></div><nav id="ownership-trail" aria-label="Emplacement du composant"></nav><p class="component-location" id="node-location"></p><h2 id="node-title"></h2><p class="component-purpose" id="node-purpose"></p><div id="component-layers"></div><div id="component-details"></div></aside>
-</section>
-<section class="story-bar" aria-label="Démonstration guidée"><div class="story-choice"><button id="start-walkthrough" class="primary">Lancer la présentation</button><label for="scenario-select">Ou choisir un trajet précis</label><select id="scenario-select"><option value="">Choisir une démonstration</option></select><label class="quiz-switch"><input type="checkbox" id="quiz-mode"> Mode quiz étudiants</label><button id="toggle-story-details" class="detail-toggle" aria-expanded="false" hidden>Afficher les détails techniques</button><p class="simulation-note">« Déployer » signifie ici installer, configurer et démarrer un service sur une VM. La maquette n’exécute rien.</p></div><div class="story-content"><p id="step-position">Vue d’ensemble · 0 / 18</p><h2 id="step-title">Commence par les deux PC.</h2><p id="step-copy">Un parcours guidé raconte l’usage, les contrôles, la sauvegarde, le VPN et la reprise.</p><p id="speaker-cue" class="speaker-cue" hidden></p><div id="packet-meta"></div></div><div class="story-controls"><div><button id="prev-step" aria-label="Étape précédente" disabled></button><button id="play" class="primary" disabled>Lire le parcours</button><button id="next-step" aria-label="Étape suivante" disabled></button></div><div id="step-track" aria-label="Progression du parcours"></div><small class="keyboard-hint">← → avancer · Espace lire · P paquet</small></div></section>
-</main>
-<script type="module" src="network-assets/diagram.bundle.js"></script>
-</body></html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#eef1f3">
+  <title>Le laboratoire, en perspective.</title>
+  <link rel="stylesheet" href="network-assets/diagram.css">
+</head>
+<body class="presenting">
+  <header class="app-header">
+    <div class="identity">
+      <svg viewBox="0 0 40 44" aria-hidden="true"><path d="M20 2 37 12v20L20 42 3 32V12Zm0 20L3 12m17 10 17-10M20 22v20"/></svg>
+      <h1>Le laboratoire, en perspective.</h1>
+    </div>
+    <div class="header-actions">
+      <div class="mode-switch" role="group" aria-label="Mode de présentation">
+        <button id="present-mode" type="button" aria-pressed="true">Présenter</button>
+        <button id="explore-mode" type="button" aria-pressed="false">Explorer</button>
+      </div>
+      <button id="presentation" type="button" title="Plein écran ou sortie · touche F">Plein écran</button>
+      <details id="options">
+        <summary>Options</summary>
+        <div class="options-menu">
+          <section class="options-group" aria-label="Parcours">
+            <button id="start-walkthrough" class="primary" type="button">Recommencer</button>
+            <label for="scenario-select">Rejouer un trajet</label>
+            <select id="scenario-select">
+              <option value="">Choisir une démonstration</option>
+            </select>
+            <label class="quiz-switch"><input type="checkbox" id="quiz-mode"> Questions pour la classe</label>
+            <button id="play" class="option-play" type="button" disabled>Lire le parcours</button>
+            <button id="toggle-story-details" class="detail-toggle" type="button" aria-expanded="false" hidden>Afficher les détails techniques</button>
+            <label class="option-check"><input type="checkbox" id="notes-toggle"> Notes du présentateur</label>
+            <button id="overview" type="button">Vue globale</button>
+          </section>
+          <div class="options-divider" role="separator"></div>
+          <details class="options-group options-tools">
+            <summary class="options-label">Outils de simulation</summary>
+            <button id="whatif-toggle" type="button" aria-expanded="false" aria-controls="whatif-panel">Et si… ? Simuler une panne</button>
+            <button id="top-view" type="button">Vue du dessus</button>
+            <button id="toggle-2d" type="button">Afficher le plan 2D</button>
+            <button id="export-svg" type="button">Exporter le plan SVG</button>
+            <button id="readiness" type="button">Limites documentées</button>
+          </details>
+          <div class="options-divider" role="separator"></div>
+          <details class="options-group options-tools">
+            <summary class="options-label">Affichage</summary>
+            <button id="quality" type="button" aria-pressed="true">Qualité visuelle : haute</button>
+            <label class="option-check"><input type="checkbox" id="free-camera"> Caméra libre (ne suit pas le récit)</label>
+            <label class="option-check"><input type="checkbox" id="reduce-motion"> Réduire les mouvements</label>
+          </details>
+          <a class="options-link" href="DIAGRAM_DESIGN.md" target="_blank" rel="noreferrer">Guide et sources</a>
+          <p class="simulation-note">La maquette illustre les flux ; elle ne configure ni ne mesure les VM.</p>
+        </div>
+      </details>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <aside class="chapter-rail" aria-label="Parcours de présentation">
+      <p id="chapter-summary">9 chapitres · 15 min</p>
+      <nav id="chapter-nav" aria-label="Chapitres"></nav>
+    </aside>
+
+    <section class="lab-view" aria-label="Laboratoire interactif">
+      <div class="canvas-toolbar">
+        <div class="toolbar-left">
+          <div class="view-switch" role="group" aria-label="Vue de la maquette">
+            <button type="button" data-mode="physical" aria-pressed="true">Équipements</button>
+            <button type="button" data-mode="logical" aria-pressed="false">Connexions</button>
+            <button type="button" data-mode="security" aria-pressed="false">Sécurité</button>
+          </div>
+        </div>
+        <p id="scene-hint">Cliquez sur un équipement pour l’ouvrir.</p>
+      </div>
+
+      <div id="stage" role="region" aria-label="Maquette 3D. Cliquez sur un équipement pour consulter ses faits et interfaces.">
+        <button id="back-network" type="button" hidden>Retour au parcours</button>
+        <button id="exit-fullscreen" type="button" hidden>Quitter le plein écran <kbd>Échap</kbd></button>
+        <div id="scene-labels"></div>
+        <div id="map2d" hidden></div>
+        <div id="loading">Préparation du laboratoire…</div>
+        <div id="fallback" hidden><p>La 3D est indisponible. Le plan 2D conserve les parcours et les explications.</p></div>
+        <div id="chapter-card" hidden aria-hidden="true"><small></small><strong></strong></div>
+        <div id="whatif-banner" hidden role="status"></div>
+        <button id="open-packet" type="button" hidden aria-pressed="false">Ouvrir le paquet <kbd>P</kbd></button>
+        <section id="quiz" hidden aria-label="Question du mode quiz"></section>
+        <section id="whatif-panel" hidden aria-label="Simulation de pannes">
+          <div class="whatif-head">
+            <h2>Et si… ?</h2>
+            <button id="whatif-close" type="button" aria-label="Fermer la simulation de pannes"></button>
+          </div>
+          <p>Choisissez une ou plusieurs pannes, puis rejouez un trajet : la maquette montre où il casse et pourquoi.</p>
+          <label for="whatif-flow">Trajet testé</label>
+          <select id="whatif-flow"></select>
+          <div id="whatif-faults"></div>
+          <div class="whatif-actions">
+            <button id="whatif-run" class="primary" type="button">Rejouer avec ces pannes</button>
+            <button id="whatif-reset" type="button">Tout rétablir</button>
+          </div>
+          <small>Simulation pédagogique · aucune VM n’est modifiée.</small>
+        </section>
+      </div>
+
+      <div id="transport-strip" aria-label="Trajet et transport">
+        <div>
+          <strong id="hop-from">PC A · OPNsense</strong>
+          <small id="hop-ingress">VMnet12 → Ethernet A</small>
+        </div>
+        <div class="trunk-lanes">
+          <div class="lane-buttons">
+            <button class="lane lane20" type="button" data-inspect-link="trunk20">VLAN20 · SERVEURS</button>
+            <button class="lane lane30" type="button" data-inspect-link="trunk30">VLAN30 · STOCKAGE</button>
+          </div>
+          <strong id="hop-direction">Un câble Ethernet · deux VLANs tagués</strong>
+          <button id="inspect-hop" type="button" hidden></button>
+        </div>
+        <div>
+          <strong id="hop-to">PC B · Alpine SW-B</strong>
+          <small id="hop-egress">Ethernet B → VMnet12</small>
+        </div>
+      </div>
+
+      <div class="scene-legend" aria-label="Légende des flux">
+        <span><i class="line copper"></i>Câble Ethernet</span>
+        <span><i class="line mint"></i>VLAN20 · SERVEURS</span>
+        <span><i class="line violet"></i>VLAN30 · STOCKAGE</span>
+        <span class="legend-note">La maquette simule les flux ; les preuves sont datées.</span>
+      </div>
+
+      <aside id="security-panel" hidden aria-label="Protections du laboratoire">
+        <h2>Qui décide ?</h2>
+        <div id="security-rule">
+          <strong id="rule-outcome"></strong>
+          <p id="rule-match"></p>
+          <p id="rule-control"></p>
+          <small>Décision illustrée · trajet simulé</small>
+        </div>
+        <p class="security-intro">Suivez le paquet jusqu’au contrôle qui autorise ou refuse.</p>
+        <section>
+          <h3>Zones séparées</h3>
+          <p>CLIENTS, SERVEURS et STOCKAGE. Tout échange entre zones passe par OPNsense.</p>
+        </section>
+        <section>
+          <h3>Droits du VPN</h3>
+          <button id="security-allow" class="allow" type="button">Suivre HTTPS8443 autorisé</button>
+          <button id="security-deny" class="deny" type="button">Suivre SMB445 refusé</button>
+          <p>Le refus s’arrête au pare-feu, avant le trunk.</p>
+        </section>
+        <section>
+          <h3>Protections des services</h3>
+          <p>Windows : Defender et audit. Ubuntu : iptables et SSH par clé. NAS : ACL. InvoiceShelf : session et rôle.</p>
+        </section>
+      </aside>
+
+      <aside id="component-panel" hidden aria-label="Composant ouvert">
+        <div class="panel-heading">
+          <div id="component-icon"></div>
+          <button id="close-panel" type="button" aria-label="Fermer le composant"></button>
+        </div>
+        <nav id="ownership-trail" aria-label="Emplacement du composant"></nav>
+        <p class="component-location" id="node-location"></p>
+        <h2 id="node-title"></h2>
+        <p class="component-purpose" id="node-purpose"></p>
+        <div id="component-layers"></div>
+        <div id="component-details"></div>
+      </aside>
+    </section>
+
+    <section class="story-bar" aria-label="Étape de présentation">
+      <div class="story-content">
+        <p id="step-position">Chapitre 1 · 1 / 24</p>
+        <h2 id="step-title">Une facture traverse le réseau</h2>
+        <p id="step-copy">Windows rejoint InvoiceShelf par OPNsense et le VLAN 20.</p>
+        <p id="speaker-cue" class="speaker-cue" hidden></p>
+        <div id="packet-meta"></div>
+      </div>
+      <div class="story-controls">
+        <div class="story-actions">
+          <button id="prev-step" type="button" aria-label="Étape précédente" disabled></button>
+          <button id="show-evidence" class="evidence-open" type="button">Preuves</button>
+          <button id="next-step" class="primary" type="button" disabled>Suivant</button>
+        </div>
+        <div id="step-track" aria-label="Progression du parcours"></div>
+        <small class="keyboard-hint">← → étapes · Espace lecture · P paquet</small>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="evidence-dialog" class="evidence-dialog" aria-modal="true" aria-labelledby="evidence-title" aria-describedby="evidence-scope">
+    <div class="evidence-shell">
+      <header class="evidence-header">
+        <h2 id="evidence-title">Preuves datées</h2>
+        <button id="evidence-close" type="button" aria-label="Fermer les preuves"></button>
+      </header>
+      <div class="evidence-content">
+        <nav id="evidence-list" aria-label="Sujets des preuves"></nav>
+        <figure class="evidence-media">
+          <div class="evidence-image-frame">
+            <p id="evidence-empty" role="status" hidden>Aucune capture sélectionnée pour ce sujet.</p>
+            <img id="evidence-image" alt="" hidden>
+          </div>
+          <figcaption id="evidence-caption"></figcaption>
+        </figure>
+      </div>
+      <footer class="evidence-footer">
+        <p id="evidence-scope">Les captures documentent des essais datés ; la maquette ne prouve pas leur exécution.</p>
+        <div class="evidence-navigation">
+          <button id="evidence-prev" type="button" aria-label="Preuve précédente" disabled></button>
+          <span id="evidence-count" aria-live="polite"></span>
+          <button id="evidence-next" type="button">Suivante</button>
+        </div>
+      </footer>
+    </div>
+  </dialog>
+
+  <script type="module" src="network-assets/diagram.bundle.js"></script>
+</body>
+</html>

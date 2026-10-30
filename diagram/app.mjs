@@ -1,5 +1,6 @@
 import {createScene} from './scene.mjs';
 import {scenarios} from './scenarios.mjs';
+import {chapters,proofs,presentationFlow} from './presentation.mjs';
 import {makeMap} from './map.mjs';
 import {iconElement} from './icons.mjs';
 import {faults as faultList,simulate,describe} from './whatif.mjs';
@@ -7,6 +8,7 @@ import {createQuiz} from './quiz.mjs';
 const $=id=>document.getElementById(id);
 let model,scene=null,selected=null,mode='physical',flow=null,step=0,playing=false,timer=null,mapMode=false;
 let showStoryDetails=false,quizMode=false,cardTimer=null,finaleTimer=null;
+let presenting=true,presentationStep=0,evidenceItems=[],evidenceIndex=0;
 const faults=new Set();
 const quiz=createQuiz($('quiz'),()=>renderStory(true));
 const reduced=$('reduce-motion');reduced.checked=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -17,32 +19,68 @@ function syncStoryMode(){const active=flow?.id==='presentation',toggle=$('toggle
 function syncSide(){const security=mode==='security'&&$('component-panel').hidden;$('security-panel').hidden=!security;document.querySelector('.lab-view').classList.toggle('has-side-panel',security||!$('component-panel').hidden);$('transport-strip').hidden=!!selected&&!selected.startsWith('link:');$('back-network').hidden=!selected;}
 function modeView(value){pause();scene?.stop();if(!$('component-panel').hidden)closePanel();mode=value;scene?.setMode(value);document.querySelectorAll('[data-mode]').forEach(n=>n.setAttribute('aria-pressed',String(n.dataset.mode===value)));$('scene-hint').textContent=value==='physical'?'Cliquez sur un équipement pour l’ouvrir.':value==='logical'?'Suivez les connexions, sans changer la place des machines.':'Zones séparées, accès filtrés : choisissez un exemple à droite.';syncSide();if(flow)renderStory();else renderMap();}
 function list(title,values){const section=el('section'),ul=el('ul');section.append(el('h3',title));values.forEach(t=>ul.append(el('li',t)));section.append(ul);return section;}
-const layerSets={
-fw:[['wan','Interfaces','WAN, MGMT, CLIENTS et trunk20/30'],['switch','Routage','Une passerelle pour chaque zone'],['fw','Filtrage','Règles entrantes, états et journaux']],
-windows:[['windows','Poste client','Ouvre InvoiceShelf et le partage autorisé'],['fw','Protection','Defender et pare-feu local'],['monitor','Audit','Sysmon et événements Security']],
-switch:[['switch','Port trunk','VLAN20 et VLAN30 tagués'],['ubuntu','Accès20','Ubuntu reçoit des trames non taguées'],['nas','Accès30','TrueNAS reçoit des trames non taguées']],
-ubuntu:[['ubuntu','Système invité','SSH, iptables, audit et journaux'],['proxy','Docker & HTTPS','Nginx8443 → InvoiceShelf8080 interne'],['data','Données & supervision','SQLite local, sauvegarde NAS, Prometheus']],
-nas:[['nas','Partage SMB','Lecture, écriture ou refus selon le compte'],['vpn','Données protégées','Dataset chiffré et clés privées'],['layers','Restauration','Snapshots et récupération de fichier']],
-app:[['app','Facturation','Clients fictifs, factures, dépenses et PDF'],['fw','Rôles','Comptable ou consultation, à vérifier'],['data','Persistance','SQLite et fichiers dans Ubuntu']],
-proxy:[['vpn','HTTPS8443','Chiffrement jusqu’au proxy'],['app','Backend8080','Sur le bridge Docker interne']],
-data:[['data','Volume local','Base active et fichiers dans Ubuntu'],['nas','Archive NAS','Application arrêtée avant sauvegarde']],
-monitor:[['monitor','Prometheus','Collecte les cibles et la disponibilité'],['windows','Windows exporter','Métriques TCP9182'],['monitor','Grafana','Affiche les séries collectées']],
-vpn:[['vpn','Tunnel','OpenVPN sur le WAN simulé'],['app','Droit limité','Application autorisée ; NAS/admin refusés']],
-wan:[['wan','NAT VMware','VMnet8 sur l’hôte A'],['fw','Passerelle','WAN de la VM OPNsense']],
-mgmt:[['mgmt','Gestion','Hôte A sur10.77.99.254'],['fw','Accès séparé','MGMT non tagué ; retirer ce chemin pour le test VPN']]
-};
+function factsGrid(rows){
+const dl=el('dl',undefined,'fact-grid');
+for(const [label,value] of rows){const row=el('div');row.append(el('dt',label),el('dd',value));dl.append(row);}
+return dl;
+}
+const nodeProofs={};for(const s of presentationFlow.steps){const c=chapters.find(c=>c.id===s.module);if(!c)continue;for(const id of [s.node,s.inspect,s.from,s.to].filter(Boolean))nodeProofs[id]=[...new Set([...(nodeProofs[id]||[]),...c.proofs])];}
 function fillPanel(id){
 const hostId=id.startsWith('host:')?id.slice(5):null,n=model.nodes.find(n=>n.id===id),h=model.hosts.find(h=>h.id===hostId);
-$('component-panel').hidden=false;$('component-icon').replaceChildren(iconElement(h?'host':id));$('node-location').textContent=h?'Hôte physique · '+h.owner:n.kind+' · PC '+n.host.toUpperCase();
-$('node-title').textContent=h?h.name:n.name;$('node-purpose').textContent=h?(h.id==='a'?'Héberge la passerelle et le poste client. Les accès de gestion et le client VPN sont des applications/interfaces de cet hôte.':'Héberge la commutation VLAN, les services Ubuntu et le stockage NAS. Leur communication passe par le pare-feu sur A.'):n.purpose;
+$('component-panel').hidden=false;$('component-icon').replaceChildren(iconElement(h?'host':id));
+$('node-location').textContent=h?'Hôte physique':n.kind+' · PC '+n.host.toUpperCase();
+$('node-title').textContent=h?h.name:n.name;
+$('node-purpose').textContent=h?(h.id==='a'?'Contrôle les communications et héberge le poste de démonstration.':'Héberge la commutation, les services et le stockage.'):n.purpose;
 const layers=$('component-layers');layers.replaceChildren();
-if(h){model.nodes.filter(n=>n.host===h.id&&!n.parent).forEach(n=>{const b=button('',()=>openComponent(n.id));b.append(iconElement(n.id),el('span',n.name));layers.append(b);});}
-else{for(const [symbol,title,copy] of layerSets[id]||[]){const item=el('div',undefined,'layer');item.append(iconElement(symbol));const text=el('div');text.append(el('strong',title),el('p',copy));item.append(text);layers.append(item);}}
+if(h){layers.append(factsGrid([['Hyperviseur','VMware Workstation'],['Machines',h.id==='a'?'OPNsense · Windows':'Alpine · Ubuntu · TrueNAS'],['Mémoire physique',h.ram],['Rôle',h.id==='a'?'Accès et contrôle':'Services et données']]));}
+else layers.append(factsGrid(n.facts||n.interfaces.slice(0,4).map(r=>[r[0],r.slice(1).join(' · ')])));
 const out=$('component-details');out.replaceChildren();
-if(h){out.append(list('Ressources relevées',[h.cpu,h.ram,h.free,h.disk]),el('p',h.planned,'state-note'));return;}
-if(id==='ubuntu'){out.append(el('h3','Services dans cette VM'));for(const child of model.nodes.filter(n=>n.parent==='ubuntu'))out.append(button(child.name,()=>openComponent(child.id),'service-action'));}
-const tech=el('details');tech.append(el('summary','Configuration et état réel'));const body=el('div',undefined,'technical-body');body.append(el('p',n.status,'state-note'),el('p',n.resources));
-const table=el('table');for(const row of n.interfaces){const tr=el('tr');row.forEach(v=>tr.append(el('td',v)));table.append(tr);}body.append(table,list('Protections à vérifier',n.controls),el('h3','Prochaine action'),el('p',n.next),el('h3','Preuve disponible'),el('p',n.evidence),el('p','Source : '+n.source,'source-note'));tech.append(body);out.append(tech);
+const children=model.nodes.filter(v=>h?v.host===h.id&&!v.parent: v.parent===id);
+if(children.length){const actions=el('div',undefined,'service-actions');for(const child of children)actions.append(button(child.name,()=>openComponent(child.id),'service-action'));out.append(actions);}
+if(nodeProofs[id])out.append(button('Preuves associées',()=>openEvidence(nodeProofs[id]),'inline-action'));
+if(h)return;
+const tech=el('details');tech.append(el('summary','Configuration complète'));
+const body=el('div',undefined,'technical-body');body.append(el('p',n.status,'state-note'),el('p',n.resources));
+const table=el('table');for(const row of n.interfaces){const tr=el('tr');row.forEach(v=>tr.append(el('td',v)));table.append(tr);}
+body.append(table,list('Protections documentées',n.controls),el('h3','Portée de la preuve'),el('p',n.evidence),el('p','Source : '+n.source,'source-note'));tech.append(body);out.append(tech);
+}
+function buildChapterNav(){
+$('chapter-nav').replaceChildren(...chapters.map((c,i)=>{const b=button('',()=>chooseChapter(c.id),'chapter-button');b.dataset.chapter=c.id;b.append(el('span',String(i+1).padStart(2,'0'),'chapter-number'),el('span',c.title,'chapter-name'));b.setAttribute('aria-label','Chapitre '+(i+1)+' : '+c.title);return b;}));
+}
+function currentChapter(){return flow?.id==='presentation'?chapters.find(c=>c.id===flow.steps[step].module):null;}
+function syncChapters(){
+const current=currentChapter(),index=chapters.indexOf(current);
+for(const b of $('chapter-nav').children){b.setAttribute('aria-current',b.dataset.chapter===current?.id?'step':'false');b.classList.toggle('done',index>=0&&chapters.findIndex(c=>c.id===b.dataset.chapter)<index);}
+$('chapter-summary').textContent=current?'Chapitre '+(index+1)+' / 9':'9 chapitres · environ 15 min';
+$('present-mode').setAttribute('aria-pressed',String(presenting));$('explore-mode').setAttribute('aria-pressed',String(!presenting));
+$('show-evidence').setAttribute('aria-label',current?'Voir les preuves : '+current.title:'Voir les preuves du laboratoire');
+}
+function chooseChapter(id){
+presenting=true;document.body.classList.add('presenting');document.body.classList.remove('exploring');toggleWhatIf(false);
+if(flow?.id!=='presentation')chooseFlow('presentation');
+const index=flow.steps.findIndex(s=>s.module===id);go(Math.max(0,index));syncChapters();
+}
+function setExperience(value){
+if(presenting&&flow?.id==='presentation')presentationStep=step;
+presenting=value;document.body.classList.toggle('presenting',value);document.body.classList.toggle('exploring',!value);
+pause();toggleWhatIf(false);
+if(value){const resume=presentationStep;chooseFlow('presentation');go(resume);}else{if(selected)closePanel();flow=null;step=0;scene?.reset();modeView('physical');renderStory();}
+syncChapters();
+}
+function renderEvidence(){
+const proof=evidenceItems[evidenceIndex],image=$('evidence-image');
+$('evidence-empty').hidden=!!proof;image.hidden=!proof;
+$('evidence-caption').textContent=proof?.caption||'';$('evidence-scope').textContent=proof?.scope||'';
+$('evidence-count').textContent=proof?(evidenceIndex+1)+' / '+evidenceItems.length:'';
+$('evidence-prev').disabled=evidenceIndex===0;$('evidence-next').disabled=evidenceIndex>=evidenceItems.length-1;
+for(const b of $('evidence-list').children)b.setAttribute('aria-current',String(b.dataset.proof===proof?.id));
+if(proof){image.alt=proof.caption;image.src='network-assets/evidence/'+proof.image;}
+}
+function openEvidence(ids=currentChapter()?.proofs||proofs.map(p=>p.id)){
+pause();evidenceItems=ids.map(id=>proofs.find(p=>p.id===id)).filter(Boolean);evidenceIndex=0;
+$('evidence-title').textContent='Preuves · '+(currentChapter()?.title||'laboratoire');
+$('evidence-list').replaceChildren(...evidenceItems.map((p,i)=>{const b=button(p.title,()=>{evidenceIndex=i;renderEvidence();},'evidence-item');b.dataset.proof=p.id;return b;}));
+renderEvidence();if(!$('evidence-dialog').open)$('evidence-dialog').showModal();
 }
 function renderOwnership(id){
 const nav=$('ownership-trail');nav.replaceChildren(button('Réseau',globalView));if(id.startsWith('link:'))return;
@@ -59,7 +97,7 @@ function syncPacketButton(open=!!scene?.packetOpen()){const b=$('open-packet'),v
 function togglePacket(){if(!scene||mapMode)return;let open=false;if(!scene.packetOpen()){if(!scene.packetVisible())return;pause();open=scene.explodePacket(true);$('scene-hint').textContent='Paquet ouvert · chaque couche porte une information différente.';}else{scene.explodePacket(false);$('scene-hint').textContent='Suivez le paquet jusqu’au contrôle suivant.';}syncPacketButton(open);}
 function syncQuality(){const q=scene?.quality()||'economy';$('quality').textContent='Qualité visuelle : '+(q==='high'?'haute':'économie');$('quality').setAttribute('aria-pressed',String(q==='high'));}
 function quizEntries(){return flow?flow.steps.map((s,i)=>[flow.id+':'+i,s.quiz]).filter(([,q])=>q):[];}
-function chapterCard(current){if(flow.id!=='presentation')return;const prev=flow.steps[step-1];if(prev&&prev.chapter===current.chapter)return;const chapters=[...new Set(flow.steps.map(s=>s.chapter))],card=$('chapter-card');card.querySelector('small').textContent='Chapitre '+(chapters.indexOf(current.chapter)+1)+' / '+chapters.length;card.querySelector('strong').textContent=current.chapter;card.hidden=false;card.classList.remove('show');void card.offsetWidth;card.classList.add('show');clearTimeout(cardTimer);cardTimer=setTimeout(()=>{card.hidden=true;},reduced.checked?1600:2600);}
+function chapterCard(current){if(flow.id!=='presentation')return;const prev=flow.steps[step-1];if(prev&&prev.module===current.module)return;const ch=chapters.find(c=>c.id===current.module),card=$('chapter-card');card.querySelector('small').textContent='Chapitre '+(chapters.indexOf(ch)+1)+' / '+chapters.length;card.querySelector('strong').textContent=ch?.title||current.chapter;card.hidden=false;card.classList.remove('show');void card.offsetWidth;card.classList.add('show');clearTimeout(cardTimer);cardTimer=setTimeout(()=>{card.hidden=true;},reduced.checked?1600:2600);}
 function finale(){clearTimeout(finaleTimer);if(!quizMode||!flow||step!==flow.steps.length-1)return;const entries=quizEntries();if(entries.length)finaleTimer=setTimeout(()=>{if(quizMode&&flow&&step===flow.steps.length-1)quiz.summary(quiz.score(entries));},900);}
 function openComponent(id){if(id==='packet'){togglePacket();return;}const isLink=id.startsWith('link:');if(isLink?!model.links.some(l=>'link:'+l.id===id):id.startsWith('host:')?!model.hosts.some(h=>'host:'+h.id===id):!model.nodes.some(n=>n.id===id))return;pause();scene?.stop();selected=id;if(isLink){fillLink(id.slice(5));scene?.reset();scene?.finishView();scene?.inspectLink(id.slice(5));}else{fillPanel(id);scene?.open(id);}renderOwnership(id);syncSide();$('scene-hint').textContent='Vue fonctionnelle · le parcours est conservé pendant l’inspection.';renderMap();syncPacketButton();}
 function closePanel(resetScene=true){$('component-panel').hidden=true;selected=null;if(resetScene){scene?.reset();scene?.finishView();if(flow)scene?.showStep(flow.steps,step,false,()=>{},flow,{hold:quizMode&&!!flow.steps[step].quiz&&!quiz.answered(flow.id+':'+step)});}syncSide();renderMap();syncPacketButton();}
@@ -75,10 +113,10 @@ $('hop-from').textContent=from?name(from)+' · PC '+pc(from):'PC A · OPNsense';
 $('hop-to').textContent=to?name(to)+' · PC '+pc(to):current?.decision?'Décision au point de contrôle':'PC B · Alpine SW-B';
 $('hop-ingress').textContent=l?(l.from===from?l.fromPort:l.toPort):'VMnet12 → Ethernet A';
 $('hop-egress').textContent=l?(l.to===to?l.toPort:l.fromPort):'Ethernet B → VMnet12';
-if(current&&!l){const ingress=current.chapter==='VPN'||['deny','vpnapp'].includes(flow?.id)?'Entrée : interface VPN':current.chapter==='Sauvegarde'||flow?.id==='backup'?'Entrée : VLAN20':'Entrée : CLIENTS';$('hop-ingress').textContent=current.node==='fw'?ingress:'Dans '+name(current.node);
-$('hop-egress').textContent=current.denied&&current.node==='fw'?'Aucune sortie · paquet arrêté':current.node==='fw'?(current.chapter==='Sauvegarde'||flow?.id==='backup'?'Sortie : VLAN30':'Sortie : VLAN20'):current.node==='nas'?'Compte et ACL du dataset':current.node==='app'?'Ubuntu · données locales':'Contrôle du service';}
+if(current&&!l){const ingress=current.module==='security'||['deny','vpnapp'].includes(flow?.id)?'Entrée : interface VPN':current.module==='storage'||flow?.id==='backup'?'Entrée : VLAN20':'Entrée : CLIENTS';$('hop-ingress').textContent=current.node==='fw'?ingress:'Dans '+name(current.node);
+$('hop-egress').textContent=current.denied&&current.node==='fw'?'Aucune sortie · paquet arrêté':current.node==='fw'?(current.module==='storage'||flow?.id==='backup'?'Sortie : VLAN30':'Sortie : VLAN20'):current.node==='nas'?'Compte et ACL du dataset':current.node==='app'?'Ubuntu · données locales':'Contrôle du service';}
 $('hop-direction').textContent=l?(l.id.startsWith('trunk')?'PC '+pc(from)+' → PC '+pc(to)+' · VLAN'+l.zone:current.tag||l.label):(current?.denied&&current.node==='fw'?'REFUS · ':'')+(current?.decision||'Un câble Ethernet · deux VLANs tagués');
-if(flow?.id==='presentation'&&!l){if(current.chapter==='Architecture'){$('hop-from').textContent='PC A · OPNsense + Windows';$('hop-to').textContent='PC B · SW-B + Ubuntu + TrueNAS';$('hop-ingress').textContent='Deux hôtes physiques';$('hop-egress').textContent='Trois VM sur PC B';$('hop-direction').textContent='Cinq VM · les conteneurs vivent dans Ubuntu';}else if(current.node){$('hop-from').textContent=name(current.node)+' · PC '+pc(current.node);$('hop-to').textContent=current.decision?'Point de contrôle':'Rôle du composant';$('hop-ingress').textContent='Élément mis en évidence';$('hop-egress').textContent=current.denied&&current.chapter==='VPN'?'Trafic arrêté au pare-feu':current.denied?'Sonde en alerte':current.decision?'Contrôle attendu':'Voir son rôle dans le récit';$('hop-direction').textContent=current.denied&&current.chapter==='VPN'?'REFUS simulé':current.denied?'Indisponibilité simulée':current.decision||'Composant mis en évidence';}}
+if(flow?.id==='presentation'&&!l){if(current.module==='virtualization'){$('hop-from').textContent='PC A · OPNsense + Windows';$('hop-to').textContent='PC B · SW-B + Ubuntu + TrueNAS';$('hop-ingress').textContent='Deux hôtes physiques';$('hop-egress').textContent='Trois VM sur PC B';$('hop-direction').textContent='Cinq VM · les conteneurs vivent dans Ubuntu';}else if(current.node){$('hop-from').textContent=name(current.node)+' · PC '+pc(current.node);$('hop-to').textContent=current.decision?'Point de contrôle':'Rôle du composant';$('hop-ingress').textContent='Élément mis en évidence';$('hop-egress').textContent=current.denied&&(current.module==='security'||flow?.id==='deny')?'Trafic arrêté au pare-feu':current.denied?'Sonde en alerte':current.decision?'Contrôle attendu':'Voir son rôle dans le récit';$('hop-direction').textContent=current.denied&&(current.module==='security'||flow?.id==='deny')?'REFUS simulé':current.denied?'Indisponibilité simulée':current.decision||'Composant mis en évidence';}}
 $('inspect-hop').hidden=!l;$('inspect-hop').textContent=l?'Inspecter cette connexion':'';
 $('transport-strip').dataset.active=current?.link||'';
 const outcome=(current?.denied&&current.node==='fw'?'REFUS · ':'')+(current?.decision||'Choisissez un trajet autorisé ou refusé.');$('rule-outcome').textContent=outcome;$('rule-outcome').classList.toggle('denied',!!current?.denied);
@@ -86,12 +124,16 @@ $('rule-match').textContent=flow?flow.source+' → '+flow.destination+' · '+flo
 $('rule-control').textContent=current?.node==='app'?(current.denied?'Disponibilité : la sonde HTTPS détecte la panne applicative.':'Contrôle indépendant : session et rôle InvoiceShelf.'):current?.node==='nas'?'Contrôle indépendant : compte et ACL du dataset.':current?.node==='fw'?'Point de contrôle : interface entrante OPNsense.':'Le marqueur dans la scène situe le contrôle courant.';
 }
 function renderStory(animate=false){
-if(!flow){syncStoryMode();updateJourney();$('step-title').classList.remove('denied');$('step-position').textContent='Vue d’ensemble · 0 / '+scenarios.find(s=>s.id==='presentation').steps.length;$('step-title').textContent='Commence par les deux PC.';$('step-copy').textContent='Un parcours guidé raconte l’usage, les contrôles, la sauvegarde, le VPN et la reprise.';$('speaker-cue').hidden=true;$('speaker-cue').textContent='';$('packet-meta').replaceChildren();$('step-track').replaceChildren();$('play').disabled=true;$('prev-step').disabled=true;$('next-step').disabled=true;quiz.hide();$('whatif-banner').hidden=true;syncPacketButton();return;}
+syncChapters();
+if(!flow){syncStoryMode();updateJourney();$('step-title').classList.remove('denied');$('step-position').textContent='Vue d’ensemble · 0 / '+scenarios.find(s=>s.id==='presentation').steps.length;$('step-title').textContent='Explorer le laboratoire';$('step-copy').textContent='Cliquez une machine pour l’ouvrir. « Présenter » reprend le récit.';$('speaker-cue').hidden=true;$('speaker-cue').textContent='';$('packet-meta').replaceChildren();$('step-track').replaceChildren();$('play').disabled=true;$('prev-step').disabled=true;$('next-step').disabled=true;quiz.hide();$('whatif-banner').hidden=true;syncPacketButton();return;}
 syncStoryMode();
-const current=flow.steps[step];updateJourney(current);$('step-position').textContent=(current.chapter||(flow.id==='whatif'?'Et si…':'Parcours'))+' · '+(step+1)+' / '+flow.steps.length+' · '+(flow.id==='whatif'?'simulation de panne':'simulation explicative');
-$('whatif-banner').hidden=flow.id!=='whatif';$('whatif-banner').textContent='Simulation de panne · '+describe(new Set(flow.faults||[]))+' · '+flow.name.replace('Et si… · ','');$('step-title').textContent=current.title;$('step-copy').textContent=current.text;$('speaker-cue').hidden=!current.cue;$('speaker-cue').textContent=current.cue?'À dire : '+current.cue:'';$('step-title').classList.toggle('denied',!!current.denied);$('packet-meta').replaceChildren(...[flow.source+' → '+flow.destination,flow.protocol,current.tag||current.decision||''].filter(Boolean).map(t=>el('span',t)));
+const current=flow.steps[step];if(flow.id==='presentation')presentationStep=step;updateJourney(current);$('step-position').textContent=(current.chapter||(flow.id==='whatif'?'Et si…':'Parcours'))+' · '+(step+1)+' / '+flow.steps.length+' · '+(flow.id==='whatif'?'simulation de panne':'simulation explicative');
+$('whatif-banner').hidden=flow.id!=='whatif';$('whatif-banner').textContent='Simulation de panne · '+describe(new Set(flow.faults||[]))+' · '+flow.name.replace('Et si… · ','');$('step-title').textContent=current.title;$('step-copy').textContent=current.text;$('speaker-cue').hidden=!current.cue||!$('notes-toggle').checked;$('speaker-cue').textContent=current.cue?'À dire : '+current.cue:'';$('step-title').classList.toggle('denied',!!current.denied);$('packet-meta').replaceChildren(...[flow.source+' → '+flow.destination,flow.protocol,current.tag||current.decision||''].filter(Boolean).map(t=>el('span',t)));
 $('play').disabled=false;$('prev-step').disabled=step===0;$('next-step').disabled=step===flow.steps.length-1;
-$('step-track').replaceChildren(...flow.steps.map((s,i)=>{const b=button('',()=>go(i));b.setAttribute('aria-label','Étape '+(i+1)+' : '+s.title);b.setAttribute('aria-current',step===i?'step':'false');if(i<step)b.classList.add('done');return b;}));
+const chapter=currentChapter(),visibleSteps=flow.steps.map((s,i)=>({s,i})).filter(({s})=>!chapter||s.module===chapter.id);
+if(chapter)$('step-position').textContent='Chapitre '+(chapters.indexOf(chapter)+1)+' / 9 · '+(visibleSteps.findIndex(v=>v.i===step)+1)+' / '+visibleSteps.length;
+$('step-track').replaceChildren(...visibleSteps.map(({s,i},j)=>{const b=button('',()=>go(i));b.setAttribute('aria-label','Étape '+(j+1)+' / '+visibleSteps.length+' : '+s.title);b.setAttribute('aria-current',step===i?'step':'false');if(i<step)b.classList.add('done');return b;}));
+{const nx=flow.steps[step+1],nc=flow.id==='presentation'&&nx&&nx.module!==current.module?chapters.find(c=>c.id===nx.module):null;$('next-step').replaceChildren(document.createTextNode(step===flow.steps.length-1?'Fin du parcours':nc?'Chapitre suivant : '+nc.title:'Suivant'),iconElement('next'));}
 clearTimeout(finaleTimer);
 const key=flow.id+':'+step,entries=quizEntries();
 if(quizMode&&current.quiz&&!quiz.answered(key)){scene?.showStep(flow.steps,step,false,()=>{},flow,{hold:true});renderMap();quiz.ask(current.quiz,key,entries.findIndex(([k])=>k===key)+1,entries.length);$('scene-hint').textContent='Question : répondez avant de voir l’animation.';syncPacketButton();return;}
@@ -100,19 +142,26 @@ scene?.showStep(flow.steps,step,animate&&!mapMode,()=>{schedule(1100);finale();}
 if(animate&&(!current.link||reduced.checked||mapMode||!scene))schedule(3200);
 if(!animate||!current.link||reduced.checked||mapMode)finale();
 }
-function go(index){if(!flow)return;if(selected)closePanel();pause();scene?.stop();step=Math.max(0,Math.min(flow.steps.length-1,index));renderStory(true);}
+function go(index){if(!flow)return;if(!$('component-panel').hidden)closePanel();pause();scene?.stop();step=Math.max(0,Math.min(flow.steps.length-1,index));renderStory(true);}
 function chooseFlow(id){pause();flow=scenarios.find(s=>s.id===id)||null;step=0;modeView('logical');closePanel();scene?.stop();renderStory();}
 function download(name,text,type){const url=URL.createObjectURL(new Blob([text],{type}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 function buildWhatIf(){
 scenarios.filter(s=>s.id!=='presentation').forEach(s=>{const o=el('option',s.name);o.value=s.id;$('whatif-flow').append(o);});
 for(const f of faultList){const row=el('label',undefined,'fault'),input=document.createElement('input'),text=el('span');input.type='checkbox';input.value=f.id;input.addEventListener('change',()=>{if(input.checked)faults.add(f.id);else faults.delete(f.id);});text.append(el('strong',f.label),el('small',f.hint));row.append(input,text);$('whatif-faults').append(row);}
 }
-function toggleWhatIf(open=$('whatif-panel').hidden){$('whatif-panel').hidden=!open;$('whatif-toggle').setAttribute('aria-expanded',String(open));if(open){$('options').open=false;$('whatif-flow').value=flow&&flow.id!=='presentation'?(flow.id==='whatif'?flow.base:flow.id):'app';}}
+function toggleWhatIf(open=$('whatif-panel').hidden){if(open&&presenting)setExperience(false);$('whatif-panel').hidden=!open;$('whatif-toggle').setAttribute('aria-expanded',String(open));if(open){$('options').open=false;$('whatif-flow').value=flow&&flow.id!=='presentation'?(flow.id==='whatif'?flow.base:flow.id):'app';}}
 function runWhatIf(){const base=scenarios.find(s=>s.id===$('whatif-flow').value)||scenarios.find(s=>s.id==='app');pause();scene?.stop();flow=simulate(model,base,faults);step=0;$('scenario-select').value='';toggleWhatIf(false);modeView('logical');$('scene-hint').textContent=flow.broken?'Suivez le paquet jusqu’au point de rupture.':'Aucune des pannes choisies ne touche ce trajet.';$('play').click();}
 function resetWhatIf(){faults.clear();$('whatif-faults').querySelectorAll('input').forEach(i=>{i.checked=false;});if(flow?.id==='whatif'){const base=flow.base;chooseFlow(base);$('scenario-select').value=base;}}
 async function start(){
 try{const r=await fetch('network-assets/topology.json');if(!r.ok)throw Error('HTTP '+r.status);model=await r.json();const ids=new Set(model.nodes.map(n=>n.id));if(ids.size!==model.nodes.length||model.links.some(l=>!ids.has(l.from)||!ids.has(l.to)))throw Error('Liaisons incohérentes');}
 catch(e){$('loading').textContent='Impossible de charger le modèle. Utiliser le lanceur local. '+e.message;return;}
+buildChapterNav();
+$('evidence-close').append(iconElement('close'));$('evidence-prev').append(iconElement('prev'));$('evidence-next').append(iconElement('next'));
+$('present-mode').addEventListener('click',()=>setExperience(true));$('explore-mode').addEventListener('click',()=>setExperience(false));
+$('show-evidence').addEventListener('click',()=>openEvidence());$('evidence-close').addEventListener('click',()=>$('evidence-dialog').close());
+$('evidence-prev').addEventListener('click',()=>{evidenceIndex=Math.max(0,evidenceIndex-1);renderEvidence();});$('evidence-next').addEventListener('click',()=>{evidenceIndex=Math.min(evidenceItems.length-1,evidenceIndex+1);renderEvidence();});
+$('evidence-image').addEventListener('error',()=>{$('evidence-image').hidden=true;$('evidence-empty').hidden=false;$('evidence-empty').textContent='Cette capture n’est pas disponible. Consulter les notes du dépôt.';});
+$('notes-toggle').addEventListener('change',()=>{if(flow)renderStory();});
 $('overview').prepend(iconElement('global'));$('presentation').prepend(iconElement('fullscreen'));$('close-panel').append(iconElement('close'));$('prev-step').append(iconElement('prev'));$('next-step').append(iconElement('next'));pause();
 scenarios.forEach(s=>{const option=el('option',s.name);option.value=s.id;$('scenario-select').append(option);});
 try{scene=createScene(model,openComponent,{onAutoQuality:syncQuality});}catch(e){scene=null;$('fallback').hidden=false;mapView(true);$('top-view').disabled=true;$('quality').disabled=true;}
@@ -129,17 +178,17 @@ document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',(
 $('security-allow').addEventListener('click',()=>{chooseFlow('vpnapp');$('scenario-select').value='vpnapp';modeView('security');renderStory();});$('security-deny').addEventListener('click',()=>{chooseFlow('deny');$('scenario-select').value='deny';modeView('security');renderStory();});
 $('scenario-select').addEventListener('change',e=>chooseFlow(e.target.value));$('toggle-story-details').addEventListener('click',()=>{showStoryDetails=!showStoryDetails;syncStoryMode();});$('prev-step').addEventListener('click',()=>go(step-1));$('next-step').addEventListener('click',()=>go(step+1));$('play').addEventListener('click',()=>{if(!flow)return;if(selected)closePanel();if(playing){pause();return;}if(scene?.packetOpen())scene.explodePacket(false);if(step===flow.steps.length-1)step=0;playing=true;$('play').replaceChildren(iconElement('pause'),document.createTextNode('Pause'));$('play').setAttribute('aria-pressed','true');renderStory(true);});
 $('top-view').addEventListener('click',()=>{pause();scene?.topView();$('options').open=false;});$('toggle-2d').addEventListener('click',()=>mapView(!mapMode));reduced.addEventListener('change',()=>{pause();scene?.setReduced(reduced.checked);if(flow)renderStory();});
-$('readiness').addEventListener('click',()=>{pause();closePanel();$('options').open=false;$('component-panel').hidden=false;$('component-icon').replaceChildren(iconElement('layers'));$('node-location').textContent='Préparation du laboratoire';$('node-title').textContent='Les points ouverts';$('node-purpose').textContent='Ces points proviennent du plan et de l’état déclaré par B. Ils restent visibles sans prétendre que les tests ont réussi.';$('component-layers').replaceChildren(...model.issues.map(i=>{const row=el('div',undefined,'preparation-item');row.append(button(i.title,()=>openComponent(i.node)),el('p',i.text),el('small','Responsable : '+i.owner));return row;}));$('component-details').replaceChildren();syncSide();});
+$('readiness').addEventListener('click',()=>{pause();closePanel();$('options').open=false;$('component-panel').hidden=false;$('component-icon').replaceChildren(iconElement('layers'));$('node-location').textContent='Limites et portée des preuves';$('node-title').textContent='Limites documentées';$('node-purpose').textContent='Les preuves du 29 octobre établissent certains résultats et laissent ces points incomplets.';$('component-layers').replaceChildren(...model.issues.map(i=>{const row=el('div',undefined,'preparation-item');row.append(button(i.title,()=>openComponent(i.node)),el('p',i.text),el('small','Responsable : à compléter'));return row;}));$('component-details').replaceChildren();syncSide();});
 $('export-svg').addEventListener('click',()=>{pause();download('laboratoire-'+(flow?.id||'global')+'.svg',makeMap(model,flow?.steps||[],step,selected||''),'image/svg+xml');$('options').open=false;});
 $('presentation').addEventListener('click',async()=>{if(document.fullscreenElement){await document.exitFullscreen();return;}try{await document.documentElement.requestFullscreen();}catch{$('presentation').replaceChildren(iconElement('fullscreen'),document.createTextNode('Utiliser F11'));}});
 let idleTimer=0;const wake=()=>{document.body.classList.remove('idle');clearTimeout(idleTimer);if(document.fullscreenElement)idleTimer=setTimeout(()=>document.body.classList.add('idle'),2600);};
 const syncFullscreen=()=>{const on=!!document.fullscreenElement;document.body.classList.toggle('presentation-mode',on);$('exit-fullscreen').hidden=!on;$('options').open=false;$('presentation').replaceChildren(iconElement('fullscreen'),document.createTextNode(on?'Quitter le plein écran':'Plein écran'));wake();};document.addEventListener('fullscreenchange',syncFullscreen);syncFullscreen();
 $('exit-fullscreen').addEventListener('click',()=>document.exitFullscreen?.());document.addEventListener('pointermove',wake,{passive:true});document.addEventListener('keydown',wake);
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){pause();if(scene?.packetOpen()){togglePacket();return;}if(!$('whatif-panel').hidden){toggleWhatIf(false);return;}if(!$('component-panel').hidden)closePanel();$('options').open=false;return;}if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;
+document.addEventListener('keydown',e=>{if($('evidence-dialog').open){if(e.key==='ArrowRight'){$('evidence-next').click();e.preventDefault();}if(e.key==='ArrowLeft'){$('evidence-prev').click();e.preventDefault();}return;}if(e.key==='Escape'){pause();if(scene?.packetOpen()){togglePacket();return;}if(!$('whatif-panel').hidden){toggleWhatIf(false);return;}if(!$('component-panel').hidden)closePanel();$('options').open=false;return;}if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;
 if(quiz.open()){if(/^[1-3]$/.test(e.key)){e.preventDefault();quiz.choose(+e.key-1);return;}if(e.key==='ArrowRight'||e.key==='Enter'&&e.target.tagName!=='BUTTON'){e.preventDefault();quiz.proceed();return;}if(e.key===' '){e.preventDefault();return;}}
 if(e.key.toLowerCase()==='p'&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&flow){e.preventDefault();togglePacket();return;}if(e.key.toLowerCase()==='f'&&!e.ctrlKey&&!e.metaKey&&!e.altKey){e.preventDefault();$('presentation').click();return;}if(e.target.tagName==='SUMMARY')return;if(e.key==='ArrowRight'&&flow){e.preventDefault();go(step+1);}if(e.key==='ArrowLeft'&&flow){e.preventDefault();go(step-1);}if(e.key===' '&&e.target===document.body&&flow){e.preventDefault();$('play').click();}});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)pause();});document.addEventListener('lab-webgl-lost',()=>{pause();$('fallback').hidden=false;mapView(true);});
-modeView('physical');renderStory();scene?.flyIn();
-window.labDiagram={revision:model.revision,getState:()=>({selected,mode,scenario:flow?.id||null,step,playing,mapMode,quizMode,quizOpen:quiz.open(),faults:[...faults],whatif:flow?.id==='whatif'?{base:flow.base,broken:flow.broken,steps:flow.steps.length}:null,render:scene?.info()||null})};
+chooseFlow('presentation');go(0);scene?.flyIn();
+window.labDiagram={revision:model.revision,getState:()=>({selected,mode,presenting,chapter:currentChapter()?.id||null,evidenceOpen:$('evidence-dialog').open,scenario:flow?.id||null,step,playing,mapMode,quizMode,quizOpen:quiz.open(),faults:[...faults],whatif:flow?.id==='whatif'?{base:flow.base,broken:flow.broken,steps:flow.steps.length}:null,render:scene?.info()||null})};
 }
 start();

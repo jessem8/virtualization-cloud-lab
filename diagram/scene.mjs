@@ -226,11 +226,14 @@ else{move(exit,1.55,'power1.inOut',0);tl.add(gate.play({position:base,scale:s,de
 packetTimeline=tl;
 }
 function showStep(steps,index,animate,done,flow,options={}){
-clearMotion();const current=steps[index],prev=steps[index-1];currentNode=current.node||current.to||null;setExpanded(!!nodes.get(current.node)?.child||serviceLinks.includes(current.link));
+clearMotion();const current=steps[index],prev=steps[index-1];currentNode=current.node||current.to||null;
+if(current.inspect){currentLink=null;decisionPos=null;decision.textContent='';decision.classList.remove('denied','broken');wires.forEach(l=>{l.material.opacity=.45;l.material.color.copy(l.base);});focusLabels([current.inspect,current.node]);document.getElementById('transport-strip').dataset.active='';packet.show(false);if(active!==current.inspect){active=current.inspect;animateView(current.inspect,true);}if(!animate||reduced)finishView();highlight(current.node);invalidate();return;}
+if(active){active=null;animateView('',false);finishView();}
+setExpanded(!!nodes.get(current.node)?.child||serviceLinks.includes(current.link));
 currentLink=current.link||null;
 decisionPos=current.decision&&current.node&&!current.link?nodes.get(current.node).g.position.clone().add(new THREE.Vector3(0,3.4,0)):null;
 decision.textContent=(current.denied&&current.node==='fw'&&!current.broken?'REFUS · ':'')+(current.decision||'');decision.classList.toggle('denied',!!current.denied);decision.classList.toggle('broken',!!current.broken);
-wires.forEach(l=>{const on=l.data.id===currentLink;l.material.opacity=on?1:.15;l.material.color.copy(l.base).multiplyScalar(on?(current.broken?1:2.3):1);if(on&&current.broken)l.material.color.set(0xff5544);});
+wires.forEach(l=>{const on=l.data.id===currentLink;l.material.opacity=on?1:current.shot==='overview'?.45:.15;l.material.color.copy(l.base).multiplyScalar(on?(current.broken?1:2.3):1);if(on&&current.broken)l.material.color.set(0xff5544);});
 highlight(current.node||current.to,current.denied);focusLabels(current.shot==='overview'?[]:[current.node,current.from,current.to]);document.getElementById('transport-strip').dataset.active=current.link||'';
 rig.nextStep();shoot(current);
 packet.frame=frameFor(current,flow);packet.setChipHidden(false);

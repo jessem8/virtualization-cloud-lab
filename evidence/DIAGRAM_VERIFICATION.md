@@ -47,3 +47,15 @@ Les contrôles ont été exercés à des dimensions de bureau1366×768 et1536×8
 Ces animations expliquent l’architecture prévue. Cette tâche n’a modifié aucune VM ni configuration réseau. Les résultats réels seront ajoutés pendant les prochaines étapes : configurer A, finir B avec Sanad, connecter et vérifier ensemble. La projection physique, la charge avec toutes les VM et la perte réelle de contexte WebGL n’ont pas été évaluées ; le plan2D a été ouvert manuellement.
 
 Les sources de topologie sont les guides du dépôt, evidence/PC_B_STATUS.md, les commits de B jusqu’à921eebf et les décisions humaines du27 octobre. Les guides opérationnels sont maintenant alignés sur InvoiceShelf2.4.7 et l’autorisation directe de A.
+
+## 30 octobre 2026 — refonte du présentateur
+
+Branche `presenter`, PC A, serveur loopback 127.0.0.1:3187, révision `diagramme-2026-10-28`. Contrôle dans Microsoft Edge piloté par Playwright, scripts hors dépôt, à 1366x768 et 1920x1080.
+
+- Parcours : 24 étapes en neuf chapitres (1/3/3/3/5/4/3/1/1), navigation par le rail et par les flèches ; aucune erreur de page ni requête en échec (seul `favicon.ico` répond 404).
+- Galerie : huit captures chargées, chacune datée du 29 octobre ; flèches gauche/droite et Échap vérifiés. Depuis un chapitre, la galerie montre seulement ses preuves.
+- Clavier : focus visible sur les commandes, Échap ferme la galerie et le panneau composant ; Explorer puis Présenter reprend la même étape.
+- Vue en coupe et faits du composant (PC A) ; mouvement réduit respecté ; plan 2D par le bouton et en repli sans WebGL.
+- Correctifs CSS : l'avis 2D ne recouvre plus le titre du plan ; contraste AA des numéros de chapitre et des titres d'options ; aide clavier à 12 px.
+
+Simulation explicative : ces contrôles ne mesurent pas le laboratoire et aucune VM n'a été touchée.

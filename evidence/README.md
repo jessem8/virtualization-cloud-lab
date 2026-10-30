@@ -42,3 +42,5 @@ Les deux dossiers et leurs index ont été conservés sans modification. **121 c
 [Début de séance commune](JOINT_SESSION.md), [anciens états A](history/PC_A_STATUS.md), [anciens états B](history/PC_B_STATUS.md) et [archives documentaires](../docs/archive/README.md) gardent la chronologie. Dans les notes datées, les sections de clôture en tête supersèdent les anciennes mentions « en attente ».
 
 Les fichiers [DIAGRAM_VERIFICATION](DIAGRAM_VERIFICATION.md), [PRESENTER_ENHANCEMENT](PRESENTER_ENHANCEMENT.md) et [PRESENTER_SIMPLIFICATION](PRESENTER_SIMPLIFICATION.md), ainsi que les [aperçus](diagram-preview/), concernent l'interface simulée, jamais des tests VM. Ils sont historiques ; aucune nouvelle vérification graphique n'est revendiquée par ce rangement.
+
+Le 30 octobre 2026 — refonte du présentateur : parcours en neuf chapitres et 24 étapes, contrôlé dans le navigateur ; détails dans [DIAGRAM_VERIFICATION](DIAGRAM_VERIFICATION.md#30-octobre-2026--refonte-du-présentateur). Les huit captures de la galerie sont copiées dans `docs/network-assets/evidence/` et restent datées du 29 octobre.

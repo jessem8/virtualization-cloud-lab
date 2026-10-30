@@ -23,3 +23,5 @@ Maintain only two project branches: main for documentation/evidence and presente
 This repository remains private. The live presenter is in the separate public jessem8/virtualization-lab-3d repository, Pages main/root. Preserve its site, source and export workflow; a presenter branch here does not authorize publication or Pages changes. Keep secrets, VPN profiles, backups and VM images out of Git.
 
 Keep current outcomes/limitations in PROJECT_STATE.md and the relevant A/B status, with sources in dated evidence and its index. PR #1 is merged and historical; issue #2 is closed after evidence handoff. Do not reopen it or send messages automatically. Old pending-state notes are historical where superseded; no automatic provisioning or polling is needed.
+
+30 octobre 2026 — refonte du présentateur: Jessem approved a presenter UX redesign on the presenter branch only (nine chapters, 24 steps). Keep facts unchanged: PC A/PC B labels, SW-B L2 only, VLAN20/30 tagged on the trunk, VMnet10 as a host-local number, SQLite local to Ubuntu, evidence dated 29 October. Verification notes live in evidence/DIAGRAM_VERIFICATION.md.

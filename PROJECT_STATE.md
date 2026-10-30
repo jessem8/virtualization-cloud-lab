@@ -70,3 +70,7 @@ Correction éditoriale du 30 octobre : nom personnel **Jessem** uniformisé dans
 - Conserver les échecs et contournements sans inventer la cause racine.
 - Une copie persistante, un snapshot et une restauration d'archive sont des preuves distinctes.
 - Une documentation actuelle remplace les suites obsolètes ; l'historique reste accessible.
+
+## 30 octobre 2026 — refonte du présentateur
+
+À la demande de Jessem, la branche `presenter` reçoit la refonte UX : neuf chapitres, 24 étapes, galerie de huit preuves datées du 29 octobre, « Et si » déplacé dans Options, libellés PC A/PC B. Les sources du présentateur ne contiennent plus VMnet14 ni les anciens états « préparé / non testé ». Vérification navigateur et correctifs CSS : [DIAGRAM_VERIFICATION](evidence/DIAGRAM_VERIFICATION.md). Aucune VM ni configuration modifiée ; le site public distinct n'est pas mis à jour.
