@@ -30,7 +30,7 @@ const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-per
 renderer.setClearColor(0x080f1d);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;renderer.info.autoReset=false;stage.prepend(renderer.domElement);
 const scene=new THREE.Scene(),camera=new THREE.OrthographicCamera(-24,24,12,-12,.1,160);
 camera.position.set(15,24.7,30);
-let frames=0,focusSet=new Set(),pathLinks=new Set(),queued=false,mode='physical',active=null,reduced=matchMedia('(prefers-reduced-motion: reduce)').matches,focusTimeline=null,packetTimeline=null,expanded=false,top=false,ambient=false,lastFrame=0,looping=false,highlighted=null,hoverId=null;
+let frozen=false,frames=0,focusSet=new Set(),pathLinks=new Set(),queued=false,mode='physical',active=null,reduced=matchMedia('(prefers-reduced-motion: reduce)').matches,focusTimeline=null,packetTimeline=null,expanded=false,top=false,ambient=false,lastFrame=0,looping=false,highlighted=null,hoverId=null;
 function invalidate(){if(!queued){queued=true;requestAnimationFrame(render);}}
 const rig=createCameraRig(camera,renderer.domElement,invalidate,reduced);
 rig.controls.setLookAt(15,24.7,30,0,2.7,0,false);
@@ -104,11 +104,13 @@ const zoneNames={windows:'CLIENTS · non tagué',ubuntu:'SERVEURS · VLAN20',nas
 for(const id of ['windows','ubuntu','nas']){const n=data.nodes.find(n=>n.id===id),c=id==='windows'?tint.client:id==='ubuntu'?tint['20']:tint['30'];const group=new THREE.Group();group.position.set(n.position[0],.85,n.position[2]);scene.add(group);
 box(group,4.8,.08,4,new THREE.MeshBasicMaterial({color:c,transparent:true,opacity:.3,depthWrite:false}));
 const frame=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(4.8,3.1,4)),new THREE.LineBasicMaterial({color:new THREE.Color(c).multiplyScalar(1.6),transparent:true,opacity:.75}));frame.position.y=1.55;group.add(frame);group.visible=false;zones.push(group);
-const e=document.createElement('div');e.className='zone-label';e.textContent=zoneNames[id];e.style.setProperty('--zone',new THREE.Color(c).getStyle());labels.append(e);fixed.push({el:e,position:new THREE.Vector3(n.position[0],4.5,n.position[2]),security:true});
+const e=document.createElement('button');e.type='button';e.className='zone-label';e.dataset.tag=zoneNames[id];e.textContent=zoneNames[id];e.style.setProperty('--zone',new THREE.Color(c).getStyle());labels.append(e);fixed.push({el:e,position:new THREE.Vector3(n.position[0],4.5,n.position[2]),security:true});
 }
 const serviceBoundary=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(8,5,6.5)),new THREE.LineBasicMaterial({color:new THREE.Color(0x58b3ff).multiplyScalar(1.6),transparent:true,opacity:.7}));serviceBoundary.position.set(11,3.2,-3.5);serviceBoundary.visible=false;scene.add(serviceBoundary);
 scene.traverse(o=>{if(o.isMesh&&!o.material.transparent&&o!==ground&&!o.material.isMeshBasicMaterial){o.castShadow=true;o.receiveShadow=true;}});
 const packet=createPacket(scene,labels,tint,plaque,invalidate),gate=createGate(scene,invalidate),flowLine=createFlowLine(scene);pick.push(...packet.picks);
+// The packet chip ('VLAN20', 'Sans tag') explains tagging on click.
+const chipEl=labels.querySelector('.packet-chip');chipEl?.addEventListener('click',()=>document.dispatchEvent(new CustomEvent('lab-tag',{detail:{text:chipEl.textContent,el:chipEl}})));
 let layoutFrame=0;
 function layout(dt=1/60){const rect=stage.getBoundingClientRect(),items=[],moving=[];leaders.replaceChildren();leaders.setAttribute('viewBox','0 0 '+rect.width+' '+rect.height);layoutFrame++;
 const project=(el,position,list=items)=>{const p=position.clone().project(camera);if(Math.abs(p.z)>1){el.hidden=true;return;}list.push({el,ax:(p.x*.5+.5)*rect.width,ay:(-.5*p.y+.5)*rect.height,w:el.offsetWidth,h:el.offsetHeight});};
@@ -135,7 +137,7 @@ return settling;
 }
 function pulseLeds(now){const t=now/1000;for(const [id,n]of nodes){if(!n.leds.length)continue;const hot=id===highlighted;n.leds.forEach((led,i)=>{const flicker=hot?.55+.45*Math.abs(Math.sin(t*9+led.userData.phase)):.75+.25*Math.sin(t*1.3+led.userData.phase);led.material.color.copy(led.userData.base).multiplyScalar((hot?3.4:2.1)*flicker);});}}
 function render(now){queued=false;frames++;const gap=now-lastFrame;lastFrame=now;const dt=gap<=0?1/60:Math.min(gap,100)/1000;
-const moving=rig.update(dt);if(ambient)flowLine.tick(dt);pulseLeds(now);
+const moving=rig.update(dt);if(ambient&&!frozen)flowLine.tick(dt);pulseLeds(now);
 renderer.info.reset();fx.render(dt);const settling=layout(dt);
 const continuous=moving||ambient;if(continuous&&looping)fx.sample(gap);else if(continuous)fx.resetSamples();looping=continuous;if(continuous||settling)invalidate();}
 let overviewBounds=null;
@@ -249,6 +251,8 @@ function finishView(){focusTimeline?.progress(1);}
 function frame(ids){const b=new THREE.Box3();for(const id of ids){const n=nodes.get(id);if(n){if(!n.g.visible&&n.child)setExpanded(true);b.expandByObject(n.g);}else if(id.startsWith('host:')&&hosts.has(id.slice(5)))b.expandByObject(hosts.get(id.slice(5)).group);}if(b.isEmpty()){rig.overview();return;}b.expandByScalar(1.2);rig.shot(b,{pad:1.35,max:ids.length>1?1.6:1.9,force:true});invalidate();}
 function setFocus(ids){focusSet=new Set(ids||[]);focusLabels(ids||[]);invalidate();}
 function resetAll(){clearMotion();focusTimeline?.kill();focusTimeline=null;pathLinks=new Set();focusSet=new Set();hoverId=null;active=null;expanded=false;currentLink=null;currentNode=null;decision.textContent='';decision.classList.remove('denied','broken');animateView('',false);focusTimeline?.progress(1);setExpanded(false);highlight(null);focusLabels([]);setMode('physical');rig.overview(false);invalidate();}
+// Shows one step at rest (Retour / step-wise Suivant), no tweens left running.
+function showAt(steps,i,flow){clearMotion();pathLinks=new Set(steps.map(s=>s.link).filter(Boolean));showStep(steps,i,false,null,flow);ambient=false;flowLine.hide();invalidate();}
 // Plays steps once, in order; isLive() lets the caller drop callbacks from an older scene.
 function playPath(steps,{flow,animate=true,isLive=()=>true,onStep,onDone}={}){
 pathLinks=new Set(steps.map(s=>s.link).filter(Boolean));
@@ -258,8 +262,9 @@ run(0);
 }
 renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();pause();document.dispatchEvent(new CustomEvent('lab-webgl-lost'));});
 setExpanded(false);resize();
-return {open,reset,resetAll,playPath,frame,setFocus,inspectLink,finishView,highlight,setExpanded,setMode,showStep,pause,stop,topView,simulateBreak,
+return {open,reset,resetAll,playPath,showAt,frame,setFocus,inspectLink,finishView,highlight,setExpanded,setMode,showStep,pause,stop,topView,simulateBreak,
 overview:()=>rig.overview(),
+setFrozen:v=>{frozen=!!v;invalidate();},
 setFollow:value=>rig.setFollow(value),
 onUserCamera:f=>rig.onUser(f),
 setQuality:value=>{fx.setQuality(value);resize();updateOutline();},

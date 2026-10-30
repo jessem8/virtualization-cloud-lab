@@ -14,6 +14,8 @@
     <nav id="tabs" aria-label="Sections"></nav>
     <div class="top-actions">
       <button id="home-btn" type="button">Toutes les sections</button>
+      <button id="security-btn" type="button" aria-haspopup="dialog">Sécurité</button>
+      <button id="scenarios-btn" class="danger" type="button">Scénarios</button>
       <button id="reset-section" type="button">Réinitialiser la section</button>
       <button id="fullscreen" type="button" aria-keyshortcuts="F">Plein écran</button>
       <button id="toggle-2d" type="button" aria-pressed="false">Plan 2D</button>
@@ -49,7 +51,7 @@
   </main>
 
   <footer class="bottombar" aria-label="Étape">
-    <button id="prev" type="button" aria-label="Étape précédente" aria-keyshortcuts="ArrowLeft">Précédent</button>
+    <button id="prev" type="button" aria-label="Retour : étape ou scène précédente" aria-keyshortcuts="ArrowLeft">Retour</button>
     <div class="caption">
       <div class="caption-head">
         <p id="position"></p>
@@ -61,13 +63,29 @@
     <div class="bar-actions">
       <details id="details">
         <summary>Détails</summary>
-        <ul id="details-list"></ul>
+        <div id="details-body"></div>
       </details>
+      <button id="tag-btn" class="tag-btn" type="button" hidden aria-describedby="tag-tip"></button>
+      <button id="pause" type="button" hidden aria-pressed="false" aria-keyshortcuts="P">Pause</button>
       <button id="replay" type="button" hidden>Rejouer</button>
       <button id="proofs" type="button" hidden>Preuves</button>
     </div>
     <button id="next" class="primary" type="button" aria-keyshortcuts="ArrowRight">Suivant</button>
   </footer>
+
+  <div id="tag-tip" role="tooltip" hidden>
+    <strong id="tag-tip-title"></strong>
+    <p id="tag-tip-text"></p>
+    <button id="tag-tip-close" type="button" aria-label="Fermer l’explication">Fermer</button>
+  </div>
+
+  <dialog id="security" aria-labelledby="security-title">
+    <header>
+      <h2 id="security-title">Sécurité du laboratoire</h2>
+      <button id="security-close" type="button">Fermer</button>
+    </header>
+    <div id="security-body"></div>
+  </dialog>
 
   <dialog id="evidence" aria-labelledby="evidence-title">
     <header>
