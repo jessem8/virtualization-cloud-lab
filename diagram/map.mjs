@@ -2,6 +2,8 @@ export const xml = s => String(s).replace(/[<>&"']/g,c=>({'<':'&lt;','>':'&gt;',
 const positions={wan:[100,130],vpn:[360,130],windows:[130,420],mgmt:[360,420],fw:[350,260],switch:[680,260],ubuntu:[925,130],nas:[925,420],proxy:[840,225],app:[960,225],data:[1080,225],monitor:[925,320]};
 export function makeMap(data,steps=[],index=0,selected='fw'){
 const current=steps[index],currentLink=current?.link,currentNode=current?.node||current?.to;
+// Every link of the active path stays highlighted; the current one is thickest.
+const pathLinks=new Set(steps.map(s=>s.link).filter(Boolean));
 const color=z=>({'20':'#1867bc','30':'#b87512',client:'#697f90',mgmt:'#697f90',vpn:'#856f9d',wan:'#697f90',local:'#697579'}[z]||'#697f90');
 const size=id=>data.nodes.find(n=>n.id===id)?.parent?[112,50]:[160,72];
 function border(id,toward){const p=positions[id],[w,h]=size(id),dx=toward[0]-p[0],dy=toward[1]-p[1],scale=Math.min(dx?w/2/Math.abs(dx):Infinity,dy?h/2/Math.abs(dy):Infinity);return [p[0]+dx*scale,p[1]+dy*scale];}
@@ -11,7 +13,7 @@ if(l.id.startsWith('trunk')){const y=l.id==='trunk20'?245:275;points=[[a[0]+80,a
 else points=[border(l.from,b),border(l.to,a)];
 if(isCurrent&&current.from===l.to)points.reverse();
 const path=points.map((p,i)=>(i?'L':'M')+p.join(' ')).join(' ');
-out+=`<path data-link="${l.id}" d="${path}" fill="none" stroke="${color(l.zone)}" stroke-width="${isCurrent?5:2}" opacity="${current&&!isCurrent?.25:1}" ${isCurrent?'marker-end="url(#packet-arrow)"':''} ${l.id.startsWith('trunk')?'stroke-dasharray="8 5"':''}/>`;
+out+=`<path data-link="${l.id}" d="${path}" fill="none" stroke="${color(l.zone)}" stroke-width="${isCurrent?6:pathLinks.has(l.id)?4:2}" opacity="${current&&!isCurrent&&!pathLinks.has(l.id)?.25:1}" ${isCurrent?'marker-end="url(#packet-arrow)"':''} ${l.id.startsWith('trunk')?'stroke-dasharray="8 5"':''}/>`;
 }
 out+='<text x="480" y="226" class="small">Ethernet : tags20/30</text><text x="650" y="370" class="small">Deux accès séparés · SW-B ne route pas</text>';
 for(const n of data.nodes){const p=positions[n.id];if(!p)continue;const child=!!n.parent,[w,h]=size(n.id),nodeClass=n.id===currentNode?(current.denied?'denied':'current'):n.id===selected?'selected':'';

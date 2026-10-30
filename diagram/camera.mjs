@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import {gsap} from 'gsap';
 CameraControls.install({THREE});
 
 const ISO=new THREE.Vector3(15,22,30).normalize(),TOP=new THREE.Vector3(0,1,.0012).normalize(),DIST=41.5,OVERVIEW=new THREE.Vector3(0,2.7,0);
@@ -14,8 +13,10 @@ c.touches.one=A.TOUCH_ROTATE;c.touches.two=A.TOUCH_ZOOM_TRUCK;c.touches.three=A.
 Object.assign(c,{minZoom:.75,maxZoom:3,minPolarAngle:0,maxPolarAngle:1.2,minAzimuthAngle:-.35,maxAzimuthAngle:1.25,azimuthRotateSpeed:.55,polarRotateSpeed:.45,truckSpeed:1.4,dollySpeed:.6,dollyToCursor:true,draggingSmoothTime:.16,restThreshold:.003,boundaryFriction:.25});
 c.setBoundary(new THREE.Box3(new THREE.Vector3(-17,-.5,-11),new THREE.Vector3(17,7,11)));
 dom.addEventListener('contextmenu',e=>e.preventDefault());
-let reduced=reducedAtStart,follow=true,hold=false,last=null,saved=null,shakeTween=null;
-const baseSmooth=.75;c.smoothTime=reduced?0:baseSmooth;
+let reduced=reducedAtStart,follow=true,hold=false,last=null;
+// Presenter mode: the story drives the camera; user input is disabled.
+c.enabled=false;
+const baseSmooth=.45;c.smoothTime=reduced?0:baseSmooth;
 const listeners=new Set();
 c.addEventListener('controlstart',()=>{hold=true;listeners.forEach(f=>f());});
 c.addEventListener('update',invalidate);c.addEventListener('wake',invalidate);
@@ -37,15 +38,11 @@ function settled(s){const z=clamp(zoomFor(s.box,s.dir,s.pad),s.min,s.max);s.box.
 function shot(box,{pad=1.3,min=.85,max=2.1,dir=ISO,force=false,animate=true}={}){last={box:box.clone(),pad,min,max,dir};if(force||follow&&!hold){if(!force&&animate&&settled(last))return;apply(last,animate);}}
 function look(target,zoom,animate=true,dir=ISO){last={target:target.clone(),zoom,dir};apply(last,animate);}
 function overview(animate=true){last={target:OVERVIEW.clone(),zoom:1,dir:ISO};if(follow&&!hold)apply(last,animate);}
-function peek(box,options){saved=last;shot(box,{...options,force:true});}
-function unpeek(){if(saved){last=saved;saved=null;apply(last,true);}}
 function refit(){if(last&&(follow&&!hold||last.target))apply(last,false);}
-function flyIn(){if(reduced){overview(false);return;}c.smoothTime=1.25;position.copy(OVERVIEW).addScaledVector(TOP,DIST);c.setLookAt(position.x,position.y,position.z,OVERVIEW.x,OVERVIEW.y,OVERVIEW.z,false);c.zoomTo(.78,false);last={target:OVERVIEW.clone(),zoom:1,dir:ISO};requestAnimationFrame(()=>{apply(last,true);const restore=()=>{c.smoothTime=reduced?0:baseSmooth;c.removeEventListener('rest',restore);};c.addEventListener('rest',restore);});}
 function topView(on){const target=c.getTarget(new THREE.Vector3(),true);look(target,camera.zoom,true,on?TOP:ISO);}
-function shake(){if(reduced)return;shakeTween?.kill();const o={x:0,y:0};shakeTween=gsap.to(o,{keyframes:[{x:.32,y:-.08,duration:.06},{x:-.26,y:.06,duration:.07},{x:.16,y:-.04,duration:.07},{x:-.08,y:0,duration:.08},{x:0,y:0,duration:.08}],onUpdate:()=>{c.setFocalOffset(o.x,o.y,0,false);invalidate();}});}
 function update(dt){return c.update(dt);}
 return {
-controls:c,update,shot,look,overview,peek,unpeek,refit,flyIn,topView,shake,
+controls:c,update,shot,look,overview,refit,topView,
 nextStep:()=>{hold=false;},
 setFollow:value=>{follow=value;if(value){hold=false;if(last)apply(last,true);}},
 following:()=>follow&&!hold,

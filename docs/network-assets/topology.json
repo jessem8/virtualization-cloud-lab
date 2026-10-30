@@ -1,5 +1,5 @@
 {
-  "revision": "diagramme-2026-10-28",
+  "revision": "presentation-4-2026-10-30",
   "sourceRevision": "af4f279",
   "title": "Le laboratoire, en perspective.",
   "subtitle": "État documenté le 29/10 ; non revérifié le 30/10.",
@@ -8,24 +8,44 @@
     {
       "id": "a",
       "name": "PC A",
-      "owner": "à compléter",
       "cpu": "Intel i7-13700HX",
       "ram": "15,71 Gio utilisables",
       "free": "2,59 Gio disponibles · mesure du 27/10",
       "disk": "36,79 Gio libres · mesure du 27/10",
       "planned": "FW-LAB 3 Gio ; WIN-LAB cible 4 Gio · documentation du 29/10",
-      "x": -9
+      "x": -9,
+      "card": {
+        "type": "Ordinateur hôte · VMware Workstation",
+        "location": "PC A",
+        "role": "Héberge le pare-feu et le client",
+        "purpose": "OPNsense, Windows et le client VPN de test.",
+        "config": [
+          "CPU : Intel i7-13700HX",
+          "RAM : 15,71 Gio utilisables",
+          "VM : OPNsense, Windows"
+        ]
+      }
     },
     {
       "id": "b",
       "name": "PC B",
-      "owner": "à compléter",
       "cpu": "AMD Ryzen 7 7840HS",
       "ram": "15,29 Gio utilisables",
       "free": "4,41 Gio disponibles · déclaration du 26/10",
       "disk": "122,8 Gio libres · déclaration du 26/10",
       "planned": "SW-B 512 Mio ; Ubuntu 4 Gio ; TrueNAS 6 Gio · observations du 29/10",
-      "x": 9
+      "x": 9,
+      "card": {
+        "type": "Ordinateur hôte · VMware Workstation",
+        "location": "PC B",
+        "role": "Héberge les serveurs",
+        "purpose": "SW-B, Ubuntu et TrueNAS.",
+        "config": [
+          "CPU : AMD Ryzen 7 7840HS",
+          "RAM : 15,29 Gio utilisables",
+          "VM : SW-B, Ubuntu, TrueNAS"
+        ]
+      }
     }
   ],
   "nodes": [
@@ -106,7 +126,20 @@
       ],
       "next": "La cause du défaut HTTPS reste inconnue ; T03 est partiel et T04 non confirmé.",
       "evidence": "Notes A/B du 29/10 : VPN et journaux observés ; pings des passerelles VLAN20/30 documentés. T03/T04 restent incomplets. Pas de nouvelle vérification le 30/10.",
-      "source": "docs/MACHINE_A.md · evidence/PC_A_2026-10-29.md · evidence/PC_B_2026-10-29.md"
+      "source": "docs/MACHINE_A.md · evidence/PC_A_2026-10-29.md · evidence/PC_B_2026-10-29.md",
+      "card": {
+        "type": "VM · pare-feu et routeur",
+        "location": "PC A",
+        "role": "Passerelle entre toutes les zones",
+        "purpose": "Route et filtre CLIENTS, SERVEURS, STOCKAGE, MGMT et VPN.",
+        "config": [
+          "Version : OPNsense 26.7.7",
+          "VLAN : 20 et 30 tagués sur le trunk (em3, sans IP)",
+          "Passerelles : 10.77.10.1 · .20.1 · .30.1 · .99.1",
+          "NAT entre zones : aucun",
+          "VPN : OpenVPN UDP 1194 · 10.78.0.0/24"
+        ]
+      }
     },
     {
       "id": "windows",
@@ -166,7 +199,20 @@
       ],
       "next": "Les anciennes captures Sysmon/Defender sont incomplètes ; conserver la portée datée.",
       "evidence": "Accès InvoiceShelf et Grafana après reboot observé le 29/10 ; Defender, pare-feu, Sysmon et audit documentés le 28/10. Pas de vérification actuelle.",
-      "source": "docs/MACHINE_A.md · evidence/PC_A_STATUS.md · evidence/PC_A_2026-10-29.md"
+      "source": "docs/MACHINE_A.md · evidence/PC_A_STATUS.md · evidence/PC_A_2026-10-29.md",
+      "card": {
+        "type": "VM · poste client",
+        "location": "PC A",
+        "role": "Client des services",
+        "purpose": "Ouvre InvoiceShelf, Grafana et le partage SMB.",
+        "config": [
+          "Système : Windows Server 2025 (évaluation)",
+          "Adresse : 10.77.10.10/24 · passerelle 10.77.10.1",
+          "Réseau : CLIENTS · VMnet10 · non tagué",
+          "Protection : Defender, pare-feu, Sysmon, audit 4624/4625",
+          "Métriques : windows_exporter TCP 9182"
+        ]
+      }
     },
     {
       "id": "mgmt",
@@ -224,7 +270,19 @@
       ],
       "next": "Aucune route VPN résiduelle n’a été observée lors de la relecture A du 29/10.",
       "evidence": "Essai SSH par clé après durcissement et reboot ; nettoyage de la route /32 et retour de VMnet13 à Up documentés le 29/10. Pas de vérification actuelle.",
-      "source": "docs/MACHINE_A.md · evidence/PC_A_2026-10-29.md · evidence/PC_A_STATUS.md"
+      "source": "docs/MACHINE_A.md · evidence/PC_A_2026-10-29.md · evidence/PC_A_STATUS.md",
+      "card": {
+        "type": "Interface de l’hôte",
+        "location": "PC A",
+        "role": "Administration",
+        "purpose": "SSH par clé vers Ubuntu depuis l’hôte A.",
+        "config": [
+          "Adresse : 10.77.99.254/24",
+          "Réseau : VMnet13 host-only · non tagué",
+          "Passerelle : OPNsense 10.77.99.1",
+          "Pendant l’essai VPN : désactivée"
+        ]
+      }
     },
     {
       "id": "wan",
@@ -282,7 +340,18 @@
       ],
       "next": "Aucun déploiement Internet public ni accès externe n’est documenté.",
       "evidence": "Connexion OpenVPN et contrôles de service réalisés via VMnet8 NAT le 29/10 ; cela ne démontre pas une publication Internet. Pas de vérification actuelle.",
-      "source": "docs/MACHINE_A.md · evidence/PC_A_2026-10-29.md"
+      "source": "docs/MACHINE_A.md · evidence/PC_A_2026-10-29.md",
+      "card": {
+        "type": "Réseau VMware NAT",
+        "location": "PC A",
+        "role": "WAN simulé",
+        "purpose": "Transporte le tunnel OpenVPN de test.",
+        "config": [
+          "Réseau : VMnet8 · NAT VMware",
+          "OPNsense : em0 en DHCP",
+          "Internet public : non démontré"
+        ]
+      }
     },
     {
       "id": "vpn",
@@ -341,7 +410,18 @@
       ],
       "next": "Le profil testé contenait des routes explicites ; la poussée de routes pour de futurs profils n’est pas confirmée.",
       "evidence": "10.78.0.2 connecté, HTTPS8443 permis, TCP22/445/3001 refusés avec marqueurs et perte d’accès après déconnexion observés/documentés le 29/10. WAN VMware simulé.",
-      "source": "docs/MACHINE_A.md · evidence/PC_A_2026-10-29.md · evidence/PC_B_2026-10-29.md"
+      "source": "docs/MACHINE_A.md · evidence/PC_A_2026-10-29.md · evidence/PC_B_2026-10-29.md",
+      "card": {
+        "type": "Client de test sur l’hôte",
+        "location": "PC A",
+        "role": "Accès distant restreint",
+        "purpose": "Montre ce que le tunnel autorise et refuse.",
+        "config": [
+          "Tunnel : 10.78.0.2 → passerelle 10.78.0.1",
+          "Autorisé : HTTPS 8443 vers InvoiceShelf",
+          "Refusés et journalisés : 22, 445, 3001 (29/10)"
+        ]
+      }
     },
     {
       "id": "switch",
@@ -405,7 +485,20 @@
       ],
       "next": "T03 reste partiel ; T04, rejet d’un tag30 depuis l’accès Ubuntu, reste non confirmé.",
       "evidence": "Configuration Alpine installée et active, ports eth1/eth2/eth0, bridge et persistance après reboot observés dans les preuves B du 28–29/10. Transport complet et isolation non établis.",
-      "source": "docs/MACHINE_B.md · evidence/PC_B_STATUS.md · evidence/PC_B_2026-10-29.md"
+      "source": "docs/MACHINE_B.md · evidence/PC_B_STATUS.md · evidence/PC_B_2026-10-29.md",
+      "card": {
+        "type": "VM · commutateur L2 (Alpine)",
+        "location": "PC B",
+        "role": "Commute VLAN 20 et 30",
+        "purpose": "Relie le trunk aux ports d’accès d’Ubuntu et du NAS.",
+        "config": [
+          "Trunk : eth1 · VMnet12 · tags 20/30",
+          "Accès Ubuntu : eth2 · VMnet10 · VLAN 20",
+          "Accès NAS : eth0 · VMnet11 · VLAN 30",
+          "Routage : aucun",
+          "Adresse IP : aucune"
+        ]
+      }
     },
     {
       "id": "ubuntu",
@@ -471,7 +564,20 @@
       ],
       "next": "MTU1400 et MSS1360 ciblée stabilisent les accès observés ; la cause liaison/pilote reste inconnue.",
       "evidence": "Adresse, MTU, règles/services et six conteneurs retrouvés après reboot ; accès Windows à InvoiceShelf/Grafana observé dans les preuves A/B du 29/10. Pas de vérification actuelle.",
-      "source": "docs/MACHINE_B.md · evidence/PC_B_STATUS.md · evidence/PC_B_2026-10-29.md"
+      "source": "docs/MACHINE_B.md · evidence/PC_B_STATUS.md · evidence/PC_B_2026-10-29.md",
+      "card": {
+        "type": "VM · serveur",
+        "location": "PC B",
+        "role": "Héberge application et supervision",
+        "purpose": "Docker exécute le proxy, InvoiceShelf et la supervision.",
+        "config": [
+          "Système : Ubuntu Desktop 26.04.1 · 4 Gio",
+          "Adresse : 10.77.20.10/24 · passerelle 10.77.20.1",
+          "Docker : 29.1.3 · Compose 2.40.3 · 6 conteneurs",
+          "MTU : 1400 · MSS 1360 ciblée Windows → 8443",
+          "Pare-feu : iptables LAB-INPUT et DOCKER-USER"
+        ]
+      }
     },
     {
       "id": "nas",
@@ -536,7 +642,20 @@
       ],
       "next": "L’allocation observée de 6 Gio reste sous la référence de 8 Gio.",
       "evidence": "TrueNAS 25.10.7, adresse 10.77.30.10 et tests SMB/sauvegarde/restauration documentés dans les preuves du 28–29/10. Pas de vérification actuelle.",
-      "source": "docs/MACHINE_B.md · evidence/PC_B_STATUS.md · evidence/PC_B_2026-10-29.md · evidence/history/PC_B_STATUS.md"
+      "source": "docs/MACHINE_B.md · evidence/PC_B_STATUS.md · evidence/PC_B_2026-10-29.md · evidence/history/PC_B_STATUS.md",
+      "card": {
+        "type": "VM · stockage",
+        "location": "PC B",
+        "role": "Partages SMB et sauvegardes",
+        "purpose": "Stocke les fichiers projet et l’archive applicative.",
+        "config": [
+          "Système : TrueNAS 25.10.7 · 6 Gio (référence 8 Gio)",
+          "Adresse : 10.77.30.10/24",
+          "Pool : miroir tank · datasets chiffrés",
+          "SMB : chiffrement requis · TCP 445",
+          "Comptes : Alice RW · lecteur RO · Bob connecté, lecture refusée"
+        ]
+      }
     },
     {
       "id": "proxy",
@@ -595,7 +714,18 @@
       ],
       "next": "Le certificat TLS reste autosigné et non approuvé par les navigateurs.",
       "evidence": "Accès HTTPS8443 à l’application depuis Windows/VPN et après reboot documentés le 29/10 ; certificat autosigné signalé non fiable. Pas de vérification actuelle.",
-      "source": "docs/APP.md · evidence/PC_A_2026-10-29.md · evidence/PC_B_2026-10-29.md"
+      "source": "docs/APP.md · evidence/PC_A_2026-10-29.md · evidence/PC_B_2026-10-29.md",
+      "card": {
+        "type": "Conteneur Docker",
+        "location": "PC B · dans Ubuntu",
+        "role": "Entrée HTTPS",
+        "purpose": "Termine TLS et relaie vers InvoiceShelf.",
+        "config": [
+          "Écoute : TCP 8443",
+          "Backend : InvoiceShelf 8080 (réseau Docker interne)",
+          "Certificat : autosigné, non approuvé par les navigateurs"
+        ]
+      }
     },
     {
       "id": "app",
@@ -659,7 +789,19 @@
       ],
       "next": "Les refus d’actions par rôle restent partiellement prouvés ; atelier Docker/Docker Bench non confirmé.",
       "evidence": "Société, facture, PDF, accès après reboot et persistance après recréation observés/documentés le 29/10 ; les restrictions détaillées sont rapportées. La matrice T12/T13 conserve ses limites.",
-      "source": "docs/APP.md · evidence/PC_B_2026-10-29.md · docs/TEST_MATRIX.md"
+      "source": "docs/APP.md · evidence/PC_B_2026-10-29.md · docs/TEST_MATRIX.md",
+      "card": {
+        "type": "Conteneur Docker",
+        "location": "PC B · dans Ubuntu",
+        "role": "Application de facturation",
+        "purpose": "Gère clients, factures et PDF.",
+        "config": [
+          "Version : InvoiceShelf 2.4.7",
+          "Port : 8080 interne uniquement",
+          "Données : SQLite locale sur Ubuntu",
+          "Rôle lecteur : visible ; refus d’actions non capturés"
+        ]
+      }
     },
     {
       "id": "data",
@@ -719,7 +861,18 @@
       ],
       "next": "La copie isolée a été retirée après vérification ; l’archive reste distincte du service actif.",
       "evidence": "Transfert aller-retour aux empreintes identiques et restauration applicative isolée documentés le 29/10. Pas de vérification actuelle.",
-      "source": "docs/APP.md · evidence/PC_B_2026-10-29.md"
+      "source": "docs/APP.md · evidence/PC_B_2026-10-29.md",
+      "card": {
+        "type": "Volume persistant",
+        "location": "PC B · dans Ubuntu",
+        "role": "Données actives",
+        "purpose": "Conserve SQLite et les fichiers de l’application.",
+        "config": [
+          "Emplacement : disque local Ubuntu, pas sur SMB",
+          "Sauvegarde : archive après arrêt, envoyée au NAS",
+          "Intégrité : SHA-256 identique au retour (29/10)"
+        ]
+      }
     },
     {
       "id": "monitor",
@@ -789,7 +942,19 @@
       ],
       "next": "La matrice garde des limites sur les refus réseau et l’exposition complète des collecteurs.",
       "evidence": "Quatre jobs UP, graphes CPU, probe_success et reprises séparées sont documentés le 29/10 ; les journaux OPNsense ont été reçus/rotés sur TCP514. Pas de vérification actuelle.",
-      "source": "docs/MACHINE_B.md · evidence/PC_B_STATUS.md · evidence/PC_B_2026-10-29.md · docs/TEST_MATRIX.md"
+      "source": "docs/MACHINE_B.md · evidence/PC_B_STATUS.md · evidence/PC_B_2026-10-29.md · docs/TEST_MATRIX.md",
+      "card": {
+        "type": "Conteneurs Docker",
+        "location": "PC B · dans Ubuntu",
+        "role": "Supervision",
+        "purpose": "Collecte les métriques et sonde InvoiceShelf.",
+        "config": [
+          "Prometheus 3.5.5 : interne TCP 9090",
+          "Grafana 13.2.4 : HTTPS TCP 3001",
+          "Cibles : node, blackbox, windows_exporter 9182",
+          "Journaux : OPNsense → rsyslog TCP 514"
+        ]
+      }
     }
   ],
   "links": [
@@ -915,49 +1080,85 @@
     }
   ],
   "policy": [
-    {"id": "clients-app", "from": "CLIENTS", "to": "10.77.20.10", "port": "TCP8443", "action": "allow", "label": "CLIENTS → InvoiceShelf HTTPS8443"},
-    {"id": "vpn-app", "from": "VPN", "to": "10.77.20.10", "port": "TCP8443", "action": "allow", "label": "VPN → InvoiceShelf HTTPS8443"},
-    {"id": "vpn-nas", "from": "VPN", "to": "10.77.30.10", "port": "TCP445", "action": "deny", "label": "VPN → NAS SMB445"},
-    {"id": "backup-nas", "from": "SERVEURS20", "to": "10.77.30.10", "port": "TCP445", "action": "allow", "label": "Ubuntu → NAS SMB445 (sauvegarde)"},
-    {"id": "prom-windows", "from": "SERVEURS20", "to": "10.77.10.10", "port": "TCP9182", "action": "allow", "label": "Prometheus → Windows exporter9182"},
-    {"id": "default", "from": "*", "to": "*", "port": "*", "action": "deny", "label": "Refus final journalisé"}
+    {
+      "id": "clients-app",
+      "from": "CLIENTS",
+      "to": "10.77.20.10",
+      "port": "TCP8443",
+      "action": "allow",
+      "label": "CLIENTS → InvoiceShelf HTTPS8443"
+    },
+    {
+      "id": "vpn-app",
+      "from": "VPN",
+      "to": "10.77.20.10",
+      "port": "TCP8443",
+      "action": "allow",
+      "label": "VPN → InvoiceShelf HTTPS8443"
+    },
+    {
+      "id": "vpn-nas",
+      "from": "VPN",
+      "to": "10.77.30.10",
+      "port": "TCP445",
+      "action": "deny",
+      "label": "VPN → NAS SMB445"
+    },
+    {
+      "id": "backup-nas",
+      "from": "SERVEURS20",
+      "to": "10.77.30.10",
+      "port": "TCP445",
+      "action": "allow",
+      "label": "Ubuntu → NAS SMB445 (sauvegarde)"
+    },
+    {
+      "id": "prom-windows",
+      "from": "SERVEURS20",
+      "to": "10.77.10.10",
+      "port": "TCP9182",
+      "action": "allow",
+      "label": "Prometheus → Windows exporter9182"
+    },
+    {
+      "id": "default",
+      "from": "*",
+      "to": "*",
+      "port": "*",
+      "action": "deny",
+      "label": "Refus final journalisé"
+    }
   ],
-  "issues":   [
+  "issues": [
     {
       "node": "fw",
       "title": "Cause du défaut HTTPS inconnue",
-      "text": "MTU Ubuntu 1400 et MSS 1360 limitée à Windows→InvoiceShelf ont stabilisé les accès observés ; la cause racine de liaison/pilote n’est pas établie.",
-      "owner": "à compléter"
+      "text": "MTU Ubuntu 1400 et MSS 1360 limitée à Windows→InvoiceShelf ont stabilisé les accès observés ; la cause racine de liaison/pilote n’est pas établie."
     },
     {
       "node": "proxy",
       "title": "Certificat TLS autosigné",
-      "text": "Le navigateur signale le certificat du laboratoire comme non fiable ; son approbation côté client n’est pas établie.",
-      "owner": "à compléter"
+      "text": "Le navigateur signale le certificat du laboratoire comme non fiable ; son approbation côté client n’est pas établie."
     },
     {
       "node": "app",
       "title": "Preuves partielles des rôles InvoiceShelf",
-      "text": "Le rôle lecteur est visible ; les refus d’actions détaillés sont rapportés sans capture indépendante de chaque refus.",
-      "owner": "à compléter"
+      "text": "Le rôle lecteur est visible ; les refus d’actions détaillés sont rapportés sans capture indépendante de chaque refus."
     },
     {
       "node": "switch",
       "title": "Isolation VLAN incomplète",
-      "text": "T03 reste partiel ; T04, rejet d’un tag30 injecté depuis l’accès Ubuntu, n’est pas confirmé.",
-      "owner": "à compléter"
+      "text": "T03 reste partiel ; T04, rejet d’un tag30 injecté depuis l’accès Ubuntu, n’est pas confirmé."
     },
     {
       "node": "app",
       "title": "Atelier Docker et Docker Bench non confirmés",
-      "text": "L’exécution d’InvoiceShelf ne démontre ni l’atelier du cours, ni l’inspection digest/couches, ni Docker Bench (T13).",
-      "owner": "à compléter"
+      "text": "L’exécution d’InvoiceShelf ne démontre ni l’atelier du cours, ni l’inspection digest/couches, ni Docker Bench (T13)."
     },
     {
       "node": "nas",
       "title": "TrueNAS : 6 Gio observés vs référence 8 Gio",
-      "text": "Les notes du 29/10 documentent 6 Gio ; le plan de référence reste à 8 Gio. Aucune nouvelle mesure de charge n’a été faite.",
-      "owner": "à compléter"
+      "text": "Les notes du 29/10 documentent 6 Gio ; le plan de référence reste à 8 Gio. Aucune nouvelle mesure de charge n’a été faite."
     }
   ]
 }

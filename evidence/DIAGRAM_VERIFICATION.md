@@ -59,3 +59,17 @@ Branche `presenter`, PC A, serveur loopback 127.0.0.1:3187, révision `diagramme
 - Correctifs CSS : l'avis 2D ne recouvre plus le titre du plan ; contraste AA des numéros de chapitre et des titres d'options ; aide clavier à 12 px.
 
 Simulation explicative : ces contrôles ne mesurent pas le laboratoire et aucune VM n'a été touchée.
+
+## 30/10 — répétition du présentateur en direct (4 sections, 13 scènes)
+
+Worktree `presenter-live`, serveur loopback 127.0.0.1:3190 (le port 3187 reste occupé par l'autre serveur). Contrôle dans Microsoft Edge piloté par Playwright à 1366x768 et 1920x1080, rendu WebGL logiciel (SwiftShader).
+
+- Ouverture directe de #architecture, #securite, #stockage et #supervision ; Suivant/Précédent sur les 13 scènes ; « Section suivante » après les sections 1 à 3 ; retour 4 → 1 ; Accueil puis réouverture de chaque section ; rechargement de #stockage/3 sur la même scène.
+- Changement de scène en pleine animation : 0 image rendue en 5 s une fois la scène fixe atteinte (`labDiagram.getState().render.frames`).
+- Fiche d'information refermée sur le plan ; galerie au clavier (flèches, Échap) ; vignette « Capture non incluse » affichée quand une image manque (essai avec une requête bloquée).
+- Plein écran (bouton et touche F), `?renderer=2d`, mouvement réduit : conformes. Aucune erreur console ni réponse 404.
+- Recherche dans les sources : aucun VMnet14, « non exécuté », « à effectuer », « à compléter » ni nom personnel ; Alice et Bob sont des comptes de test. Sysmon n'est daté que du 28/10.
+- Correctifs : le pas de temps de rendu est plafonné à 100 ms au lieu de revenir à 1/60 s, ce qui laissait la caméra converger très lentement sur une machine lente ; `start.ps1` utilise `-UseBasicParsing` et est enregistré en UTF-8 avec BOM, ce qui corrige le second lancement et les accents.
+- Mesures comparatives (ancienne version 1e48368 / nouvelle) : appels de dessin 316 / 108, triangles 34 820 / environ 16 100, images rendues au repos en 5 s 12-23 / 0-5. Ces valeurs viennent d'un rendu logiciel et ne valent pas mesure sur GPU réel.
+
+Simulation explicative : aucune VM ni configuration n'a été touchée.

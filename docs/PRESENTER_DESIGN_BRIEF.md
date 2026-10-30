@@ -23,3 +23,7 @@ Contexte → Virtualisation → Réseau → Application → Sécurité/VPN → S
 ## 30 octobre 2026 — refonte du présentateur
 
 Livré : 24 étapes réparties 1/3/3/3/5/4/3/1/1, « Et si » dans Options. Vérifié dans Edge à 1366x768 et 1920x1080 ; l'avis du plan 2D est placé au-dessus du plan sans recouvrir son titre, et les petits textes du rail et des options atteignent le contraste AA. Détails : [DIAGRAM_VERIFICATION](../evidence/DIAGRAM_VERIFICATION.md).
+
+## 30/10 — présentateur en direct
+
+Quatre sections et 13 scènes, une phrase et un plan de caméra par scène. Répétition dans le navigateur conforme ; le rendu s'arrête une fois la scène fixe (0 image au repos), et la qualité économique divise par trois environ les appels de dessin par rapport à 1e48368. Détails et limites : [DIAGRAM_VERIFICATION](../evidence/DIAGRAM_VERIFICATION.md).
