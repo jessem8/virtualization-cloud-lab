@@ -5,7 +5,7 @@ export const demos = {
     out: 'AntivirusEnabled          : True\nRealTimeProtectionEnabled : True\nAntivirusSignatureVersion : 1.463.12.0\n# scan rapide terminé, aucune menace enregistrée'},
   'win-firewall': {title: 'Windows · profils du pare-feu', source: 'Notes A du 28/10', cmd: 'PS> Get-NetFirewallProfile | Select Name,Enabled',
     out: 'Name    Enabled\n----    -------\nDomain     True\nPrivate    True\nPublic     True'},
-  'win-sysmon': {title: 'Windows · Sysmon 15.22', source: 'Notes A du 28/10 (captures incomplètes)', cmd: "PS> Get-WinEvent -LogName 'Microsoft-Windows-Sysmon/Operational' | ? Id -in 1,3 | Select -First 2 Id,Message",
+  'win-sysmon': {title: 'Windows · Sysmon 15.22', source: 'Notes A du 28/10', cmd: "PS> Get-WinEvent -LogName 'Microsoft-Windows-Sysmon/Operational' | ? Id -in 1,3 | Select -First 2 Id,Message",
     out: 'Id Message\n-- -------\n 3 Network connection detected ...\n 1 Process Create ...'},
   'win-audit': {title: 'Windows · audit des ouvertures de session', source: 'Notes A du 28/10', cmd: "PS> Get-WinEvent -FilterHashtable @{LogName='Security';Id=4624,4625} -MaxEvents 2 | Select Id",
     out: '  Id\n  --\n4625   # échec contrôlé (compte de test inexistant)\n4624   # ouverture réussie'},

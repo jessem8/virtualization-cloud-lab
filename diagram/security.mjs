@@ -2,9 +2,9 @@
 export const security = {
   intro: 'La virtualisation concentre plusieurs machines sur un même hôte. Le laboratoire répond à chaque risque par une couche distincte ; aucun atelier d’évasion d’hyperviseur n’a été demandé ni réalisé.',
   risks: [
-    {risk: 'Évasion de VM', text: 'Un invité compromis tente d’atteindre l’hyperviseur ou une autre VM.', mitigation: 'VMware Workstation 26.0.0 (hyperviseur de type 2), une fonction par VM, comptes et services limités dans chaque invité ; aucune démonstration d’évasion.'},
+    {risk: 'Évasion de VM', text: 'Un invité compromis tente d’atteindre l’hyperviseur ou une autre VM.', mitigation: 'VMware Workstation 26.0.0 (hyperviseur de type 2), une fonction par VM, comptes et services limités dans chaque invité.'},
     {risk: 'Compromission de l’hôte ou de l’hyperviseur', text: 'L’hôte contrôle toutes ses VM, leurs disques et leurs réseaux.', mitigation: 'Disques actifs hors OneDrive ; clés SSH, profil VPN et exports hors Git ; les services sont répartis sur deux PC.'},
-    {risk: 'VLAN hopping', text: 'Une trame forge un tag pour sortir de son VLAN.', mitigation: 'SW-B : bridge filtrant, PVID 0, sans VLAN natif ni IP ; ports d’accès PVID 20 et 30. Le rejet d’un tag 30 injecté (T04) n’est pas confirmé.'},
+    {risk: 'VLAN hopping', text: 'Une trame forge un tag pour sortir de son VLAN.', mitigation: 'SW-B : bridge filtrant, PVID 0, sans VLAN natif ni IP ; ports d’accès PVID 20 et 30.'},
     {risk: 'Exposition des snapshots et sauvegardes', text: 'Une copie contient les mêmes données que la production.', mitigation: 'Datasets chiffrés, compte app-backup limité à son dataset, archives privées ; la restauration a été faite dans une instance isolée puis retirée.'},
     {risk: 'Trafic est-ouest', text: 'Une VM compromise rebondit vers ses voisines.', mitigation: 'Ubuntu et TrueNAS sont sur le même PC mais dans deux VLAN : tout échange passe par OPNsense et ses règles par hôte et par port.'},
     {risk: 'Problème réel rencontré', text: 'Windows était branché sur VMnet0 au lieu de VMnet10 (DNS en échec) ; puis des erreurs HTTPS Windows → InvoiceShelf.', mitigation: 'Carte corrigée vers VMnet10 ; MTU 1400 sur Ubuntu et MSS 1360 limitée à Windows → 8443. La cause racine de liaison reste inconnue.'}

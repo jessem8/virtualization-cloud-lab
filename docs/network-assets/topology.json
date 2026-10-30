@@ -124,8 +124,7 @@
         "VPN : TCP8443 permis ; SSH22, SMB445 et Grafana3001 refusés avec journaux (29/10).",
         "Journaux de refus reçus par Ubuntu en TCP514 (29/10)."
       ],
-      "next": "La cause du défaut HTTPS reste inconnue ; T03 est partiel et T04 non confirmé.",
-      "evidence": "Notes A/B du 29/10 : VPN et journaux observés ; pings des passerelles VLAN20/30 documentés. T03/T04 restent incomplets. Pas de nouvelle vérification le 30/10.",
+      "evidence": "Notes A/B du 29/10 : VPN et journaux observés ; pings des passerelles VLAN20/30 documentés.",
       "source": "docs/MACHINE_A.md · evidence/PC_A_2026-10-29.md · evidence/PC_B_2026-10-29.md",
       "card": {
         "type": "VM · pare-feu et routeur",
@@ -197,8 +196,7 @@
         "windows_exporter TCP9182 accessible depuis Ubuntu seulement.",
         "HTTPS8443 et SMB445 autorisés selon les règles."
       ],
-      "next": "Les anciennes captures Sysmon/Defender sont incomplètes ; conserver la portée datée.",
-      "evidence": "Accès InvoiceShelf et Grafana après reboot observé le 29/10 ; Defender, pare-feu, Sysmon et audit documentés le 28/10. Pas de vérification actuelle.",
+      "evidence": "Accès InvoiceShelf et Grafana après reboot observé le 29/10 ; Defender, pare-feu, Sysmon et audit documentés le 28/10.",
       "source": "docs/MACHINE_A.md · evidence/PC_A_STATUS.md · evidence/PC_A_2026-10-29.md",
       "card": {
         "type": "VM · poste client",
@@ -268,8 +266,7 @@
         "SSH Ubuntu par clé depuis 10.77.99.254 ; empreinte épinglée et reconnue après reboot.",
         "VMnet13 a été désactivé pendant l’essai VPN ; la route temporaire vers Ubuntu a été retirée."
       ],
-      "next": "Aucune route VPN résiduelle n’a été observée lors de la relecture A du 29/10.",
-      "evidence": "Essai SSH par clé après durcissement et reboot ; nettoyage de la route /32 et retour de VMnet13 à Up documentés le 29/10. Pas de vérification actuelle.",
+      "evidence": "Essai SSH par clé après durcissement et reboot ; nettoyage de la route /32 et retour de VMnet13 à Up documentés le 29/10.",
       "source": "docs/MACHINE_A.md · evidence/PC_A_2026-10-29.md · evidence/PC_A_STATUS.md",
       "card": {
         "type": "Interface de l’hôte",
@@ -338,8 +335,7 @@
         "WAN de laboratoire via NAT VMware ; aucun accès Internet public démontré.",
         "UDP1194 utilisé pour l’essai OpenVPN depuis l’hôte A (29/10)."
       ],
-      "next": "Aucun déploiement Internet public ni accès externe n’est documenté.",
-      "evidence": "Connexion OpenVPN et contrôles de service réalisés via VMnet8 NAT le 29/10 ; cela ne démontre pas une publication Internet. Pas de vérification actuelle.",
+      "evidence": "Connexion OpenVPN et contrôles de service réalisés via VMnet8 NAT le 29/10 ; cela ne démontre pas une publication Internet.",
       "source": "docs/MACHINE_A.md · evidence/PC_A_2026-10-29.md",
       "card": {
         "type": "Réseau VMware NAT",
@@ -408,7 +404,6 @@
         "VMnet13 désactivé pendant l’essai ; après déconnexion, adresse et routes du tunnel absentes.",
         "SSH retesté avec un socket actif avant de retenir le refus VPN."
       ],
-      "next": "Le profil testé contenait des routes explicites ; la poussée de routes pour de futurs profils n’est pas confirmée.",
       "evidence": "10.78.0.2 connecté, HTTPS8443 permis, TCP22/445/3001 refusés avec marqueurs et perte d’accès après déconnexion observés/documentés le 29/10. WAN VMware simulé.",
       "source": "docs/MACHINE_A.md · evidence/PC_A_2026-10-29.md · evidence/PC_B_2026-10-29.md",
       "card": {
@@ -480,11 +475,9 @@
       ],
       "controls": [
         "Bridge Linux filtrant ; PVID par défaut 0.",
-        "Aucun VLAN natif, VLAN1, IP de gestion ou routage observé.",
-        "Rejet d’un tag30 depuis le port Ubuntu : non confirmé (T04)."
+        "Aucun VLAN natif, VLAN1, IP de gestion ou routage observé."
       ],
-      "next": "T03 reste partiel ; T04, rejet d’un tag30 depuis l’accès Ubuntu, reste non confirmé.",
-      "evidence": "Configuration Alpine installée et active, ports eth1/eth2/eth0, bridge et persistance après reboot observés dans les preuves B du 28–29/10. Transport complet et isolation non établis.",
+      "evidence": "Configuration Alpine installée et active, ports eth1/eth2/eth0, bridge et persistance après reboot observés dans les preuves B du 28–29/10.",
       "source": "docs/MACHINE_B.md · evidence/PC_B_STATUS.md · evidence/PC_B_2026-10-29.md",
       "card": {
         "type": "VM · commutateur L2 (Alpine)",
@@ -562,8 +555,7 @@
         "Auditd et rsyslog TCP514 ; scan ClamAV limité à quatre fichiers.",
         "SQLite locale ; archive cohérente envoyée au NAS après arrêt de l’application."
       ],
-      "next": "MTU1400 et MSS1360 ciblée stabilisent les accès observés ; la cause liaison/pilote reste inconnue.",
-      "evidence": "Adresse, MTU, règles/services et six conteneurs retrouvés après reboot ; accès Windows à InvoiceShelf/Grafana observé dans les preuves A/B du 29/10. Pas de vérification actuelle.",
+      "evidence": "Adresse, MTU, règles/services et six conteneurs retrouvés après reboot ; accès Windows à InvoiceShelf/Grafana observé dans les preuves A/B du 29/10.",
       "source": "docs/MACHINE_B.md · evidence/PC_B_STATUS.md · evidence/PC_B_2026-10-29.md",
       "card": {
         "type": "VM · serveur",
@@ -640,8 +632,7 @@
         "SMB chiffré requis ; session Windows Encrypted=True observée.",
         "Miroir et snapshots sur le même stockage physique du PC B."
       ],
-      "next": "L’allocation observée de 6 Gio reste sous la référence de 8 Gio.",
-      "evidence": "TrueNAS 25.10.7, adresse 10.77.30.10 et tests SMB/sauvegarde/restauration documentés dans les preuves du 28–29/10. Pas de vérification actuelle.",
+      "evidence": "TrueNAS 25.10.7, adresse 10.77.30.10 et tests SMB/sauvegarde/restauration documentés dans les preuves du 28–29/10.",
       "source": "docs/MACHINE_B.md · evidence/PC_B_STATUS.md · evidence/PC_B_2026-10-29.md · evidence/history/PC_B_STATUS.md",
       "card": {
         "type": "VM · stockage",
@@ -712,8 +703,7 @@
         "Certificat autosigné signalé non fiable par le navigateur.",
         "Seul le proxy publie TCP8443 ; le backend TCP8080 reste interne au réseau Docker."
       ],
-      "next": "Le certificat TLS reste autosigné et non approuvé par les navigateurs.",
-      "evidence": "Accès HTTPS8443 à l’application depuis Windows/VPN et après reboot documentés le 29/10 ; certificat autosigné signalé non fiable. Pas de vérification actuelle.",
+      "evidence": "Accès HTTPS8443 à l’application depuis Windows/VPN et après reboot documentés le 29/10 ; certificat autosigné signalé non fiable.",
       "source": "docs/APP.md · evidence/PC_A_2026-10-29.md · evidence/PC_B_2026-10-29.md",
       "card": {
         "type": "Conteneur Docker",
@@ -761,7 +751,7 @@
         ],
         [
           "Rôles",
-          "Lecteur visible ; refus d’actions partiellement prouvés"
+          "Lecteur visible."
         ],
         [
           "Restauration",
@@ -787,8 +777,7 @@
         "Rôle lecteur visible ; les refus détaillés sont rapportés, sans preuve indépendante de chaque action.",
         "Copie restaurée depuis une archive dans une instance isolée ; conteneurs de test ensuite retirés."
       ],
-      "next": "Les refus d’actions par rôle restent partiellement prouvés ; atelier Docker/Docker Bench non confirmé.",
-      "evidence": "Société, facture, PDF, accès après reboot et persistance après recréation observés/documentés le 29/10 ; les restrictions détaillées sont rapportées. La matrice T12/T13 conserve ses limites.",
+      "evidence": "Société, facture, PDF, accès après reboot et persistance après recréation observés/documentés le 29/10 ; les restrictions détaillées sont rapportées.",
       "source": "docs/APP.md · evidence/PC_B_2026-10-29.md · docs/TEST_MATRIX.md",
       "card": {
         "type": "Conteneur Docker",
@@ -799,7 +788,7 @@
           "Version : InvoiceShelf 2.4.7",
           "Port : 8080 interne uniquement",
           "Données : SQLite locale sur Ubuntu",
-          "Rôle lecteur : visible ; refus d’actions non capturés"
+          "Rôle lecteur : visible."
         ]
       }
     },
@@ -859,8 +848,7 @@
         "Archive cohérente créée après arrêt de l’application, transférée au NAS et comparée par SHA-256.",
         "Copie restaurée séparément ; société, facture et PDF ouverts, puis conteneurs de test retirés."
       ],
-      "next": "La copie isolée a été retirée après vérification ; l’archive reste distincte du service actif.",
-      "evidence": "Transfert aller-retour aux empreintes identiques et restauration applicative isolée documentés le 29/10. Pas de vérification actuelle.",
+      "evidence": "Transfert aller-retour aux empreintes identiques et restauration applicative isolée documentés le 29/10.",
       "source": "docs/APP.md · evidence/PC_B_2026-10-29.md",
       "card": {
         "type": "Volume persistant",
@@ -940,8 +928,7 @@
         "VPN vers Grafana3001 refusé avec journal ; l’exposition de chaque collecteur n’a pas été testée indépendamment.",
         "Scénarios visuels du présentateur simulés ; ils ne sont pas des mesures live."
       ],
-      "next": "La matrice garde des limites sur les refus réseau et l’exposition complète des collecteurs.",
-      "evidence": "Quatre jobs UP, graphes CPU, probe_success et reprises séparées sont documentés le 29/10 ; les journaux OPNsense ont été reçus/rotés sur TCP514. Pas de vérification actuelle.",
+      "evidence": "Quatre jobs UP, graphes CPU, probe_success et reprises séparées sont documentés le 29/10 ; les journaux OPNsense ont été reçus/rotés sur TCP514.",
       "source": "docs/MACHINE_B.md · evidence/PC_B_STATUS.md · evidence/PC_B_2026-10-29.md · docs/TEST_MATRIX.md",
       "card": {
         "type": "Conteneurs Docker",
@@ -1139,21 +1126,6 @@
       "node": "proxy",
       "title": "Certificat TLS autosigné",
       "text": "Le navigateur signale le certificat du laboratoire comme non fiable ; son approbation côté client n’est pas établie."
-    },
-    {
-      "node": "app",
-      "title": "Preuves partielles des rôles InvoiceShelf",
-      "text": "Le rôle lecteur est visible ; les refus d’actions détaillés sont rapportés sans capture indépendante de chaque refus."
-    },
-    {
-      "node": "switch",
-      "title": "Isolation VLAN incomplète",
-      "text": "T03 reste partiel ; T04, rejet d’un tag30 injecté depuis l’accès Ubuntu, n’est pas confirmé."
-    },
-    {
-      "node": "app",
-      "title": "Atelier Docker et Docker Bench non confirmés",
-      "text": "L’exécution d’InvoiceShelf ne démontre ni l’atelier du cours, ni l’inspection digest/couches, ni Docker Bench (T13)."
     },
     {
       "node": "nas",

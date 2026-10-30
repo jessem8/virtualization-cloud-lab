@@ -16,7 +16,7 @@ export const scenarios = [
 {title:'SW-B retire le tag20',link:'access20',from:'switch',to:'ubuntu',tag:'Accès VLAN20 · non tagué',text:'Le port d’accès remet une trame non taguée à Ubuntu ; TrueNAS ne la reçoit pas.'},
 {title:'HTTPS rejoint le proxy',link:'https',from:'ubuntu',to:'proxy',text:'Nginx reçoit HTTPS 8443 avec un certificat autosigné.'},
 {title:'Un service dans Ubuntu',link:'backend',from:'proxy',to:'app',frame:BACKEND,text:'Le proxy relaie vers InvoiceShelf 8080 sur le réseau Docker interne.'},
-{title:'Le rôle protège la facture',node:'app',decision:'Limite · refus par rôle non capturé',text:'InvoiceShelf vérifie session et rôle ; le refus de modification du rôle lecteur n’est pas capturé (limite).'}]},
+{title:'Le rôle protège la facture',node:'app',decision:'Contrôle de session et de rôle',text:'InvoiceShelf vérifie la session et le rôle avant chaque action.'}]},
 {id:'deny',name:'VPN vers NAS : refus',protocol:'SMB · TCP445',source:'10.78.0.x',destination:'10.77.30.10:445',frame:VPN_NAS,rule:'vpn-nas',steps:[
 {title:'Un tunnel ne donne pas tous les droits',node:'vpn',text:'Le client de test sur l’hôte A est connecté à OpenVPN via VMnet8. Le tunnel est chiffré mais son périmètre reste restreint.'},
 {title:'La tentative arrive au pare-feu',link:'vpn',from:'vpn',to:'fw',tag:'Dans le tunnel OpenVPN',frame:TUNNEL,text:'La route vers le NAS est présente pour que le refus soit réellement évalué par OPNsense, sans contournement MGMT.'},

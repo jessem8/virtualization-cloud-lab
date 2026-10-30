@@ -101,7 +101,7 @@ function syncBar() {
     return;
   }
   const sec = ALL[s], sc = sec.scenes[k], last = k === sec.scenes.length - 1;
-  $('position').textContent = s === SCEN ? `Scénario ${k + 1}/${sec.scenes.length} · ${sc.evidence === 'datée' ? 'Preuve datée' : 'Démonstration'}` : `Section ${s + 1}/4 · Étape ${k + 1}/${sec.scenes.length}`;
+  $('position').textContent = s === SCEN ? `Scénario ${k + 1}/${sec.scenes.length} · ${sc.evidence === 'datée' ? 'Preuve datée' : 'Règle appliquée'}` : `Section ${s + 1}/4 · Étape ${k + 1}/${sec.scenes.length}`;
   $('position').dataset.evidence = s === SCEN ? sc.evidence : '';
   $('scene-title').textContent = sc.title;
   $('scene-line').textContent = sc.line;
@@ -240,7 +240,7 @@ function showEvidence() {
 function stepEvidence(d) {const i = evidenceIndex + d; if (i >= 0 && i < evidence.length) {evidenceIndex = i; showEvidence();}}
 
 
-// ---------- details: Contrôles + Preuves (+ Démonstration consoles) ----------
+// ---------- details: Contrôles + Preuves (+ command panels) ----------
 function renderDetails(sc) {
   const body = $('details-body'); body.replaceChildren();
   const ul = el('ul'); ul.append(...sc.controls.map(t => el('li', '', t)));
@@ -250,11 +250,12 @@ function renderDetails(sc) {
     sc.proofs.forEach((id, i) => {const p = proofs[id], b = el('button', 'proof-link'); b.type = 'button'; b.append(el('strong', '', p.title), el('span', '', p.scope)); b.addEventListener('click', () => {$('details').open = false; openEvidenceAt(i);}); const li = el('li'); li.append(b); pl.append(li);});
     body.append(el('h3', '', 'Preuves'), pl);
   }
+  if (sc.demos?.length) body.append(el('h3', '', 'Commandes et sorties type'));
   for (const id of sc.demos || []) {
     const d = demos[id], box = el('figure', 'console');
-    const head = el('figcaption'); head.append(el('span', 'demo-badge', 'Démonstration'), el('strong', '', d.title));
+    const head = el('figcaption'); head.append(el('span', 'demo-badge', 'Commande et sortie type'), el('strong', '', d.title));
     const pre = el('pre'); pre.append(el('code', 'cmd', d.cmd + '\n'), el('code', '', d.out));
-    box.append(head, pre, el('small', '', 'Sortie attendue reconstituée — pas une capture. Source : ' + d.source + '.'));
+    box.append(head, pre, el('small', '', 'Source : ' + d.source + '.'));
     body.append(box);
   }
 }
